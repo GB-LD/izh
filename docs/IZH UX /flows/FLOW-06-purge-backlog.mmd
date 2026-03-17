@@ -1,0 +1,55 @@
+flowchart TD
+    %% Declencheurs
+    TRIG_NUDGE(["Nudge automatique\nbacklog 35+ taches"]):::trigger
+    TRIG_BLOCK(["Blocage backlog\n40 sur 40"]):::trigger
+    TRIG_MANUAL(["Tap bouton purge\naction manuelle"]):::trigger
+
+    TRIG_NUDGE --> SCR07
+    TRIG_BLOCK --> SCR07_BLOCK
+    TRIG_MANUAL --> SCR08
+
+    %% Intro nudge
+    SCR07["SCR-07 Overlay purge intro\nTon backlog a N taches\nOn regarde celles qui trainent ?"]:::screen
+    SCR07 -->|"C est parti"| SCR08
+    SCR07 -->|"Pas maintenant"| DISMISS(["Retour backlog\nNudge reviendra plus tard"]):::success
+
+    %% Intro blocage
+    SCR07_BLOCK["SCR-07 Overlay purge blocage\nBacklog plein 40/40\nFais de la place pour continuer"]:::error
+    SCR07_BLOCK -->|"C est parti"| SCR08
+    SCR07_BLOCK -->|"Pas maintenant"| DISMISS_BLOCK(["Retour backlog\nTri inbox bloque tant que 40/40"]):::error
+
+    %% Questionnaire tache par tache
+    SCR08["SCR-08 Questionnaire purge\nTitre tache + quadrant + anciennete\nElle compte toujours ?\nProgression X/Y taches revues"]:::screen
+    SCR08 -->|"Non, supprimer"| DELETE[/"Suppression"/]:::loading
+    SCR08 -->|"Oui, garder"| Q2_PURGE
+    SCR08 -->|"Arreter la purge"| EARLY_EXIT(["Retour backlog\nChangements persistes"]):::success
+
+    Q2_PURGE["SCR-08 Question 2\nElle est au bon endroit ?\nQuadrant actuel + alternatives"]:::screen
+    Q2_PURGE -->|"Garder tel quel"| DEC_MORE
+    Q2_PURGE -->|"Reclasser"| RECLASS[/"Reclassement"/]:::loading
+
+    DELETE --> DEC_MORE
+    RECLASS --> DEC_MORE
+
+    DEC_MORE{"Taches restantes\na revoir ?"}:::decision
+    DEC_MORE -->|"Oui"| SCR08
+    DEC_MORE -->|"Toutes revues"| SCR09
+
+    %% Bilan
+    SCR09["SCR-09 Bilan purge\nN taches revues\nX supprimees, Y reclassees, Z gardees\nBacklog: N/40"]:::success
+    SCR09 --> BACK_BL(["Retour backlog"]):::success
+
+    %% Purge unitaire hors overlay
+    TRIG_UNIT(["Swipe gauche ou menu\nsur une tache backlog"]):::trigger
+    TRIG_UNIT --> UNIT_DELETE[/"Suppression unitaire"/]:::loading
+    UNIT_DELETE --> TOAST["Toast undo\nTache supprimee - Annuler\n5 secondes"]:::screen
+    TOAST -->|"Annuler avant 5s"| UNDO(["Tache restauree"]):::success
+    TOAST -->|"Timeout 5s"| GONE(["Suppression definitive"]):::success
+
+    classDef screen   fill:#e8f0fe,stroke:#4285f4,color:#1a1a1a
+    classDef decision fill:#fff8e1,stroke:#f9a825,color:#1a1a1a
+    classDef error    fill:#fce8e6,stroke:#d93025,color:#1a1a1a
+    classDef success  fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef loading  fill:#f3e5f5,stroke:#7b1fa2,color:#1a1a1a
+    classDef empty    fill:#f5f5f5,stroke:#9e9e9e,color:#1a1a1a
+    classDef trigger  fill:#e0f2f1,stroke:#00695c,color:#1a1a1a
