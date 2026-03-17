@@ -16,7 +16,7 @@ inputDocuments:
   - "IZH UX /05-design-tokens-systeme-visuel.md"
   - "IZH UX /06-specifications-composants.md"
   - "IZH UX /09-references-visuelles-directions.md"
-workflowType: 'prd'
+workflowType: "prd"
 documentCounts:
   briefs: 2
   research: 0
@@ -50,27 +50,27 @@ MVP : React + TypeScript, responsive mobile-first, localStorage. En production d
 
 ## Project Classification
 
-| Attribut | Valeur |
-|---|---|
-| Type de projet | Web app (SPA, responsive mobile-first) |
-| Domaine | Productivité personnelle / gestion de tâches |
-| Complexité domaine | Faible (pas de régulation, pas de compliance MVP) |
-| Contexte projet | Greenfield — nouveau produit |
-| Stack | React + TypeScript, localStorage (MVP), Supabase (phase 2) |
-| Déploiement | Continu, URL publique |
+| Attribut           | Valeur                                                     |
+| ------------------ | ---------------------------------------------------------- |
+| Type de projet     | Web app (SPA, responsive mobile-first)                     |
+| Domaine            | Productivité personnelle / gestion de tâches               |
+| Complexité domaine | Faible (pas de régulation, pas de compliance MVP)          |
+| Contexte projet    | Greenfield — nouveau produit                               |
+| Stack              | React + TypeScript, localStorage (MVP), Supabase (phase 2) |
+| Déploiement        | Continu, URL publique                                      |
 
 ## Success Criteria
 
 ### User Success
 
-| Critère | Cible MVP | Mesure |
-|---|---|---|
-| Tâches déchargées par session de brain dump | 5+ | Compteur localStorage par session |
-| Inbox triée en <48h | >80% des tâches | `created_at` vs `classified_at` |
-| Tâches complétées/semaine depuis la matrice | 3+ | `completed_at` + source matrice |
-| Temps de tri par tâche (flow assisté) | <60 secondes | Timer automatique entrée flow → classement |
-| Score de légèreté mentale ressentie | >7/10 | Micro-survey in-app (post-1er tri complet, puis 1x/semaine max) |
-| Rétention hebdomadaire W1→W4 | 40%+ | Sessions par semaine (localStorage) |
+| Critère                                     | Cible MVP       | Mesure                                                          |
+| ------------------------------------------- | --------------- | --------------------------------------------------------------- |
+| Tâches déchargées par session de brain dump | 5+              | Compteur localStorage par session                               |
+| Inbox triée en <48h                         | >80% des tâches | `created_at` vs `classified_at`                                 |
+| Tâches complétées/semaine depuis la matrice | 3+              | `completed_at` + source matrice                                 |
+| Temps de tri par tâche (flow assisté)       | <60 secondes    | Timer automatique entrée flow → classement                      |
+| Score de légèreté mentale ressentie         | >7/10           | Micro-survey in-app (post-1er tri complet, puis 1x/semaine max) |
+| Rétention hebdomadaire W1→W4                | 40%+            | Sessions par semaine (localStorage)                             |
 
 **Moment "aha!" :** Camille termine son premier tri assisté. La matrice se remplit. Elle voit clairement quoi faire demain matin. Émotion : clarté, soulagement — "je sais où j'en suis".
 
@@ -79,6 +79,7 @@ MVP : React + TypeScript, responsive mobile-first, localStorage. En production d
 ### Business Success
 
 **À 3 mois (MVP en production — mi-avril 2026) :**
+
 - Web app déployée en continu, URL publique accessible
 - Workflow complet fonctionnel (brain dump → tri → backlog → matrice)
 - Métriques localStorage validant l'hypothèse Lean UX
@@ -86,6 +87,7 @@ MVP : React + TypeScript, responsive mobile-first, localStorage. En production d
 - Repository GitHub comme pièce portfolio (React + TypeScript + clean architecture)
 
 **À 12 mois :**
+
 - Migration Supabase terminée (auth + persistance serveur)
 - Timeblocking + synchronisation Google Agenda / Apple Calendar
 - 10 utilisateurs actifs en production
@@ -95,23 +97,25 @@ MVP : React + TypeScript, responsive mobile-first, localStorage. En production d
 
 ### Technical Success
 
-| Critère | Cible |
-|---|---|
-| Stack | React + TypeScript, responsive mobile-first |
-| Persistance MVP | localStorage — zéro backend |
-| Performance perçue | Capture <10s, tri <60s, navigation instantanée |
-| Qualité code | Clean architecture, tests, CI/CD |
-| Déploiement | Continu, chaque avancée visible en production |
-| Accessibilité | WCAG AA sur texte fonctionnel, zones tactiles 44x44px min |
+| Critère            | Cible                                                     |
+| ------------------ | --------------------------------------------------------- |
+| Stack              | React + TypeScript, responsive mobile-first               |
+| Persistance MVP    | localStorage — zéro backend                               |
+| Performance perçue | Capture <10s, tri <60s, navigation instantanée            |
+| Qualité code       | Clean architecture, tests, CI/CD                          |
+| Déploiement        | Continu, chaque avancée visible en production             |
+| Accessibilité      | WCAG AA sur texte fonctionnel, zones tactiles 44x44px min |
 
 ### Measurable Outcomes
 
 **Signaux positifs (green lights) :**
+
 - Les testeurs utilisent le tri assisté plutôt que le tri manuel
 - Les testeurs reviennent la semaine suivante sans qu'on leur demande
 - Retours qualitatifs convergent vers "ça m'aide à y voir clair"
 
 **Signaux d'alerte (red flags) :**
+
 - Abandon du questionnaire en cours de route
 - Usage exclusif du tri manuel → le différenciateur échoue
 - Feedback type "c'est encore un truc à gérer" → piège Todoist/Notion reproduit
@@ -177,21 +181,21 @@ Un autre soir, elle lance le tri assisté mais ferme l'overlay au milieu du ques
 
 ### Journey Requirements Summary
 
-| Capability | Journeys source | Priorité |
-|---|---|---|
-| Brain dump continu sans friction (champ texte, flux continu) | J1, J2, J3 | Critique |
-| Tri assisté par questionnaire cognitif (4 flux, <60s) | J1, J2 | Critique |
-| Tri manuel direct (sélection quadrant) | J3 | Critique |
-| Matrice Focus (max 4/quadrant, lecture seule) | J1, J2, J3 | Critique |
-| Backlog Réserve (accordion, drag & drop, limite 40) | J1, J3, J4 | Critique |
-| Purge assistée + manuelle (nudge 35+, blocage 40) | J3, J4 | Haute |
-| Capture depuis le Vrac uniquement | J1, J2, J3 | Critique |
-| Onboarding par l'usage (surbrillances, animations) | J1 | Haute |
-| Abandon sans perte (overlay, questionnaire, purge) | J4 | Haute |
-| Undo complétion/suppression (toast 5s) | J1, J3 | Moyenne |
-| Feedback pédagogique (toast drag inter-quadrant) | J3 | Moyenne |
-| Analytics localStorage (timestamps, timer) | Tous | Haute |
-| Micro-survey légèreté mentale | J1 | Moyenne |
+| Capability                                                   | Journeys source | Priorité |
+| ------------------------------------------------------------ | --------------- | -------- |
+| Brain dump continu sans friction (champ texte, flux continu) | J1, J2, J3      | Critique |
+| Tri assisté par questionnaire cognitif (4 flux, <60s)        | J1, J2          | Critique |
+| Tri manuel direct (sélection quadrant)                       | J3              | Critique |
+| Matrice Focus (max 4/quadrant, lecture seule)                | J1, J2, J3      | Critique |
+| Backlog Réserve (accordion, drag & drop, limite 40)          | J1, J3, J4      | Critique |
+| Purge assistée + manuelle (nudge 35+, blocage 40)            | J3, J4          | Haute    |
+| Capture depuis le Vrac uniquement                            | J1, J2, J3      | Critique |
+| Onboarding par l'usage (surbrillances, animations)           | J1              | Haute    |
+| Abandon sans perte (overlay, questionnaire, purge)           | J4              | Haute    |
+| Undo complétion/suppression (toast 5s)                       | J1, J3          | Moyenne  |
+| Feedback pédagogique (toast drag inter-quadrant)             | J3              | Moyenne  |
+| Analytics localStorage (timestamps, timer)                   | Tous            | Haute    |
+| Micro-survey légèreté mentale                                | J1              | Moyenne  |
 
 ## Product Scope & Phased Development
 
@@ -208,6 +212,7 @@ Un autre soir, elle lance le tri assisté mais ferme l'overlay au milieu du ques
 **Core User Journeys supportés :** J1, J2, J3, J4 — 100% couverts.
 
 **Workflow complet (critique) :**
+
 1. Brain dump — champ texte inline dans le Vrac, flux continu
 2. Inbox (Vrac) — liste sans limite, édition inline
 3. Tri assisté — 4 flux cognitifs (projection, ancrage, audit stress, test du regret), 2-4 questions, <60s
@@ -223,41 +228,42 @@ Un autre soir, elle lance le tri assisté mais ferme l'overlay au milieu du ques
 
 **Must-Have Capabilities :**
 
-| Capability | Pourquoi must-have | Sans ça... |
-|---|---|---|
-| Brain dump (champ texte, flux continu) | Point d'entrée du produit | Pas de produit |
-| Inbox (Vrac) illimitée | Stockage des tâches non triées | Pas de brain dump |
-| Tri assisté (4 flux cognitifs) | **Différenciateur** — raison d'être d'izh | Todoist clone |
-| Tri manuel (sélection directe) | Raccourci pour utilisateurs experts | David abandonne |
-| Backlog (Réserve) avec quadrants | Organisation post-tri | Pas de pipeline |
-| Matrice (Focus) limitée à 4/quadrant | Passage à l'action | Pas de clarté |
-| Complétion + archivage + undo | Boucle fermée | Tâches fantômes |
-| Purge assistée (nudge 35+, blocage 40) | Santé du backlog | Backlog pourri |
-| Onboarding par l'usage | Première impression | "Encore un truc à configurer" |
-| Analytics localStorage | Validation hypothèse Lean UX | Pas de données |
-| Édition inline des titres | Correction sans friction | Frustration |
-| Drag & drop (backlog inter-quadrant) | Reclassification fluide | UX rigide |
+| Capability                             | Pourquoi must-have                        | Sans ça...                    |
+| -------------------------------------- | ----------------------------------------- | ----------------------------- |
+| Brain dump (champ texte, flux continu) | Point d'entrée du produit                 | Pas de produit                |
+| Inbox (Vrac) illimitée                 | Stockage des tâches non triées            | Pas de brain dump             |
+| Tri assisté (4 flux cognitifs)         | **Différenciateur** — raison d'être d'izh | Todoist clone                 |
+| Tri manuel (sélection directe)         | Raccourci pour utilisateurs experts       | David abandonne               |
+| Backlog (Réserve) avec quadrants       | Organisation post-tri                     | Pas de pipeline               |
+| Matrice (Focus) limitée à 4/quadrant   | Passage à l'action                        | Pas de clarté                 |
+| Complétion + archivage + undo          | Boucle fermée                             | Tâches fantômes               |
+| Purge assistée (nudge 35+, blocage 40) | Santé du backlog                          | Backlog pourri                |
+| Onboarding par l'usage                 | Première impression                       | "Encore un truc à configurer" |
+| Analytics localStorage                 | Validation hypothèse Lean UX              | Pas de données                |
+| Édition inline des titres              | Correction sans friction                  | Frustration                   |
+| Drag & drop (backlog inter-quadrant)   | Reclassification fluide                   | UX rigide                     |
 
 **Nice-to-have intégrés au MVP (si le temps le permet) :**
+
 - Micro-survey légèreté mentale (utile mais pas bloquant)
 - Drag intra-quadrant pour réordonnancement manuel
 
 ### Phase 2 — Infrastructure & Timeblocking
 
-| Feature | Dépendance | Valeur ajoutée |
-|---|---|---|
-| Migration Supabase (auth + persistance) | MVP validé | Multi-device, pas de perte de données |
-| Timeblocking | Supabase | Passer de "quoi faire" à "quand le faire" |
-| Sync Google Agenda + Apple Calendar | Timeblocking | Intégration dans le workflow réel |
+| Feature                                 | Dépendance   | Valeur ajoutée                            |
+| --------------------------------------- | ------------ | ----------------------------------------- |
+| Migration Supabase (auth + persistance) | MVP validé   | Multi-device, pas de perte de données     |
+| Timeblocking                            | Supabase     | Passer de "quoi faire" à "quand le faire" |
+| Sync Google Agenda + Apple Calendar     | Timeblocking | Intégration dans le workflow réel         |
 
 ### Phase 3 — Expansion
 
-| Feature | Dépendance | Valeur ajoutée |
-|---|---|---|
-| Email digest hebdomadaire | Supabase (email) | Rétention passive |
-| Installation PWA | Indépendant | Accès rapide mobile |
-| Définition guidée des 3 priorités | Indépendant | Enrichit le Flux 2 |
-| Freemium (si audience) | Supabase + userbase | Monétisation |
+| Feature                           | Dépendance          | Valeur ajoutée      |
+| --------------------------------- | ------------------- | ------------------- |
+| Email digest hebdomadaire         | Supabase (email)    | Rétention passive   |
+| Installation PWA                  | Indépendant         | Accès rapide mobile |
+| Définition guidée des 3 priorités | Indépendant         | Enrichit le Flux 2  |
+| Freemium (si audience)            | Supabase + userbase | Monétisation        |
 
 **Hors scope permanent :** fonctionnalités sociales, gamification/streaks, gestion de projets (sous-tâches, dépendances), timer/Pomodoro, notifications push natives.
 
@@ -265,26 +271,26 @@ Un autre soir, elle lance le tri assisté mais ferme l'overlay au milieu du ques
 
 **Risques techniques :**
 
-| Risque | Probabilité | Impact | Mitigation |
-|---|---|---|---|
-| Drag & drop complexe sur mobile | Moyenne | Élevé | Utiliser une lib React éprouvée (dnd-kit), tester tôt sur iOS Safari |
-| Performance localStorage avec 40+ tâches | Faible | Moyen | Structure de données simple (titre + metadata), pas de recherche complexe |
-| Bottom sheet custom cross-browser | Moyenne | Moyen | Composant overlay unifié, tester Chrome + Safari dès le début |
+| Risque                                   | Probabilité | Impact | Mitigation                                                                |
+| ---------------------------------------- | ----------- | ------ | ------------------------------------------------------------------------- |
+| Drag & drop complexe sur mobile          | Moyenne     | Élevé  | Utiliser une lib React éprouvée (dnd-kit), tester tôt sur iOS Safari      |
+| Performance localStorage avec 40+ tâches | Faible      | Moyen  | Structure de données simple (titre + metadata), pas de recherche complexe |
+| Bottom sheet custom cross-browser        | Moyenne     | Moyen  | Composant overlay unifié, tester Chrome + Safari dès le début             |
 
 **Risques marché :**
 
-| Risque | Probabilité | Impact | Mitigation |
-|---|---|---|---|
-| Le questionnaire est le différenciateur mais personne ne l'utilise | Moyenne | Critique | Nudge architectural (bouton assisté > quadrants), tracking `classification_method`, itérer sur le wording |
-| L'app est perçue comme "un Notion de plus" | Faible | Élevé | Moments signature visuels (animation tri, feedback classement), onboarding sans setup |
-| Le wording ne fonctionne pas pour tous les profils | Moyenne | Élevé | Wording émotionnel (Système 1), taux de correction (`user_override`) <30%, itération post-MVP |
+| Risque                                                             | Probabilité | Impact   | Mitigation                                                                                                |
+| ------------------------------------------------------------------ | ----------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| Le questionnaire est le différenciateur mais personne ne l'utilise | Moyenne     | Critique | Nudge architectural (bouton assisté > quadrants), tracking `classification_method`, itérer sur le wording |
+| L'app est perçue comme "un Notion de plus"                         | Faible      | Élevé    | Moments signature visuels (animation tri, feedback classement), onboarding sans setup                     |
+| Le wording ne fonctionne pas pour tous les profils                 | Moyenne     | Élevé    | Wording émotionnel (Système 1), taux de correction (`user_override`) <30%, itération post-MVP             |
 
 **Risques ressources :**
 
-| Risque | Probabilité | Impact | Mitigation |
-|---|---|---|---|
-| Solo dev, timeline 1 mois trop court | Moyenne | Moyen | Specs UX complètes = pas de temps perdu en design. Prioriser le workflow core, reporter micro-survey si nécessaire |
-| Perte de motivation | Faible | Élevé | Déploiement continu = résultats visibles, double valeur produit + portfolio |
+| Risque                               | Probabilité | Impact | Mitigation                                                                                                         |
+| ------------------------------------ | ----------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| Solo dev, timeline 1 mois trop court | Moyenne     | Moyen  | Specs UX complètes = pas de temps perdu en design. Prioriser le workflow core, reporter micro-survey si nécessaire |
+| Perte de motivation                  | Faible      | Élevé  | Déploiement continu = résultats visibles, double valeur produit + portfolio                                        |
 
 ## Innovation & Novel Patterns
 
@@ -307,13 +313,13 @@ Les fondements scientifiques (Mere Urgency Effect — Zhu et al. 2018, effet Zei
 
 ### Validation Approach
 
-| Hypothèse | Méthode | Signal de succès |
-|---|---|---|
-| Le tri assisté est préféré au tri manuel | Analytics localStorage (`classification_method`) | Assisté majoritaire les 2 premières semaines |
-| Le questionnaire ne crée pas de friction | Timer `flow_duration_ms` | <60s par tâche |
-| Le wording fonctionne pour les 3 profils | Taux de correction (`user_override`) | <30% par flux |
-| Les limites sont perçues comme une aide | Micro-survey + retours qualitatifs | Score légèreté >7/10 |
-| L'app ne devient pas "un truc de plus à gérer" | Rétention W1→W4 | 40%+ |
+| Hypothèse                                      | Méthode                                          | Signal de succès                             |
+| ---------------------------------------------- | ------------------------------------------------ | -------------------------------------------- |
+| Le tri assisté est préféré au tri manuel       | Analytics localStorage (`classification_method`) | Assisté majoritaire les 2 premières semaines |
+| Le questionnaire ne crée pas de friction       | Timer `flow_duration_ms`                         | <60s par tâche                               |
+| Le wording fonctionne pour les 3 profils       | Taux de correction (`user_override`)             | <30% par flux                                |
+| Les limites sont perçues comme une aide        | Micro-survey + retours qualitatifs               | Score légèreté >7/10                         |
+| L'app ne devient pas "un truc de plus à gérer" | Rétention W1→W4                                  | 40%+                                         |
 
 ## Web App Technical Requirements
 
@@ -323,11 +329,11 @@ izh est une SPA (Single Page Application) responsive mobile-first. Pas de MPA, p
 
 ### Responsive Design
 
-| Breakpoint | Surface | Layout |
-|---|---|---|
-| < 768px | Mobile (prioritaire) | Pleine largeur, bottom nav, layout asymétrique Focus |
-| 768-1279px | Tablette | Pleine largeur, grille 2×2 Focus |
-| ≥ 1280px | Desktop | Contenu centré max-width 600px, sidebar nav gauche |
+| Breakpoint | Surface              | Layout                                               |
+| ---------- | -------------------- | ---------------------------------------------------- |
+| < 768px    | Mobile (prioritaire) | Pleine largeur, bottom nav, layout asymétrique Focus |
+| 768-1279px | Tablette             | Pleine largeur, grille 2×2 Focus                     |
+| ≥ 1280px   | Desktop              | Contenu centré max-width 600px, sidebar nav gauche   |
 
 ### Design System
 
@@ -434,41 +440,41 @@ Design system complet défini : Space Grotesk (titres) + Inter (corps), palette 
 
 ### Performance
 
-| NFR | Cible | Justification |
-|---|---|---|
-| NFR1: First Contentful Paint | <1.5s sur mobile 4G | Camille a 45 min — l'app doit être prête immédiatement |
-| NFR2: Time to Interactive | <2s | Le champ de saisie doit être utilisable sans attente |
-| NFR3: Bundle size (gzipped) | <200KB | Chargement rapide sur connexions mobiles |
-| NFR4: Animations | 60fps constant | Drag & drop et transitions fluides, pas de jank |
-| NFR5: Opérations localStorage | <50ms | Lecture/écriture instantanée perçue |
-| NFR6: Transition entre écrans | <100ms | Navigation instantanée (SPA, pas de rechargement) |
+| NFR                           | Cible               | Justification                                          |
+| ----------------------------- | ------------------- | ------------------------------------------------------ |
+| NFR1: First Contentful Paint  | <1.5s sur mobile 4G | Camille a 45 min — l'app doit être prête immédiatement |
+| NFR2: Time to Interactive     | <2s                 | Le champ de saisie doit être utilisable sans attente   |
+| NFR3: Bundle size (gzipped)   | <200KB              | Chargement rapide sur connexions mobiles               |
+| NFR4: Animations              | 60fps constant      | Drag & drop et transitions fluides, pas de jank        |
+| NFR5: Opérations localStorage | <50ms               | Lecture/écriture instantanée perçue                    |
+| NFR6: Transition entre écrans | <100ms              | Navigation instantanée (SPA, pas de rechargement)      |
 
 ### Accessibilité
 
-| NFR | Cible | Justification |
-|---|---|---|
-| NFR7: Standard WCAG | 2.1 niveau AA | Texte fonctionnel — contraste, navigation clavier, focus visible |
-| NFR8: Contraste texte primaire | ≥4.5:1 (AA) | text-primary sur surface-base : ~14.5:1 atteint |
-| NFR9: Zones tactiles | ≥44×44px | Toutes les zones interactives, Camille fatiguée une main |
-| NFR10: Focus ring | Toujours visible, jamais supprimé | Navigation clavier obligatoire |
-| NFR11: Couleur seule | Jamais seul vecteur d'information | Quadrants doublés par label textuel |
-| NFR12: `prefers-reduced-motion` | Respecté | Désactivation des animations pour utilisateurs sensibles |
-| NFR13: Taille texte minimum | ≥11px | Captions, metadata lisibles |
+| NFR                             | Cible                             | Justification                                                    |
+| ------------------------------- | --------------------------------- | ---------------------------------------------------------------- |
+| NFR7: Standard WCAG             | 2.1 niveau AA                     | Texte fonctionnel — contraste, navigation clavier, focus visible |
+| NFR8: Contraste texte primaire  | ≥4.5:1 (AA)                       | text-primary sur surface-base : ~14.5:1 atteint                  |
+| NFR9: Zones tactiles            | ≥44×44px                          | Toutes les zones interactives, Camille fatiguée une main         |
+| NFR10: Focus ring               | Toujours visible, jamais supprimé | Navigation clavier obligatoire                                   |
+| NFR11: Couleur seule            | Jamais seul vecteur d'information | Quadrants doublés par label textuel                              |
+| NFR12: `prefers-reduced-motion` | Respecté                          | Désactivation des animations pour utilisateurs sensibles         |
+| NFR13: Taille texte minimum     | ≥11px                             | Captions, metadata lisibles                                      |
 
 ### Compatibilité
 
-| NFR | Cible | Justification |
-|---|---|---|
-| NFR14: Chrome (mobile + desktop) | Support complet | >65% du marché |
-| NFR15: Safari (mobile + desktop) | Support complet | iPhone Camille et Lucas |
-| NFR16: Firefox, Edge | Support standard | Couverture raisonnable |
-| NFR17: Viewport minimum | 320px largeur | iPhone SE |
-| NFR18: Responsive breakpoints | Mobile (<768px), Tablette (768-1279px), Desktop (≥1280px) | Mobile-first, 3 breakpoints |
+| NFR                              | Cible                                                     | Justification               |
+| -------------------------------- | --------------------------------------------------------- | --------------------------- |
+| NFR14: Chrome (mobile + desktop) | Support complet                                           | >65% du marché              |
+| NFR15: Safari (mobile + desktop) | Support complet                                           | iPhone Camille et Lucas     |
+| NFR16: Firefox, Edge             | Support standard                                          | Couverture raisonnable      |
+| NFR17: Viewport minimum          | 320px largeur                                             | iPhone SE                   |
+| NFR18: Responsive breakpoints    | Mobile (<768px), Tablette (768-1279px), Desktop (≥1280px) | Mobile-first, 3 breakpoints |
 
 ### Fiabilité
 
-| NFR | Cible | Justification |
-|---|---|---|
-| NFR19: Persistance données | Zéro perte de données entre sessions | localStorage — les tâches de Camille doivent survivre à la fermeture du navigateur |
-| NFR20: Tolérance à l'abandon | Aucune donnée partielle en cas de fermeture mid-flow | Questionnaire, purge — abandon = état intact |
-| NFR21: Undo | Fenêtre de 5 secondes pour annuler complétion/suppression | Protection contre les erreurs de tap |
+| NFR                          | Cible                                                     | Justification                                                                      |
+| ---------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| NFR19: Persistance données   | Zéro perte de données entre sessions                      | localStorage — les tâches de Camille doivent survivre à la fermeture du navigateur |
+| NFR20: Tolérance à l'abandon | Aucune donnée partielle en cas de fermeture mid-flow      | Questionnaire, purge — abandon = état intact                                       |
+| NFR21: Undo                  | Fenêtre de 5 secondes pour annuler complétion/suppression | Protection contre les erreurs de tap                                               |

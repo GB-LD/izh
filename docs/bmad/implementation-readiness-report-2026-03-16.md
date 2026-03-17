@@ -29,12 +29,12 @@ files:
 
 ## 1. Document Discovery
 
-| Type | Fichier | Statut |
-|---|---|---|
-| PRD | `_bmad-output/planning-artifacts/prd.md` | Trouvé |
-| Architecture | `_bmad-output/planning-artifacts/architecture.md` | Trouvé |
-| Epics & Stories | `_bmad-output/planning-artifacts/epics.md` | Trouvé |
-| UX Design | `IZH UX /` (9 fichiers) | Trouvé |
+| Type            | Fichier                                           | Statut |
+| --------------- | ------------------------------------------------- | ------ |
+| PRD             | `_bmad-output/planning-artifacts/prd.md`          | Trouvé |
+| Architecture    | `_bmad-output/planning-artifacts/architecture.md` | Trouvé |
+| Epics & Stories | `_bmad-output/planning-artifacts/epics.md`        | Trouvé |
+| UX Design       | `IZH UX /` (9 fichiers)                           | Trouvé |
 
 **Doublons :** Aucun
 **Documents manquants :** Aucun
@@ -44,18 +44,21 @@ files:
 ### Functional Requirements (50 FRs)
 
 **Capture de tâches :**
+
 - FR1: L'utilisateur peut saisir une tâche en entrant un titre dans un champ texte
 - FR2: L'utilisateur peut enchaîner la saisie de plusieurs tâches en flux continu sans quitter l'écran
 - FR3: L'utilisateur peut capturer une tâche uniquement depuis l'écran Vrac (inbox)
 - FR4: L'utilisateur peut modifier le titre d'une tâche existante
 
 **Gestion de l'inbox (Vrac) :**
+
 - FR5: L'utilisateur peut voir la liste de toutes ses tâches non triées
 - FR6: L'utilisateur peut voir le nombre de tâches à trier
 - FR7: L'utilisateur peut lancer le tri d'une tâche depuis l'inbox
 - FR8: L'utilisateur peut stocker un nombre illimité de tâches dans l'inbox
 
 **Tri assisté (questionnaire cognitif) :**
+
 - FR9: Classification via questionnaire guidé aboutissant à un quadrant Eisenhower
 - FR10: Question d'aiguillage initiale → 4 flux cognitifs
 - FR11: 2-4 questions par flux, toujours un résultat — pas de cul-de-sac
@@ -64,10 +67,12 @@ files:
 - FR14: Abandon sans perte de données
 
 **Tri manuel :**
+
 - FR15: Classification directe en choisissant un quadrant
 - FR16: Choix entre tri assisté et tri manuel pour chaque tâche
 
 **Backlog (Réserve) :**
+
 - FR17: Tâches classées organisées par quadrant
 - FR18: Compteur total + capacité restante
 - FR19: Reclassement inter-quadrant (drag & drop)
@@ -78,6 +83,7 @@ files:
 - FR24: Ordre de tri par quadrant (date ou manuel)
 
 **Matrice active (Focus) :**
+
 - FR25: Tâches activées par quadrant, max 4/quadrant
 - FR26: Complétion depuis la matrice
 - FR27: Remise dans le backlog (même quadrant)
@@ -86,6 +92,7 @@ files:
 - FR30: Blocage activation si quadrant plein (4/4)
 
 **Purge du backlog :**
+
 - FR31: Purge assistée présentant les tâches les plus anciennes
 - FR32: Questionnaire de purge (existence puis reclassement)
 - FR33: Suppression ou reclassement pendant la purge
@@ -95,15 +102,18 @@ files:
 - FR37: Purge manuelle disponible à tout moment
 
 **Archivage :**
+
 - FR38: Liste des tâches complétées, ordre antichronologique
 - FR39: Quadrant d'origine visible
 - FR40: Compteur total de tâches complétées
 
 **Onboarding :**
+
 - FR41: Guidage première boucle complète sans tutoriel
 - FR42: Surbrillance des éléments interactifs au premier usage
 
 **Analytics et feedback :**
+
 - FR43: Timestamps automatiques (création, classification, complétion)
 - FR44: Timer durée du flow de tri
 - FR45: Enregistrement méthode de classification + flux source
@@ -111,6 +121,7 @@ files:
 - FR47: Taux de correction (override) des propositions
 
 **Navigation et persistance :**
+
 - FR48: Navigation entre 4 écrans (Vrac, Réserve, Focus, Archive)
 - FR49: Persistance locale entre sessions
 - FR50: Responsive mobile, tablette et desktop
@@ -118,6 +129,7 @@ files:
 ### Non-Functional Requirements (21 NFRs)
 
 **Performance :**
+
 - NFR1: First Contentful Paint <1.5s sur mobile 4G
 - NFR2: Time to Interactive <2s
 - NFR3: Bundle size (gzipped) <200KB
@@ -126,6 +138,7 @@ files:
 - NFR6: Transition entre écrans <100ms
 
 **Accessibilité :**
+
 - NFR7: WCAG 2.1 niveau AA
 - NFR8: Contraste texte primaire ≥4.5:1
 - NFR9: Zones tactiles ≥44×44px
@@ -135,6 +148,7 @@ files:
 - NFR13: Taille texte minimum ≥11px
 
 **Compatibilité :**
+
 - NFR14: Chrome support complet
 - NFR15: Safari support complet
 - NFR16: Firefox, Edge support standard
@@ -142,6 +156,7 @@ files:
 - NFR18: 3 breakpoints responsifs
 
 **Fiabilité :**
+
 - NFR19: Zéro perte de données entre sessions
 - NFR20: Tolérance à l'abandon (pas de données partielles)
 - NFR21: Undo 5 secondes pour complétion/suppression
@@ -164,58 +179,58 @@ Le PRD est complet et bien structuré. 50 FRs couvrent l'ensemble du workflow (c
 
 ### Coverage Matrix
 
-| FR | Description | Epic | Statut |
-|---|---|---|---|
-| FR1 | Saisie titre tâche | Epic 2 | ✓ |
-| FR2 | Flux continu de saisie | Epic 2 | ✓ |
-| FR3 | Capture depuis Vrac uniquement | Epic 2 | ✓ |
-| FR4 | Édition titre existant | Epic 2 | ✓ |
-| FR5 | Liste tâches non triées | Epic 2 | ✓ |
-| FR6 | Compteur tâches à trier | Epic 2 | ✓ |
-| FR7 | Lancement tri depuis inbox | Epic 3 | ✓ |
-| FR8 | Inbox illimitée | Epic 2 | ✓ |
-| FR9 | Questionnaire guidé → quadrant | Epic 3 | ✓ |
-| FR10 | Question d'aiguillage initiale | Epic 3 | ✓ |
-| FR11 | 2-4 questions par flux | Epic 3 | ✓ |
-| FR12 | Retour question précédente | Epic 3 | ✓ |
-| FR13 | Validation/correction quadrant | Epic 3 | ✓ |
-| FR14 | Abandon questionnaire sans perte | Epic 3 | ✓ |
-| FR15 | Tri manuel direct | Epic 3 | ✓ |
-| FR16 | Choix assisté vs manuel | Epic 3 | ✓ |
-| FR17 | Tâches classées par quadrant | Epic 4 | ✓ |
-| FR18 | Compteur total + capacité | Epic 4 | ✓ |
-| FR19 | Reclassement drag inter-quadrant | Epic 4 | ✓ |
-| FR20 | Réordonnancement intra-quadrant | Epic 4 | ✓ |
-| FR21 | Activation tâche vers matrice | Epic 4 | ✓ |
-| FR22 | Limite 40 tâches backlog | Epic 4 | ✓ |
-| FR23 | Suppression tâche backlog | Epic 4 | ✓ |
-| FR24 | Toggle tri date/manuel | Epic 4 | ✓ |
-| FR25 | Matrice max 4/quadrant | Epic 5 | ✓ |
-| FR26 | Complétion depuis matrice | Epic 5 | ✓ |
-| FR27 | Remettre tâche à la Réserve | Epic 5 | ✓ |
-| FR28 | Feedback pédagogique drag inter-quadrant | Epic 5 | ✓ |
-| FR29 | Undo complétion 5s | Epic 5 | ✓ |
-| FR30 | Blocage activation si quadrant plein | Epic 5 | ✓ |
-| FR31 | Purge assistée tâches anciennes | Epic 7 | ✓ |
-| FR32 | Questionnaire purge | Epic 7 | ✓ |
-| FR33 | Supprimer/reclasser pendant purge | Epic 7 | ✓ |
-| FR34 | Arrêt purge avec persistance | Epic 7 | ✓ |
-| FR35 | Bilan récapitulatif purge | Epic 7 | ✓ |
-| FR36 | Suggestion purge à 35+ | Epic 7 | ✓ |
-| FR37 | Purge manuelle à tout moment | Epic 7 | ✓ |
-| FR38 | Liste antichronologique complétées | Epic 6 | ✓ |
-| FR39 | Badge quadrant d'origine | Epic 6 | ✓ |
-| FR40 | Compteur total complétées | Epic 6 | ✓ |
-| FR41 | Guide première boucle complète | Epic 8 | ✓ |
-| FR42 | Surbrillance éléments 1er usage | Epic 8 | ✓ |
-| FR43 | Timestamps automatiques | Epic 8 | ✓ |
-| FR44 | Timer durée flow de tri | Epic 8 | ✓ |
-| FR45 | Enregistrement méthode classification | Epic 8 | ✓ |
-| FR46 | Micro-survey légèreté mentale | Epic 8 | ✓ |
-| FR47 | Taux de correction (override) | Epic 8 | ✓ |
-| FR48 | Navigation 4 écrans | Epic 1 | ✓ |
-| FR49 | Persistance localStorage | Epic 1 | ✓ |
-| FR50 | Responsive mobile/tablette/desktop | Epic 1 | ✓ |
+| FR   | Description                              | Epic   | Statut |
+| ---- | ---------------------------------------- | ------ | ------ |
+| FR1  | Saisie titre tâche                       | Epic 2 | ✓      |
+| FR2  | Flux continu de saisie                   | Epic 2 | ✓      |
+| FR3  | Capture depuis Vrac uniquement           | Epic 2 | ✓      |
+| FR4  | Édition titre existant                   | Epic 2 | ✓      |
+| FR5  | Liste tâches non triées                  | Epic 2 | ✓      |
+| FR6  | Compteur tâches à trier                  | Epic 2 | ✓      |
+| FR7  | Lancement tri depuis inbox               | Epic 3 | ✓      |
+| FR8  | Inbox illimitée                          | Epic 2 | ✓      |
+| FR9  | Questionnaire guidé → quadrant           | Epic 3 | ✓      |
+| FR10 | Question d'aiguillage initiale           | Epic 3 | ✓      |
+| FR11 | 2-4 questions par flux                   | Epic 3 | ✓      |
+| FR12 | Retour question précédente               | Epic 3 | ✓      |
+| FR13 | Validation/correction quadrant           | Epic 3 | ✓      |
+| FR14 | Abandon questionnaire sans perte         | Epic 3 | ✓      |
+| FR15 | Tri manuel direct                        | Epic 3 | ✓      |
+| FR16 | Choix assisté vs manuel                  | Epic 3 | ✓      |
+| FR17 | Tâches classées par quadrant             | Epic 4 | ✓      |
+| FR18 | Compteur total + capacité                | Epic 4 | ✓      |
+| FR19 | Reclassement drag inter-quadrant         | Epic 4 | ✓      |
+| FR20 | Réordonnancement intra-quadrant          | Epic 4 | ✓      |
+| FR21 | Activation tâche vers matrice            | Epic 4 | ✓      |
+| FR22 | Limite 40 tâches backlog                 | Epic 4 | ✓      |
+| FR23 | Suppression tâche backlog                | Epic 4 | ✓      |
+| FR24 | Toggle tri date/manuel                   | Epic 4 | ✓      |
+| FR25 | Matrice max 4/quadrant                   | Epic 5 | ✓      |
+| FR26 | Complétion depuis matrice                | Epic 5 | ✓      |
+| FR27 | Remettre tâche à la Réserve              | Epic 5 | ✓      |
+| FR28 | Feedback pédagogique drag inter-quadrant | Epic 5 | ✓      |
+| FR29 | Undo complétion 5s                       | Epic 5 | ✓      |
+| FR30 | Blocage activation si quadrant plein     | Epic 5 | ✓      |
+| FR31 | Purge assistée tâches anciennes          | Epic 7 | ✓      |
+| FR32 | Questionnaire purge                      | Epic 7 | ✓      |
+| FR33 | Supprimer/reclasser pendant purge        | Epic 7 | ✓      |
+| FR34 | Arrêt purge avec persistance             | Epic 7 | ✓      |
+| FR35 | Bilan récapitulatif purge                | Epic 7 | ✓      |
+| FR36 | Suggestion purge à 35+                   | Epic 7 | ✓      |
+| FR37 | Purge manuelle à tout moment             | Epic 7 | ✓      |
+| FR38 | Liste antichronologique complétées       | Epic 6 | ✓      |
+| FR39 | Badge quadrant d'origine                 | Epic 6 | ✓      |
+| FR40 | Compteur total complétées                | Epic 6 | ✓      |
+| FR41 | Guide première boucle complète           | Epic 8 | ✓      |
+| FR42 | Surbrillance éléments 1er usage          | Epic 8 | ✓      |
+| FR43 | Timestamps automatiques                  | Epic 8 | ✓      |
+| FR44 | Timer durée flow de tri                  | Epic 8 | ✓      |
+| FR45 | Enregistrement méthode classification    | Epic 8 | ✓      |
+| FR46 | Micro-survey légèreté mentale            | Epic 8 | ✓      |
+| FR47 | Taux de correction (override)            | Epic 8 | ✓      |
+| FR48 | Navigation 4 écrans                      | Epic 1 | ✓      |
+| FR49 | Persistance localStorage                 | Epic 1 | ✓      |
+| FR50 | Responsive mobile/tablette/desktop       | Epic 1 | ✓      |
 
 ### Missing Requirements
 
@@ -255,11 +270,11 @@ Aucun FR manquant. La couverture est complète.
 **⚠️ MINEUR — Couleurs de quadrants incohérentes dans 04a-wireframe-architecture.md**
 
 | Quadrant | 04a (wireframes) | 05 (tokens) & 06 (composants) & PRD |
-|---|---|---|
-| Q1 | Rouge | Rouge "Feu" ✓ |
-| Q2 | Jaune | Vert "Sauge" ✗ |
-| Q3 | Bleue | Orange "Soleil" ✗ |
-| Q4 | Grise | Jaune "Chartreuse doré" ✗ |
+| -------- | ---------------- | ----------------------------------- |
+| Q1       | Rouge            | Rouge "Feu" ✓                       |
+| Q2       | Jaune            | Vert "Sauge" ✗                      |
+| Q3       | Bleue            | Orange "Soleil" ✗                   |
+| Q4       | Grise            | Jaune "Chartreuse doré" ✗           |
 
 **Impact :** Faible. Le fichier 04a (daté 04/03) est un document de décisions structurelles, pas de couleurs. Les design tokens (05), les specs composants (06), le PRD et les epics sont tous alignés entre eux. **Source de vérité pour l'implémentation : 05-design-tokens + 06-specifications-composants.**
 
@@ -273,14 +288,14 @@ Aucun warning majeur. La documentation UX est complète et bien alignée avec le
 
 ### Best Practices Compliance
 
-| Critère | Epic 1 | Epic 2 | Epic 3 | Epic 4 | Epic 5 | Epic 6 | Epic 7 | Epic 8 |
-|---|---|---|---|---|---|---|---|---|
-| Valeur utilisateur | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| Indépendance | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Stories bien sizées | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Pas de forward dep | ✅ | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ |
-| ACs clairs (GWT) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Traçabilité FRs | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Critère             | Epic 1 | Epic 2 | Epic 3 | Epic 4 | Epic 5 | Epic 6 | Epic 7 | Epic 8 |
+| ------------------- | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| Valeur utilisateur  | ⚠️     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ⚠️     |
+| Indépendance        | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     |
+| Stories bien sizées | ✅     | ✅     | ⚠️     | ✅     | ✅     | ✅     | ✅     | ✅     |
+| Pas de forward dep  | ✅     | ✅     | ✅     | ⚠️     | ✅     | ✅     | ✅     | ✅     |
+| ACs clairs (GWT)    | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     |
+| Traçabilité FRs     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     | ✅     |
 
 ### 🟠 Major Issues
 
@@ -324,25 +339,25 @@ Les artefacts de planification sont complets, cohérents et bien alignés. Les i
 
 ### Scorecard
 
-| Dimension | Score | Commentaire |
-|---|---|---|
-| Complétude des documents | ✅ 10/10 | PRD, Architecture, Epics, UX — tous présents |
-| Couverture FR → Epics | ✅ 50/50 (100%) | Aucun gap |
-| Alignement UX ↔ PRD | ✅ Fort | 1 incohérence mineure (couleurs 04a) |
-| Alignement UX ↔ Architecture | ✅ Fort | Toutes les décisions techniques supportent les besoins UX |
-| Qualité des Epics | ✅ Bonne | 0 critique, 3 majeurs (acceptables), 3 mineurs |
-| Traçabilité | ✅ Excellente | FR Coverage Map complète, UX-DRs mappés aux epics |
+| Dimension                    | Score           | Commentaire                                               |
+| ---------------------------- | --------------- | --------------------------------------------------------- |
+| Complétude des documents     | ✅ 10/10        | PRD, Architecture, Epics, UX — tous présents              |
+| Couverture FR → Epics        | ✅ 50/50 (100%) | Aucun gap                                                 |
+| Alignement UX ↔ PRD          | ✅ Fort         | 1 incohérence mineure (couleurs 04a)                      |
+| Alignement UX ↔ Architecture | ✅ Fort         | Toutes les décisions techniques supportent les besoins UX |
+| Qualité des Epics            | ✅ Bonne        | 0 critique, 3 majeurs (acceptables), 3 mineurs            |
+| Traçabilité                  | ✅ Excellente   | FR Coverage Map complète, UX-DRs mappés aux epics         |
 
 ### Issues Requiring Attention (par priorité)
 
-| # | Sévérité | Issue | Action recommandée |
-|---|---|---|---|
-| 1 | 🟠 Major | Forward ref Story 4.4 → Epic 7 (bouton purge placeholder) | Masquer le bouton ou placeholder "Bientôt disponible" |
-| 2 | 🟠 Major | Epic 8 bundle 3 concerns | Prioriser : 8.1 (analytics) et 8.2 (onboarding) d'abord ; 8.3 et 8.4 reportables |
-| 3 | 🟠 Major | Stories "As a developer" (1.1, 8.4) | Acceptable pour greenfield — aucune action requise |
-| 4 | 🟡 Minor | Story 3.3 trop grosse (questionnaire) | Envisager split en 2 stories à l'implémentation |
-| 5 | 🟡 Minor | Chevauchement Story 8.1 / 1.5 | Clarifier scope de 8.1 au démarrage |
-| 6 | 🟡 Minor | Couleurs wireframe 04a incohérentes | Mettre à jour Q2/Q3/Q4 dans 04a |
+| #   | Sévérité | Issue                                                     | Action recommandée                                                               |
+| --- | -------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1   | 🟠 Major | Forward ref Story 4.4 → Epic 7 (bouton purge placeholder) | Masquer le bouton ou placeholder "Bientôt disponible"                            |
+| 2   | 🟠 Major | Epic 8 bundle 3 concerns                                  | Prioriser : 8.1 (analytics) et 8.2 (onboarding) d'abord ; 8.3 et 8.4 reportables |
+| 3   | 🟠 Major | Stories "As a developer" (1.1, 8.4)                       | Acceptable pour greenfield — aucune action requise                               |
+| 4   | 🟡 Minor | Story 3.3 trop grosse (questionnaire)                     | Envisager split en 2 stories à l'implémentation                                  |
+| 5   | 🟡 Minor | Chevauchement Story 8.1 / 1.5                             | Clarifier scope de 8.1 au démarrage                                              |
+| 6   | 🟡 Minor | Couleurs wireframe 04a incohérentes                       | Mettre à jour Q2/Q3/Q4 dans 04a                                                  |
 
 ### Recommended Next Steps
 
@@ -361,5 +376,5 @@ Le différenciateur produit (questionnaire cognitif) est bien spécifié dans le
 
 ---
 
-*Rapport généré le 2026-03-16 par Winston — Architect Agent*
-*Workflow : Implementation Readiness Assessment*
+_Rapport généré le 2026-03-16 par Winston — Architect Agent_
+_Workflow : Implementation Readiness Assessment_

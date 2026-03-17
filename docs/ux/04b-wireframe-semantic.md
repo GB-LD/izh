@@ -366,26 +366,47 @@ screen:
       back: hidden
     flux-3-q1:
       question: { content: "D'où vient ce sentiment d'obligation ?" }
-      answers: { items: 3, labels: ["Externe — deadline, contrat", "Interne — culpabilité, peur", "Je sais pas"] }
+      answers:
+        {
+          items: 3,
+          labels:
+            [
+              "Externe — deadline, contrat",
+              "Interne — culpabilité, peur",
+              "Je sais pas",
+            ],
+        }
       back: visible
     flux-3-rebond:
-      question: { content: "Si tu ignores cette semaine — quelqu'un te relance, ou il ne se passe rien ?" }
-      answers: { items: 2, labels: ["On me relance → Externe", "Rien → Interne"] }
+      question:
+        {
+          content: "Si tu ignores cette semaine — quelqu'un te relance, ou il ne se passe rien ?",
+        }
+      answers:
+        { items: 2, labels: ["On me relance → Externe", "Rien → Interne"] }
       back: visible
     flux-3-q2a:
-      question: { content: "Si elle disparaissait, un objectif essentiel serait compromis ?" }
+      question:
+        {
+          content: "Si elle disparaissait, un objectif essentiel serait compromis ?",
+        }
       answers: { items: 2, labels: ["Oui → Critique", "Non → Fausse urgence"] }
       back: visible
     flux-3-q2b:
-      question: { content: "Ça compte vraiment pour toi — pas pour les autres ?" }
+      question:
+        { content: "Ça compte vraiment pour toi — pas pour les autres ?" }
       answers: { items: 2, labels: ["Oui → Essentiel", "Non → Optionnel"] }
       back: visible
     flux-4-q1:
-      question: { content: "Pense à quelque chose que tu as évité l'année dernière et que tu regrettes. Cette tâche ressemble à ça ?" }
+      question:
+        {
+          content: "Pense à quelque chose que tu as évité l'année dernière et que tu regrettes. Cette tâche ressemble à ça ?",
+        }
       answers: { items: 2, labels: ["Oui", "Non"] }
       back: visible
     flux-4-q2a:
-      question: { content: "Chaque semaine sans le faire aggrave la situation ?" }
+      question:
+        { content: "Chaque semaine sans le faire aggrave la situation ?" }
       answers: { items: 2, labels: ["Oui → Critique", "Non → Essentiel"] }
       back: visible
     flux-4-q2b:
@@ -393,11 +414,21 @@ screen:
       answers: { items: 2, labels: ["Oui → Fausse urgence", "Non → Optionnel"] }
       back: visible
     flux-2-q1:
-      question: { content: "Elle contribue directement à l'une de tes 3 priorités actuelles ?" }
-      answers: { items: 3, labels: ["Oui", "Non", "Pas de priorités définies → redirige Flux 1"] }
+      question:
+        {
+          content: "Elle contribue directement à l'une de tes 3 priorités actuelles ?",
+        }
+      answers:
+        {
+          items: 3,
+          labels: ["Oui", "Non", "Pas de priorités définies → redirige Flux 1"],
+        }
       back: visible
     flux-2-q2a:
-      question: { content: "Contrainte de temps externe — deadline, fenêtre qui se ferme ?" }
+      question:
+        {
+          content: "Contrainte de temps externe — deadline, fenêtre qui se ferme ?",
+        }
       answers: { items: 2, labels: ["Oui → Critique", "Non → Essentiel"] }
       back: visible
     flux-2-q2b:
@@ -405,7 +436,10 @@ screen:
       answers: { items: 2, labels: ["Oui → Fausse urgence", "Non → Optionnel"] }
       back: visible
     flux-1:
-      question: { content: "Imagine que tu ne l'as pas faite dans une semaine. Que s'est-il passé ?" }
+      question:
+        {
+          content: "Imagine que tu ne l'as pas faite dans une semaine. Que s'est-il passé ?",
+        }
       answers:
         items: 4
         labels:
@@ -811,7 +845,8 @@ screen:
       counter-capacity: { variant: "alerte douce" }
     full:
       counter-capacity: { variant: "rouge" }
-      nudge-purge: { content: "Ta Réserve est pleine (40/40). Fais de la place." }
+      nudge-purge:
+        { content: "Ta Réserve est pleine (40/40). Fais de la place." }
     loading:
       quadrant-sections: "Skeleton placeholders"
 
@@ -1259,7 +1294,10 @@ screen:
       nav-grid: { all_counters: "0/4", active: Q1 }
       empty-state: visible
     prominent-empty:
-      prominent-quadrant: { content: "Message contextuel — ex: Rien à faire maintenant — respire." }
+      prominent-quadrant:
+        {
+          content: "Message contextuel — ex: Rien à faire maintenant — respire.",
+        }
       nav-grid: { active_card: "shows 0/4" }
     populated:
       prominent-quadrant: visible
@@ -1476,29 +1514,29 @@ screen:
 
 ## Synthèse des composants identifiés
 
-| Composant | Occurrences | Écrans |
-|---|---|---|
-| `bottom-nav` | 4 | SCR-01, SCR-06, SCR-10, SCR-11 |
-| `capture-input` | 1 | SCR-01 |
-| `task-context-header` | 4 | SCR-02, SCR-03, SCR-04, SCR-05 |
-| `empty-state` | 4 | SCR-01, SCR-06, SCR-10, SCR-11 |
-| `quadrant-button` | 2 | SCR-02, SCR-04 |
-| `quadrant-result` | 2 | SCR-04, SCR-05 |
-| `answer-option` | 2 | SCR-03, SCR-08 |
-| `question-card` | 2 | SCR-03, SCR-08 |
-| `counter-capacity` | 2 | SCR-06, SCR-09 |
-| `task-item-vrac` | 1 | SCR-01 |
-| `task-item-reserve` | 1 | SCR-06 |
-| `task-item-focus` | 1 | SCR-10 |
-| `task-item-archive` | 1 | SCR-11 |
-| `task-purge-header` | 1 | SCR-08 |
-| `reserve-section` | 1 | SCR-06 |
-| `matrix-prominent-zone` | 1 | SCR-10 (mobile) |
-| `matrix-nav-card` | 1 | SCR-10 (mobile) |
-| `survey-slider` | 1 | SCR-12 |
-| `progress-dots` | 1 | SCR-03 |
-| `toast-undo` | 2 | SCR-06, SCR-10 |
+| Composant               | Occurrences | Écrans                         |
+| ----------------------- | ----------- | ------------------------------ |
+| `bottom-nav`            | 4           | SCR-01, SCR-06, SCR-10, SCR-11 |
+| `capture-input`         | 1           | SCR-01                         |
+| `task-context-header`   | 4           | SCR-02, SCR-03, SCR-04, SCR-05 |
+| `empty-state`           | 4           | SCR-01, SCR-06, SCR-10, SCR-11 |
+| `quadrant-button`       | 2           | SCR-02, SCR-04                 |
+| `quadrant-result`       | 2           | SCR-04, SCR-05                 |
+| `answer-option`         | 2           | SCR-03, SCR-08                 |
+| `question-card`         | 2           | SCR-03, SCR-08                 |
+| `counter-capacity`      | 2           | SCR-06, SCR-09                 |
+| `task-item-vrac`        | 1           | SCR-01                         |
+| `task-item-reserve`     | 1           | SCR-06                         |
+| `task-item-focus`       | 1           | SCR-10                         |
+| `task-item-archive`     | 1           | SCR-11                         |
+| `task-purge-header`     | 1           | SCR-08                         |
+| `reserve-section`       | 1           | SCR-06                         |
+| `matrix-prominent-zone` | 1           | SCR-10 (mobile)                |
+| `matrix-nav-card`       | 1           | SCR-10 (mobile)                |
+| `survey-slider`         | 1           | SCR-12                         |
+| `progress-dots`         | 1           | SCR-03                         |
+| `toast-undo`            | 2           | SCR-06, SCR-10                 |
 
 ---
 
-*BMAD-UX Method v1.2 — Wireframes sémantiques (Agent 04b)*
+_BMAD-UX Method v1.2 — Wireframes sémantiques (Agent 04b)_

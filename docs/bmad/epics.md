@@ -1,7 +1,7 @@
 ---
 stepsCompleted: [1, 2, 3, 4]
-status: 'complete'
-completedAt: '2026-03-16'
+status: "complete"
+completedAt: "2026-03-16"
 inputDocuments:
   - "_bmad-output/planning-artifacts/prd.md"
   - "_bmad-output/planning-artifacts/architecture.md"
@@ -190,42 +190,50 @@ This document provides the complete epic and story breakdown for izh planning, d
 ## Epic List
 
 ### Epic 1: App Shell, Design System & Persistance
+
 L'utilisateur peut naviguer entre les 4 écrans (Vrac, Réserve, Focus, Archive) avec l'identité visuelle izh et ses données sont persistées entre les sessions.
 **FRs couvertes:** FR48, FR49, FR50
 **UX-DRs:** UX-DR1, UX-DR2, UX-DR3, UX-DR4, UX-DR5, UX-DR9, UX-DR15 (shell), UX-DR17
 **Additional:** Starter Vite 8, Tailwind CSS v4, React Router v7, Zustand stores + persist, Zod schemas, ErrorBoundary global, ESLint + Prettier, alias @/, Layout responsive
 
 ### Epic 2: Brain Dump — Capture des tâches
+
 L'utilisateur peut décharger ses tâches rapidement en flux continu depuis le Vrac, voir sa liste et modifier ses titres.
 **FRs couvertes:** FR1, FR2, FR3, FR4, FR5, FR6, FR8
 **UX-DRs:** UX-DR7, UX-DR8 (variante inbox), UX-DR11 (variantes Vrac)
 
 ### Epic 3: Tri — Classification guidée et manuelle
+
 L'utilisateur peut classifier chaque tâche via le questionnaire cognitif (4 flux) ou par choix direct d'un quadrant, avec possibilité de corriger ou d'abandonner sans perte.
 **FRs couvertes:** FR7, FR9, FR10, FR11, FR12, FR13, FR14, FR15, FR16
 **UX-DRs:** UX-DR12, UX-DR15 (overlay tri), UX-DR16 (transitions questionnaire)
 
 ### Epic 4: Réserve — Organisation du backlog
+
 L'utilisateur peut voir ses tâches classées par quadrant en accordion, les reclasser par drag & drop, les réordonner, les activer vers le Focus, et gérer la limite de 40.
 **FRs couvertes:** FR17, FR18, FR19, FR20, FR21, FR22, FR23, FR24
 **UX-DRs:** UX-DR8 (variante backlog), UX-DR13, UX-DR16 (accordion)
 
 ### Epic 5: Focus — Passage à l'action
+
 L'utilisateur peut voir ses tâches activées dans la matrice (max 4/quadrant), les compléter avec undo 5s, les remettre à la Réserve, et recevoir un feedback pédagogique si drag inter-quadrant.
 **FRs couvertes:** FR25, FR26, FR27, FR28, FR29, FR30
 **UX-DRs:** UX-DR8 (variante matrix), UX-DR10, UX-DR14, UX-DR16 (animations complétion/swap)
 
 ### Epic 6: Archive — Historique des accomplissements
+
 L'utilisateur peut voir la liste de ses tâches complétées en antichronologique avec le badge quadrant d'origine et le compteur total.
 **FRs couvertes:** FR38, FR39, FR40
 **UX-DRs:** UX-DR8 (variante archive), UX-DR11 (variante Archive)
 
 ### Epic 7: Purge — Maintenance du backlog
+
 L'utilisateur peut lancer une purge assistée (tâches les plus anciennes) ou manuelle, supprimer/reclasser, arrêter à tout moment, et voir le bilan récapitulatif.
 **FRs couvertes:** FR31, FR32, FR33, FR34, FR35, FR36, FR37
 **UX-DRs:** UX-DR15 (overlay purge), UX-DR16 (transitions purge)
 
 ### Epic 8: Onboarding, Analytics & Micro-survey
+
 L'utilisateur est guidé lors du premier usage (surbrillances, animations), le système track les métriques clés, et l'utilisateur peut donner un score de légèreté mentale.
 **FRs couvertes:** FR41, FR42, FR43, FR44, FR45, FR46, FR47
 **UX-DRs:** UX-DR16 (onboarding pulse)

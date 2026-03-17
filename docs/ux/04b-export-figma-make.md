@@ -14,6 +14,7 @@
 **Context:** Écran principal pour Camille (P1, surcharge cognitive, une main, mobile-first), Lucas (P2, TDAH, capture impulsive) et David (P3, expert en productivité). Flow FLOW-01 (premier lancement), FLOW-02 (tri assisté), FLOW-03 (tri direct), FLOW-05 (capture). Layout stacked (liste verticale pleine largeur).
 
 **Elements:**
+
 - **Header (sticky, 64px)** :
   - Titre H1 "Inbox"
   - Compteur contextuel "[N] tâches à trier" (badge textuel sous le titre)
@@ -35,6 +36,7 @@
   - Badge compteur sur Inbox quand actif (redondant avec header mais convention)
 
 **Behavior:**
+
 - Scroll vertical illimité, header sticky, FAB et bottom nav toujours visibles
 - Tap FAB → ouvre champ de saisie rapide, focus automatique
 - Tap "Trier" → ouvre overlay de tri (bottom sheet slide up)
@@ -47,6 +49,7 @@
 - Responsive tablette : pleine largeur
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris uniquement, pas de couleurs finales, pas de typographie finale
 - Breakpoints : mobile < 768px, tablet 768-1279px, desktop ≥ 1280px
 - Zones tactiles minimum 44×44px
@@ -62,6 +65,7 @@
 **Context:** Overlay pour Camille (P1, besoin de guidage), Lucas (P2, décisions rapides) et David (P3, tri direct expert). Flow FLOW-02 (tri assisté) et FLOW-03 (tri direct). Surface : bottom sheet partiel ~75% avec handle et fond assombri fort (opacité ~70-80%), la bottom nav est masquée par le backdrop (DT-02).
 
 **Elements:**
+
 - **Handle (top)** :
   - Barre horizontale centrée — affordance de swipe down pour fermer
 - **Titre de la tâche (sticky, top)** :
@@ -83,6 +87,7 @@
   - Visuellement secondaires (outline vs filled) — raccourci pour les experts
 
 **Behavior:**
+
 - Ouverture : slide up depuis le bas (~300ms), le backdrop s'assombrit simultanément, la bottom nav est masquée
 - Swipe down sur handle → ferme l'overlay, backdrop disparaît, tâche intacte dans l'inbox, bottom nav réapparaît
 - Tap ✕ → même effet que swipe down
@@ -95,6 +100,7 @@
 - Layout : bouton assisté pleine largeur + 4 quadrants sur une ligne, même hauteur
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris, poids visuel différencié entre outline et filled
 - Breakpoints : mobile < 768px, tablet 768-1279px, desktop ≥ 1280px
 - Les 4 boutons de quadrant sur une seule ligne — labels abrégés si nécessaire sur mobile
@@ -111,6 +117,7 @@
 **Context:** Overlay (hérité de SCR-02) pour Camille (P1, fatiguée, une main), Lucas (P2, impulsif), David (P3, auto-évaluation rapide). Flow FLOW-02. 4 flux possibles (projection, ancrage, audit stress, test du regret), 1-4 questions par flux. Surface : même overlay ~75% que SCR-02.
 
 **Elements:**
+
 - **Titre de la tâche (sticky, top)** :
   - H2 identique à SCR-02, ancrage permanent
 - **Micro-texte (au-dessus de la question, 1ère fois uniquement)** :
@@ -142,6 +149,7 @@
   - Ramène à la question précédente
 
 **Behavior:**
+
 - Tap sur une réponse → slide horizontal vers la droite (question suivante ou SCR-04)
 - Tap ← Retour → slide horizontal vers la gauche, réponse précédente pré-sélectionnée visuellement
 - ✕ (hérité de l'overlay) → ferme tout, retour inbox, aucune réponse partielle enregistrée
@@ -151,6 +159,7 @@
 - Responsive desktop : modal centrée ~480px
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - Une seule question visible à la fois — jamais de scroll de questions
 - Les réponses doivent être lisibles d'un coup d'œil (3-5 mots max par option)
@@ -166,6 +175,7 @@
 **Context:** Overlay (hérité) pour Camille (P1), Lucas (P2), David (P3). Flow FLOW-02 (suite du questionnaire). Layout centré. Le résultat du questionnaire est mis en avant, la correction est possible mais discrète.
 
 **Elements:**
+
 - **Titre de la tâche (sticky, top)** :
   - H2 identique, ancrage permanent
 - **Résultat proposé (centre vertical, visuellement dominant)** :
@@ -182,12 +192,14 @@
   - Texte discret : "[N]/[Total] triées"
 
 **Behavior:**
+
 - Tap "Ça me parle" → classement avec user_override: false → transition vers SCR-05
 - Tap sur une alternative → classement avec user_override: true → transition vers SCR-05
 - Donnée analytique : taux de correction (user_override: true) — si >30%, revoir le wording du flux
 - Responsive desktop : modal centrée ~480px
 
 **Constraints:**
+
 - Wireframe basse fidélité — le résultat proposé doit être visuellement plus lourd (plus grand, plus de poids) que les alternatives
 - Les 3 alternatives ne doivent pas entrer en compétition visuelle avec le CTA
 - Zones tactiles minimum 44×44px
@@ -201,6 +213,7 @@
 **Context:** Overlay (hérité) pour Camille (P1), Lucas (P2), David (P3). Flow FLOW-02 (tri assisté) et FLOW-03 (tri direct). Layout centré. Écran de feedback rapide — l'utilisateur doit pouvoir enchaîner.
 
 **Elements:**
+
 - **Titre de la tâche (sticky, top)** :
   - H2, ancrage permanent
 - **Feedback de classement (centre vertical)** :
@@ -213,6 +226,7 @@
   - Texte discret : "[N]/[Total] triées"
 
 **Behavior:**
+
 - Tap "Tâche suivante" → l'overlay reste ouvert, retour à SCR-02 avec le titre de la tâche suivante (pas de fermeture/réouverture)
 - Tap "Voir le backlog" → fermeture overlay → navigation SCR-06, tâche classée en highlight temporaire (2-3s)
 - Inbox vide → "Tout est trié !" + lien backlog, pas de bouton "Tâche suivante"
@@ -220,6 +234,7 @@
 - Responsive desktop : modal centrée ~480px
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - "Tâche suivante" doit être visuellement dominant par rapport à "Voir le backlog"
 - L'animation de feedback doit être représentée (flèche ou annotation)
@@ -233,6 +248,7 @@
 **Context:** Écran de niveau 1 pour Camille (P1, "j'organise"), Lucas (P2), David (P3, expert, drag & drop). Flow FLOW-04 (activation) et FLOW-06 (purge). Layout accordion strict sur toutes les surfaces (mobile, tablette, desktop) — cohérence cross-device.
 
 **Elements:**
+
 - **Header (sticky, 64px)** :
   - Titre H1 "Backlog"
   - Compteur de capacité "[N]/40" — changement visuel à 35+ (alerte douce) et 40/40 (rouge)
@@ -260,6 +276,7 @@
 - **Bottom nav** : 4 items, Backlog actif, badge inbox
 
 **Behavior:**
+
 - Accordion strict (DT-04) : tap header collapsed → s'ouvre, les autres se ferment. Tap header ouverte → tout collapsed.
 - Long press tâche + drag → headers collapsed en surbrillance couleur (zones de drop). Drop sur header = reclassement + toast "Déplacée vers [quadrant]".
 - Drag vertical dans section ouverte → réordonnancement intra-quadrant.
@@ -274,6 +291,7 @@
 - Loading : skeleton placeholders.
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris, différencier les quadrants par des niveaux de gris différents ou des labels
 - Breakpoints : mobile < 768px, tablet 768-1279px, desktop ≥ 1280px
 - Les headers collapsed doivent être visuellement identifiables comme zones de drop
@@ -289,6 +307,7 @@
 **Context:** Overlay pour Camille (P1, besoin de ménagement) et David (P3, efficacité). Flow FLOW-06 (purge). Surface : bottom sheet partiel ~75% avec fond assombri fort (DT-02). Décision rapide : j'y vais ou pas.
 
 **Elements:**
+
 - **Handle (top)** :
   - Barre horizontale — affordance swipe down (= "Pas maintenant")
 - **Illustration (centre-haut)** :
@@ -303,12 +322,14 @@
   - "Pas maintenant" — lien texte, secondaire
 
 **Behavior:**
+
 - Tap "C'est parti" → contenu de l'overlay change (transition slide), même surface ~75% → SCR-08
 - Tap "Pas maintenant" → ferme l'overlay, retour backlog
 - Swipe down sur handle → même effet que "Pas maintenant"
 - Responsive desktop : modal centrée ~400px
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - Le backlog doit être à peine visible derrière le fond assombri (~75% de couverture, backdrop forte opacité)
 - Le ton doit transparaître dans la hiérarchie visuelle (bienveillant, pas alarmiste même en blocage)
@@ -322,6 +343,7 @@
 **Context:** Overlay ~75% avec fond assombri pour Camille (P1) et David (P3). Flow FLOW-06 (purge). Tâches présentées par ancienneté décroissante, Q4 d'abord. Flow en 2 questions : Q1 "Elle compte toujours ?" → Q2 "Au bon endroit ?".
 
 **Elements:**
+
 - **En-tête tâche (sticky, top)** :
   - Titre de la tâche
   - Badge quadrant (couleur)
@@ -340,6 +362,7 @@
   - Changements déjà effectués sont persistés
 
 **Behavior:**
+
 - Tap "Non, supprimer" → suppression immédiate + transition vers tâche suivante
 - Tap "Oui" → passe à Q2 (reclassement)
 - Tap quadrant en Q2 → reclassement ou conservation → tâche suivante
@@ -349,6 +372,7 @@
 - Responsive desktop : modal centrée ~480px
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - L'ancienneté doit être visible mais pas anxiogène
 - "Non, supprimer" doit être visuellement différencié (destructif mais pas red — juste un poids différent en wireframe)
@@ -363,6 +387,7 @@
 **Context:** Overlay (hérité) pour Camille (P1) et David (P3). Flow FLOW-06 (fin de purge). Layout centré, minimaliste. L'écran dure quelques secondes — récap + total + un bouton.
 
 **Elements:**
+
 - **Illustration + titre (centre-haut)** :
   - Icône 🧹 + H2 "Purge terminée"
 - **Récapitulatif (centre)** :
@@ -377,10 +402,12 @@
   - "Retour au backlog" — bouton filled, primaire
 
 **Behavior:**
+
 - Tap "Retour au backlog" → ferme l'overlay → SCR-06 mis à jour
 - Responsive desktop : modal centrée ~400px
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - Contenu centré, sobre, minimaliste — satisfaction discrète
 - Les chiffres doivent être visuellement mis en évidence (taille ou poids)
@@ -394,6 +421,7 @@
 **Context:** Écran de niveau 1 pour Camille (P1, "j'agis, par quoi je commence ?"), Lucas (P2), David (P3). Flow FLOW-04 (activation) et FLOW-07 (complétion). Layout mobile : layout asymétrique avec swap (DT-03) — Q1 proéminent par défaut (~55% hauteur) + 3 mini-cards en bas. Tap mini-card = swap. Max 4 tâches par quadrant.
 
 **Elements — Mobile :**
+
 - **Header (sticky, 64px)** :
   - Titre H1 "Matrice"
 - **Zone proéminente (~55% hauteur utile, pleine largeur)** :
@@ -412,6 +440,7 @@
 - **Bottom nav** : 4 items, Matrice actif, badge inbox
 
 **Elements — Desktop/Tablette :**
+
 - **Grille 2×2** :
   - 4 quadrants de taille égale, symétrique
   - Chaque quadrant : label + couleur + max 4 tâches avec checkbox
@@ -419,6 +448,7 @@
 - **Pas de layout asymétrique** (remplacé par la grille)
 
 **Behavior:**
+
 - Mobile : tap mini-card → swap (le quadrant tappé monte en zone proéminente, l'ancien descend), crossfade ~200ms
 - Mobile : reset Q1 proéminent à chaque entrée sur l'écran Matrice (pas de mémorisation)
 - Tap checkbox → fade out + scale down → toast undo "Tâche complétée — [Annuler]" (5s) → archive
@@ -430,6 +460,7 @@
 - Responsive : mobile = layout asymétrique + swap ; tablette/desktop = grille 2×2
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris, différencier les quadrants par des labels et des niveaux de gris
 - Breakpoints : mobile < 768px, tablet 768-1279px, desktop ≥ 1280px
 - Les 4 quadrants desktop doivent être de taille strictement égale (pas de biais de taille)
@@ -448,6 +479,7 @@
 **Context:** Écran de niveau 1 pour Camille (P1, "j'ai accompli"), Lucas (P2), David (P3). Flow FLOW-07 (complétion). Layout stacked (liste verticale). Lecture seule — pas de réactivation, pas de suppression. MVP : pas de filtre ni de recherche.
 
 **Elements:**
+
 - **Header (sticky, 64px)** :
   - Titre H1 "Archive"
   - Compteur total : "[N] tâches complétées"
@@ -464,12 +496,14 @@
 - **Bottom nav** : 4 items, Archive actif, badge inbox
 
 **Behavior:**
+
 - Scroll vertical, header sticky, bottom nav fixe
 - Aucune interaction sur les items (lecture seule)
 - Loading : 5 skeleton placeholders
 - Responsive desktop : contenu centré max-width 600px, sidebar de navigation à gauche
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - Breakpoints : mobile < 768px, tablet 768-1279px, desktop ≥ 1280px
 - Les items sont strictement en lecture seule — aucun bouton, aucune action
@@ -484,6 +518,7 @@
 **Context:** Overlay léger pour Camille (P1), Lucas (P2), David (P3). Pas de flow spécifique — se déclenche post-1er tri complet (one-time) ou 1x/semaine après complétion. Jamais au lancement, jamais pendant tri/purge. La bottom nav reste visible. Surface : bottom sheet partiel ~30%, dismissable.
 
 **Elements:**
+
 - **Handle (top)** :
   - Barre horizontale — affordance swipe down (dismiss)
 - **Question (centre)** :
@@ -496,6 +531,7 @@
   - "Envoyer" — bouton filled, primaire
 
 **Behavior:**
+
 - Swipe down sur handle → dismiss sans donnée enregistrée, revient dans 7 jours
 - Slide du thumb → valeur suit le doigt
 - Tap "Envoyer" → enregistre mental_lightness_score + timestamp + context → bottom sheet disparaît
@@ -504,6 +540,7 @@
 - Se superpose à n'importe quel écran, la bottom nav reste visible
 
 **Constraints:**
+
 - Wireframe basse fidélité — nuances de gris
 - Bottom sheet ~30% de l'écran — la majorité du contenu en dessous reste visible
 - Non bloquant — l'utilisateur peut l'ignorer facilement
@@ -512,4 +549,4 @@
 
 ---
 
-*Export Figma Make généré depuis BMAD-UX Method v1.2 — Agent 04b*
+_Export Figma Make généré depuis BMAD-UX Method v1.2 — Agent 04b_

@@ -1,8 +1,8 @@
 ---
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 lastStep: 8
-status: 'complete'
-completedAt: '2026-03-16'
+status: "complete"
+completedAt: "2026-03-16"
 inputDocuments:
   - "_bmad-output/planning-artifacts/prd.md"
   - "_bmad-output/planning-artifacts/product-brief-izh-planning-2026-03-16.md"
@@ -16,10 +16,10 @@ inputDocuments:
   - "IZH UX /06-specifications-composants.md"
   - "IZH UX /09-references-visuelles-directions.md"
   - "IZH UX /flows/*.mmd"
-workflowType: 'architecture'
-project_name: 'izh planning'
-user_name: 'Dolu'
-date: '2026-03-16'
+workflowType: "architecture"
+project_name: "izh planning"
+user_name: "Dolu"
+date: "2026-03-16"
 ---
 
 # Architecture Decision Document
@@ -49,23 +49,23 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 
 Ces 4 priorités guident toutes les décisions architecturales. Le projet sert de portfolio technique — l'architecture doit démontrer une maîtrise professionnelle du front-end React/TypeScript.
 
-| Priorité | Signification concrète |
-|---|---|
-| **Scalable** | La structure absorbe la phase 2 (Supabase, timeblocking, calendrier) sans réécriture. Couche de persistance abstraite, modules découplés, pas de couplage localStorage en dur. |
-| **Maintenable** | Séparation claire des responsabilités, code lisible, modules à responsabilité unique. Un développeur qui découvre le projet comprend la structure en <10 minutes. |
-| **Testable** | Architecture qui facilite les tests unitaires (logique métier isolée), d'intégration (composants), et e2e (flows utilisateur). Pas de logique dans les composants UI. |
-| **Standards industrie** | Patterns reconnus par un recruteur front-end senior : clean architecture, conventions React/TS modernes, structure de projet professionnelle, CI/CD. |
+| Priorité                | Signification concrète                                                                                                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Scalable**            | La structure absorbe la phase 2 (Supabase, timeblocking, calendrier) sans réécriture. Couche de persistance abstraite, modules découplés, pas de couplage localStorage en dur. |
+| **Maintenable**         | Séparation claire des responsabilités, code lisible, modules à responsabilité unique. Un développeur qui découvre le projet comprend la structure en <10 minutes.              |
+| **Testable**            | Architecture qui facilite les tests unitaires (logique métier isolée), d'intégration (composants), et e2e (flows utilisateur). Pas de logique dans les composants UI.          |
+| **Standards industrie** | Patterns reconnus par un recruteur front-end senior : clean architecture, conventions React/TS modernes, structure de projet professionnelle, CI/CD.                           |
 
 ### Technical Constraints & Dependencies
 
-| Contrainte | Impact architectural |
-|---|---|
-| React + TypeScript | Framework imposé, typage strict |
-| localStorage uniquement (MVP) | Pas de couche API, mais structure de données doit anticiper Supabase |
-| Mobile-first, 3 breakpoints | Layout responsive (bottom sheet mobile, modal desktop, asymétrique Focus mobile vs grille desktop) |
-| Bundle <200KB gzip | Choix de libs contraint (pas de gros frameworks UI) |
-| Portfolio technique | Qualité code, patterns clairs, testabilité — l'architecture EST le livrable |
-| Migration Supabase (phase 2) | La couche de persistance doit être abstraite derrière une interface |
+| Contrainte                    | Impact architectural                                                                               |
+| ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| React + TypeScript            | Framework imposé, typage strict                                                                    |
+| localStorage uniquement (MVP) | Pas de couche API, mais structure de données doit anticiper Supabase                               |
+| Mobile-first, 3 breakpoints   | Layout responsive (bottom sheet mobile, modal desktop, asymétrique Focus mobile vs grille desktop) |
+| Bundle <200KB gzip            | Choix de libs contraint (pas de gros frameworks UI)                                                |
+| Portfolio technique           | Qualité code, patterns clairs, testabilité — l'architecture EST le livrable                        |
+| Migration Supabase (phase 2)  | La couche de persistance doit être abstraite derrière une interface                                |
 
 ### Cross-Cutting Concerns Identified
 
@@ -87,11 +87,11 @@ Front-end SPA (React + TypeScript) — pas de SSR, pas de backend MVP, contenu p
 
 ### Starter Options Considered
 
-| Option | Pour | Contre | Verdict |
-|---|---|---|---|
-| Vite officiel `react-swc-ts` | Minimal, standard, chaque choix intentionnel | Setup testing/routing/linting à faire | **Retenu** |
-| Templates communautaires | Démarrage rapide | Conventions imposées, moins impressionnant portfolio | Écarté |
-| Next.js / Remix | SSR, routing intégré | SSR inutile, over-engineering | Écarté |
+| Option                       | Pour                                         | Contre                                               | Verdict    |
+| ---------------------------- | -------------------------------------------- | ---------------------------------------------------- | ---------- |
+| Vite officiel `react-swc-ts` | Minimal, standard, chaque choix intentionnel | Setup testing/routing/linting à faire                | **Retenu** |
+| Templates communautaires     | Démarrage rapide                             | Conventions imposées, moins impressionnant portfolio | Écarté     |
+| Next.js / Remix              | SSR, routing intégré                         | SSR inutile, over-engineering                        | Écarté     |
 
 ### Selected Starter: Vite 8 + React 19 (`react-swc-ts`)
 
@@ -107,20 +107,24 @@ npm create vite@latest izh -- --template react-swc-ts
 **Architectural Decisions Provided by Starter:**
 
 **Language & Runtime:**
+
 - TypeScript 5.x strict mode
 - SWC pour la compilation React (Fast Refresh)
 - Node.js ≥20.19
 
 **Build Tooling:**
+
 - Vite 8 (Rolldown unifié, persistent caching, module-level splitting)
 - Production build optimisé (tree-shaking, minification, code splitting automatique)
 
 **Development Experience:**
+
 - HMR instantané via SWC
 - Dev server avec hot reload
 - TypeScript checking intégré
 
 **Styling Solution: Tailwind CSS v4 + Design System DaisyUI-like**
+
 - OKLCH natif — les design tokens izh (05-design-tokens) mappés via `@theme` et `:root`
 - Approche DaisyUI-like : composants CSS custom (`@layer components` + `@apply`) avec variables locales surchargeables (`--_btn-bg`, `--_card-bg`)
 - Mixte : classes custom pour les composants récurrents (btn, card, input, badge, quadrant) + utilitaires Tailwind pour les ajustements ponctuels
@@ -129,25 +133,25 @@ npm create vite@latest izh -- --template react-swc-ts
 
 **Decisions Left to Make (next steps):**
 
-| Décision | Options à évaluer |
-|---|---|
-| Routing | React Router v7 (recommandé — 4 routes, léger) |
-| Testing | Vitest 4.1 + React Testing Library + Playwright (e2e) |
-| Linting/Formatting | ESLint flat config + Prettier |
-| State management | À définir |
-| Drag & drop | dnd-kit (`@dnd-kit/react` 0.3.2) |
-| CI/CD | GitHub Actions |
+| Décision           | Options à évaluer                                     |
+| ------------------ | ----------------------------------------------------- |
+| Routing            | React Router v7 (recommandé — 4 routes, léger)        |
+| Testing            | Vitest 4.1 + React Testing Library + Playwright (e2e) |
+| Linting/Formatting | ESLint flat config + Prettier                         |
+| State management   | À définir                                             |
+| Drag & drop        | dnd-kit (`@dnd-kit/react` 0.3.2)                      |
+| CI/CD              | GitHub Actions                                        |
 
 **Versions Verified (March 2026):**
 
-| Package | Version | Vérifié |
-|---|---|---|
-| Vite | 8.0.0 | ✅ npm, mars 2026 |
-| React | 19.2.4 | ✅ npm, janvier 2026 |
-| Tailwind CSS | 4.1 | ✅ OKLCH natif, @theme directive |
-| Vitest | 4.1.0 | ✅ npm, mars 2026 |
-| @dnd-kit/react | 0.3.2 | ✅ npm, février 2026 |
-| React Router | v7 | ✅ stable |
+| Package        | Version | Vérifié                          |
+| -------------- | ------- | -------------------------------- |
+| Vite           | 8.0.0   | ✅ npm, mars 2026                |
+| React          | 19.2.4  | ✅ npm, janvier 2026             |
+| Tailwind CSS   | 4.1     | ✅ OKLCH natif, @theme directive |
+| Vitest         | 4.1.0   | ✅ npm, mars 2026                |
+| @dnd-kit/react | 0.3.2   | ✅ npm, février 2026             |
+| React Router   | v7      | ✅ stable                        |
 
 **Note:** Project initialization using this command should be the first implementation story.
 
@@ -156,6 +160,7 @@ npm create vite@latest izh -- --template react-swc-ts
 ### Decision Priority Analysis
 
 **Critical Decisions (Block Implementation):**
+
 1. State management : Zustand 5.0 avec middleware persist
 2. Routing : React Router 7.13
 3. Styling : Tailwind CSS 4.1 + design system DaisyUI-like
@@ -163,13 +168,10 @@ npm create vite@latest izh -- --template react-swc-ts
 5. Drag & drop : dnd-kit (@dnd-kit/react 0.3.2)
 6. Animations : Motion 12.37 (ex Framer Motion)
 
-**Important Decisions (Shape Architecture):**
-7. Machine à états questionnaire : useReducer custom
-8. Testing : Vitest 4.1 + React Testing Library + Playwright
-9. CI/CD : GitHub Actions
-10. Hosting : Self-hosted sur VPS via Coolify v4
+**Important Decisions (Shape Architecture):** 7. Machine à états questionnaire : useReducer custom 8. Testing : Vitest 4.1 + React Testing Library + Playwright 9. CI/CD : GitHub Actions 10. Hosting : Self-hosted sur VPS via Coolify v4
 
 **Deferred Decisions (Post-MVP):**
+
 - Authentication : Supabase Auth (phase 2)
 - Base de données : Supabase PostgreSQL (phase 2)
 - API layer : Supabase client SDK (phase 2)
@@ -179,16 +181,17 @@ npm create vite@latest izh -- --template react-swc-ts
 
 #### State Management — Zustand 5.0.12
 
-| Attribut | Valeur |
-|---|---|
-| Choix | Zustand avec middleware `persist` |
-| Version | 5.0.12 |
-| Rationale | API plus simple que useContext, zéro Provider, re-renders sélectifs (critique pour drag & drop 60fps sur 40 tâches), middleware `persist` pour localStorage natif, migration Supabase facilitée par remplacement du middleware |
-| Alternative écartée | useContext + useReducer — verbose, re-renders globaux, sync localStorage manuelle |
-| Alternative écartée | Redux Toolkit — overkill (~12KB), boilerplate excessif pour la taille du projet |
-| Affects | Tous les composants, persistance, migration phase 2 |
+| Attribut            | Valeur                                                                                                                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Choix               | Zustand avec middleware `persist`                                                                                                                                                                                              |
+| Version             | 5.0.12                                                                                                                                                                                                                         |
+| Rationale           | API plus simple que useContext, zéro Provider, re-renders sélectifs (critique pour drag & drop 60fps sur 40 tâches), middleware `persist` pour localStorage natif, migration Supabase facilitée par remplacement du middleware |
+| Alternative écartée | useContext + useReducer — verbose, re-renders globaux, sync localStorage manuelle                                                                                                                                              |
+| Alternative écartée | Redux Toolkit — overkill (~12KB), boilerplate excessif pour la taille du projet                                                                                                                                                |
+| Affects             | Tous les composants, persistance, migration phase 2                                                                                                                                                                            |
 
 **Structure des stores prévue :**
+
 - `useTaskStore` — tâches (CRUD, quadrants, métadonnées)
 - `useFlowStore` — état du questionnaire de tri (éphémère, pas persisté)
 - `useUIStore` — état UI (overlay ouvert, quadrant actif Focus, onboarding flags)
@@ -196,61 +199,61 @@ npm create vite@latest izh -- --template react-swc-ts
 
 #### Routing — React Router 7.13.1
 
-| Attribut | Valeur |
-|---|---|
-| Choix | React Router v7 (library mode) |
-| Version | 7.13.1 |
-| Rationale | 4 routes seulement (Vrac, Réserve, Focus, Archive), léger (~20KB), standard industrie, import unifié depuis `react-router` |
-| Alternative écartée | TanStack Router — type-safety poussée mais overkill pour 4 routes (+45KB) |
-| Affects | Navigation, structure des pages |
+| Attribut            | Valeur                                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Choix               | React Router v7 (library mode)                                                                                             |
+| Version             | 7.13.1                                                                                                                     |
+| Rationale           | 4 routes seulement (Vrac, Réserve, Focus, Archive), léger (~20KB), standard industrie, import unifié depuis `react-router` |
+| Alternative écartée | TanStack Router — type-safety poussée mais overkill pour 4 routes (+45KB)                                                  |
+| Affects             | Navigation, structure des pages                                                                                            |
 
 #### Machine à états questionnaire — useReducer custom
 
-| Attribut | Valeur |
-|---|---|
-| Choix | useReducer custom dans le FlowStore |
-| Rationale | Complexité modérée (4 flux × 2-4 questions), retour arrière = navigation dans un tableau de réponses, abandon = reset state. Zéro dépendance supplémentaire. |
-| Alternative écartée | XState — puissant mais courbe d'apprentissage non justifiée pour 4 flux courts |
-| Affects | Overlay de tri (SCR-02 à SCR-05), overlay de purge (SCR-07 à SCR-09) |
-| Évolution | Migrable vers XState si les flows se complexifient post-MVP |
+| Attribut            | Valeur                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Choix               | useReducer custom dans le FlowStore                                                                                                                          |
+| Rationale           | Complexité modérée (4 flux × 2-4 questions), retour arrière = navigation dans un tableau de réponses, abandon = reset state. Zéro dépendance supplémentaire. |
+| Alternative écartée | XState — puissant mais courbe d'apprentissage non justifiée pour 4 flux courts                                                                               |
+| Affects             | Overlay de tri (SCR-02 à SCR-05), overlay de purge (SCR-07 à SCR-09)                                                                                         |
+| Évolution           | Migrable vers XState si les flows se complexifient post-MVP                                                                                                  |
 
 #### Animation — Motion 12.37.0 (ex Framer Motion)
 
-| Attribut | Valeur |
-|---|---|
-| Choix | Motion pour toutes les animations et transitions (hors drag & drop) |
-| Version | 12.37.0 |
+| Attribut  | Valeur                                                                                                                                                                                   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Choix     | Motion pour toutes les animations et transitions (hors drag & drop)                                                                                                                      |
+| Version   | 12.37.0                                                                                                                                                                                  |
 | Rationale | Standard industrie React (30M+ downloads/mois), GPU-accelerated 120fps, support natif `prefers-reduced-motion`, gestures (swipe bottom sheet), layout animations (accordion, swap Focus) |
-| Import | `import { motion } from "motion/react"` |
+| Import    | `import { motion } from "motion/react"`                                                                                                                                                  |
 
 #### Séparation Drag & Drop / Animations
 
-| Responsabilité | Outil | Exemples |
-|---|---|---|
+| Responsabilité                                           | Outil   | Exemples                                                                                                                                                                     |
+| -------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tout ce qui touche au drag (mécanique + animations drag) | dnd-kit | Zones de drop (headers accordion), contraintes inter/intra-quadrant, sortable lists, sensors, preview pendant le drag, snap-back, drop animation, surbrillance zones de drop |
-| Toutes les autres animations | Motion | Slide up/down overlays, fade-out complétion, crossfade swap Focus, accordion expand/collapse, toast undo, onboarding pulse, transitions questionnaire (slide horizontal) |
+| Toutes les autres animations                             | Motion  | Slide up/down overlays, fade-out complétion, crossfade swap Focus, accordion expand/collapse, toast undo, onboarding pulse, transitions questionnaire (slide horizontal)     |
 
 #### Component Architecture
 
-| Attribut | Valeur |
-|---|---|
-| Approche | Composants React fonctionnels + hooks custom |
-| Styling | Tailwind CSS v4.1 + classes custom DaisyUI-like (`@layer components` + `@apply`) |
-| Structure CSS | `styles/base/` → `styles/themes/` → `styles/components/` → `styles/utilities/` |
-| Design tokens | OKLCH via `@theme` + `:root`, variables locales surchargeables (`--_btn-bg`) |
-| Principe | Logique métier dans les stores/hooks, composants UI purs (présentation seule) |
+| Attribut      | Valeur                                                                           |
+| ------------- | -------------------------------------------------------------------------------- |
+| Approche      | Composants React fonctionnels + hooks custom                                     |
+| Styling       | Tailwind CSS v4.1 + classes custom DaisyUI-like (`@layer components` + `@apply`) |
+| Structure CSS | `styles/base/` → `styles/themes/` → `styles/components/` → `styles/utilities/`   |
+| Design tokens | OKLCH via `@theme` + `:root`, variables locales surchargeables (`--_btn-bg`)     |
+| Principe      | Logique métier dans les stores/hooks, composants UI purs (présentation seule)    |
 
 ### Data Architecture
 
 #### Data Validation — Zod 4.3.6
 
-| Attribut | Valeur |
-|---|---|
-| Choix | Zod pour validation runtime des données localStorage |
-| Version | 4.3.6 |
-| Rationale | Protection contre corruption localStorage (données éditables par l'utilisateur dans DevTools, bugs de sérialisation). Inférence TypeScript automatique. Signal portfolio fort. |
-| Alternative écartée | TypeScript seul — pas de validation runtime, crash silencieux sur données corrompues |
-| Affects | Couche de persistance, modèle de tâche, migration Supabase |
+| Attribut            | Valeur                                                                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Choix               | Zod pour validation runtime des données localStorage                                                                                                                           |
+| Version             | 4.3.6                                                                                                                                                                          |
+| Rationale           | Protection contre corruption localStorage (données éditables par l'utilisateur dans DevTools, bugs de sérialisation). Inférence TypeScript automatique. Signal portfolio fort. |
+| Alternative écartée | TypeScript seul — pas de validation runtime, crash silencieux sur données corrompues                                                                                           |
+| Affects             | Couche de persistance, modèle de tâche, migration Supabase                                                                                                                     |
 
 #### Data Model
 
@@ -261,17 +264,19 @@ Défini dans le PRD — titre unique côté utilisateur + métadonnées automati
 const TaskSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1),
-  status: z.enum(['inbox', 'backlog', 'active', 'archived']),
-  quadrant: z.enum(['q1', 'q2', 'q3', 'q4']).nullable(),
+  status: z.enum(["inbox", "backlog", "active", "archived"]),
+  quadrant: z.enum(["q1", "q2", "q3", "q4"]).nullable(),
   created_at: z.string().datetime(),
   classified_at: z.string().datetime().nullable(),
   completed_at: z.string().datetime().nullable(),
   flow_duration_ms: z.number().nullable(),
-  source_flux: z.enum(['flux1', 'flux2', 'flux3', 'flux4', 'manual']).nullable(),
-  classification_method: z.enum(['assisted', 'manual']).nullable(),
+  source_flux: z
+    .enum(["flux1", "flux2", "flux3", "flux4", "manual"])
+    .nullable(),
+  classification_method: z.enum(["assisted", "manual"]).nullable(),
   user_override: z.boolean().nullable(),
   position: z.number(), // ordre dans le quadrant
-})
+});
 ```
 
 #### Persistence Strategy
@@ -284,34 +289,35 @@ const TaskSchema = z.object({
 
 #### Hosting — Self-hosted VPS + Coolify v4
 
-| Attribut | Valeur |
-|---|---|
-| Choix | Self-hosted sur VPS personnel via Coolify |
-| Version | Coolify v4 |
-| Rationale | Contrôle total, pas de vendor lock-in, SSL automatique (Let's Encrypt), déploiement Git intégré, signal d'autonomie DevOps en entretien |
-| Alternative écartée | Vercel — plus simple mais moins de contrôle, dépendance plateforme |
-| Affects | Pipeline de déploiement, configuration DNS, SSL |
+| Attribut            | Valeur                                                                                                                                  |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Choix               | Self-hosted sur VPS personnel via Coolify                                                                                               |
+| Version             | Coolify v4                                                                                                                              |
+| Rationale           | Contrôle total, pas de vendor lock-in, SSL automatique (Let's Encrypt), déploiement Git intégré, signal d'autonomie DevOps en entretien |
+| Alternative écartée | Vercel — plus simple mais moins de contrôle, dépendance plateforme                                                                      |
+| Affects             | Pipeline de déploiement, configuration DNS, SSL                                                                                         |
 
 #### CI/CD — GitHub Actions
 
-| Attribut | Valeur |
-|---|---|
-| Choix | GitHub Actions |
-| Pipeline | lint → type-check → test (Vitest) → build → deploy (webhook Coolify) |
+| Attribut  | Valeur                                                                    |
+| --------- | ------------------------------------------------------------------------- |
+| Choix     | GitHub Actions                                                            |
+| Pipeline  | lint → type-check → test (Vitest) → build → deploy (webhook Coolify)      |
 | Rationale | Standard industrie, gratuit pour repos publics, intégration native GitHub |
 
 #### Testing — Vitest 4.1 + RTL + Playwright
 
-| Attribut | Valeur |
-|---|---|
-| Unit tests | Vitest 4.1.0 — logique métier (stores, hooks, flows questionnaire) |
-| Component tests | React Testing Library — composants UI |
-| E2E tests | Playwright — flows utilisateur critiques (brain dump → tri → backlog → matrice) |
-| Rationale | Vitest natif Vite (10-20x plus rapide que Jest), RTL = standard React, Playwright = standard e2e 2026 |
+| Attribut        | Valeur                                                                                                |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| Unit tests      | Vitest 4.1.0 — logique métier (stores, hooks, flows questionnaire)                                    |
+| Component tests | React Testing Library — composants UI                                                                 |
+| E2E tests       | Playwright — flows utilisateur critiques (brain dump → tri → backlog → matrice)                       |
+| Rationale       | Vitest natif Vite (10-20x plus rapide que Jest), RTL = standard React, Playwright = standard e2e 2026 |
 
 ### Decision Impact Analysis
 
 **Implementation Sequence:**
+
 1. Vite 8 + React 19 + TypeScript (starter)
 2. Tailwind CSS v4 + design tokens OKLCH
 3. React Router v7 (4 routes)
@@ -323,6 +329,7 @@ const TaskSchema = z.object({
 9. Coolify deployment config
 
 **Cross-Component Dependencies:**
+
 - Zustand persist dépend de Zod (validation à la lecture)
 - Les composants UI dépendent des design tokens Tailwind
 - Le questionnaire (useReducer) vit dans le FlowStore Zustand (état éphémère)
@@ -332,18 +339,18 @@ const TaskSchema = z.object({
 
 **Versions Verified (March 2026):**
 
-| Package | Version | Date vérification |
-|---|---|---|
-| Vite | 8.0.0 | mars 2026 |
-| React | 19.2.4 | janvier 2026 |
-| Tailwind CSS | 4.1 | 2025 |
-| Zustand | 5.0.12 | mars 2026 |
-| React Router | 7.13.1 | mars 2026 |
-| Zod | 4.3.6 | février 2026 |
-| Motion | 12.37.0 | mars 2026 |
-| Vitest | 4.1.0 | mars 2026 |
-| @dnd-kit/react | 0.3.2 | février 2026 |
-| Coolify | v4 | mars 2026 |
+| Package        | Version | Date vérification |
+| -------------- | ------- | ----------------- |
+| Vite           | 8.0.0   | mars 2026         |
+| React          | 19.2.4  | janvier 2026      |
+| Tailwind CSS   | 4.1     | 2025              |
+| Zustand        | 5.0.12  | mars 2026         |
+| React Router   | 7.13.1  | mars 2026         |
+| Zod            | 4.3.6   | février 2026      |
+| Motion         | 12.37.0 | mars 2026         |
+| Vitest         | 4.1.0   | mars 2026         |
+| @dnd-kit/react | 0.3.2   | février 2026      |
+| Coolify        | v4      | mars 2026         |
 
 ## Implementation Patterns & Consistency Rules
 
@@ -351,93 +358,94 @@ const TaskSchema = z.object({
 
 #### Code Naming Conventions
 
-| Élément | Convention | Exemple |
-|---|---|---|
-| Composants React | PascalCase | `TaskItem`, `QuadrantSection` |
-| Fichiers composants | PascalCase.tsx | `TaskItem.tsx`, `OverlayShell.tsx` |
-| Hooks custom | camelCase, préfixe `use` | `useTaskStore.ts`, `useFlowReducer.ts` |
-| Fonctions/variables | camelCase | `addTask`, `flowDuration` |
-| Constantes | UPPER_SNAKE_CASE | `MAX_BACKLOG_SIZE = 40`, `UNDO_DELAY_MS = 5000` |
-| Types/Interfaces | PascalCase, préfixe libre | `Task`, `QuadrantType`, `FlowState` |
-| Fichiers utilitaires | camelCase.ts | `formatDate.ts`, `validateTask.ts` |
-| Fichiers CSS composants | kebab-case.css | `button.css`, `quadrant-section.css` |
-| Tokens CSS | `--{catégorie}-{propriété}-{modificateur}` | `--color-surface-base`, `--space-stack-md` |
-| Classes CSS custom | kebab-case | `.btn-primary`, `.task-item`, `.quadrant-q1` |
+| Élément                 | Convention                                 | Exemple                                         |
+| ----------------------- | ------------------------------------------ | ----------------------------------------------- |
+| Composants React        | PascalCase                                 | `TaskItem`, `QuadrantSection`                   |
+| Fichiers composants     | PascalCase.tsx                             | `TaskItem.tsx`, `OverlayShell.tsx`              |
+| Hooks custom            | camelCase, préfixe `use`                   | `useTaskStore.ts`, `useFlowReducer.ts`          |
+| Fonctions/variables     | camelCase                                  | `addTask`, `flowDuration`                       |
+| Constantes              | UPPER_SNAKE_CASE                           | `MAX_BACKLOG_SIZE = 40`, `UNDO_DELAY_MS = 5000` |
+| Types/Interfaces        | PascalCase, préfixe libre                  | `Task`, `QuadrantType`, `FlowState`             |
+| Fichiers utilitaires    | camelCase.ts                               | `formatDate.ts`, `validateTask.ts`              |
+| Fichiers CSS composants | kebab-case.css                             | `button.css`, `quadrant-section.css`            |
+| Tokens CSS              | `--{catégorie}-{propriété}-{modificateur}` | `--color-surface-base`, `--space-stack-md`      |
+| Classes CSS custom      | kebab-case                                 | `.btn-primary`, `.task-item`, `.quadrant-q1`    |
 
 ### Structure Patterns
 
 #### Project Organization
 
-| Élément | Convention | Détail |
-|---|---|---|
-| Tests | Co-localisés | `TaskItem.test.tsx` à côté de `TaskItem.tsx` |
-| Composants | Par feature | `features/inbox/`, `features/reserve/`, `features/focus/`, `features/archive/` |
-| Composants partagés | Dossier `shared/` | Composants réutilisés entre features (OverlayShell, Toast, EmptyState) |
-| Stores Zustand | `stores/` | À la racine de `src/` |
-| Schemas Zod | `schemas/` | À la racine de `src/` |
-| Design system CSS | `styles/` | Sous-dossiers : `base/`, `themes/`, `components/`, `utilities/` |
-| Assets | `assets/` | Icônes Lucide importées via package, pas de fichiers statiques |
+| Élément             | Convention        | Détail                                                                         |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| Tests               | Co-localisés      | `TaskItem.test.tsx` à côté de `TaskItem.tsx`                                   |
+| Composants          | Par feature       | `features/inbox/`, `features/reserve/`, `features/focus/`, `features/archive/` |
+| Composants partagés | Dossier `shared/` | Composants réutilisés entre features (OverlayShell, Toast, EmptyState)         |
+| Stores Zustand      | `stores/`         | À la racine de `src/`                                                          |
+| Schemas Zod         | `schemas/`        | À la racine de `src/`                                                          |
+| Design system CSS   | `styles/`         | Sous-dossiers : `base/`, `themes/`, `components/`, `utilities/`                |
+| Assets              | `assets/`         | Icônes Lucide importées via package, pas de fichiers statiques                 |
 
 ### Format Patterns
 
 #### Data Conventions
 
-| Élément | Convention | Exemple |
-|---|---|---|
-| IDs | UUID v4 (string) | `crypto.randomUUID()` |
-| Dates | ISO 8601 strings | `"2026-03-16T21:30:00.000Z"` |
-| JSON keys (localStorage) | camelCase | `createdAt`, `flowDurationMs` |
-| Clés localStorage | préfixe `izh-` | `izh-tasks`, `izh-ui`, `izh-analytics` |
-| Null vs undefined | `null` pour valeurs absentes en données | `quadrant: null` (pas encore trié) |
-| Enums quadrant | lowercase string | `'q1'`, `'q2'`, `'q3'`, `'q4'` |
-| Enums statut | lowercase string | `'inbox'`, `'backlog'`, `'active'`, `'archived'` |
+| Élément                  | Convention                              | Exemple                                          |
+| ------------------------ | --------------------------------------- | ------------------------------------------------ |
+| IDs                      | UUID v4 (string)                        | `crypto.randomUUID()`                            |
+| Dates                    | ISO 8601 strings                        | `"2026-03-16T21:30:00.000Z"`                     |
+| JSON keys (localStorage) | camelCase                               | `createdAt`, `flowDurationMs`                    |
+| Clés localStorage        | préfixe `izh-`                          | `izh-tasks`, `izh-ui`, `izh-analytics`           |
+| Null vs undefined        | `null` pour valeurs absentes en données | `quadrant: null` (pas encore trié)               |
+| Enums quadrant           | lowercase string                        | `'q1'`, `'q2'`, `'q3'`, `'q4'`                   |
+| Enums statut             | lowercase string                        | `'inbox'`, `'backlog'`, `'active'`, `'archived'` |
 
 ### Communication Patterns
 
 #### State Management — Zustand Rules
 
-| Règle | Détail |
-|---|---|
-| Un store par domaine | `useTaskStore`, `useFlowStore`, `useUIStore`, `useAnalyticsStore` |
-| Actions dans le store | Les mutations sont des fonctions définies dans le store, jamais dans les composants |
-| Sélecteurs granulaires | `useTaskStore(s => s.inboxTasks)` — jamais `useTaskStore()` (évite les re-renders) |
-| Immutabilité | Toujours retourner un nouvel objet/array dans `set()` |
-| Timestamps automatiques | `created_at` ajouté dans l'action `addTask`, pas dans le composant |
-| Persist sélectif | `useTaskStore` et `useAnalyticsStore` persistés. `useFlowStore` et `useUIStore` éphémères. |
+| Règle                   | Détail                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| Un store par domaine    | `useTaskStore`, `useFlowStore`, `useUIStore`, `useAnalyticsStore`                          |
+| Actions dans le store   | Les mutations sont des fonctions définies dans le store, jamais dans les composants        |
+| Sélecteurs granulaires  | `useTaskStore(s => s.inboxTasks)` — jamais `useTaskStore()` (évite les re-renders)         |
+| Immutabilité            | Toujours retourner un nouvel objet/array dans `set()`                                      |
+| Timestamps automatiques | `created_at` ajouté dans l'action `addTask`, pas dans le composant                         |
+| Persist sélectif        | `useTaskStore` et `useAnalyticsStore` persistés. `useFlowStore` et `useUIStore` éphémères. |
 
 ### Process Patterns
 
 #### Component Rules
 
-| Règle | Détail |
-|---|---|
+| Règle                            | Détail                                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Logique zéro dans les composants | Les composants appellent des actions du store et affichent des données. Pas de `if/else` métier dans le JSX. |
-| Props typées | Chaque composant a une interface `Props` explicite |
-| Export | `export function TaskItem()` — named exports, pas de default exports (meilleur tree-shaking, refactoring) |
-| Un composant par fichier | Sauf pour les sous-composants privés du même module |
-| Hooks custom pour la logique | Si un composant a besoin de logique complexe → hook custom à côté |
+| Props typées                     | Chaque composant a une interface `Props` explicite                                                           |
+| Export                           | `export function TaskItem()` — named exports, pas de default exports (meilleur tree-shaking, refactoring)    |
+| Un composant par fichier         | Sauf pour les sous-composants privés du même module                                                          |
+| Hooks custom pour la logique     | Si un composant a besoin de logique complexe → hook custom à côté                                            |
 
 #### Error Handling
 
-| Règle | Détail |
-|---|---|
-| Error Boundaries | Un ErrorBoundary global + un par feature (inbox, reserve, focus) |
-| localStorage corrompu | Validation Zod à chaque lecture. Si invalide → reset données vides + toast explicatif |
-| Abandon mid-flow | Le questionnaire ne persiste RIEN tant que l'utilisateur n'a pas validé. Fermer = état intact. |
-| Toast erreur | Ton bienveillant, jamais de message technique. Ex: "Quelque chose n'a pas marché — tes tâches sont intactes." |
+| Règle                 | Détail                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Error Boundaries      | Un ErrorBoundary global + un par feature (inbox, reserve, focus)                                              |
+| localStorage corrompu | Validation Zod à chaque lecture. Si invalide → reset données vides + toast explicatif                         |
+| Abandon mid-flow      | Le questionnaire ne persiste RIEN tant que l'utilisateur n'a pas validé. Fermer = état intact.                |
+| Toast erreur          | Ton bienveillant, jamais de message technique. Ex: "Quelque chose n'a pas marché — tes tâches sont intactes." |
 
 #### Accessibility Patterns
 
-| Règle | Détail |
-|---|---|
-| Focus management | Après ouverture overlay → focus sur le premier élément interactif. Après fermeture → focus revient sur l'élément déclencheur. |
-| `aria-live` | Toasts et résultats de tri annoncés via `aria-live="polite"` |
-| `prefers-reduced-motion` | Vérifier via Motion. Si activé → pas d'animations, transitions instantanées. |
-| Keyboard nav | Tous les éléments interactifs accessibles au clavier. Tab order logique. |
+| Règle                    | Détail                                                                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Focus management         | Après ouverture overlay → focus sur le premier élément interactif. Après fermeture → focus revient sur l'élément déclencheur. |
+| `aria-live`              | Toasts et résultats de tri annoncés via `aria-live="polite"`                                                                  |
+| `prefers-reduced-motion` | Vérifier via Motion. Si activé → pas d'animations, transitions instantanées.                                                  |
+| Keyboard nav             | Tous les éléments interactifs accessibles au clavier. Tab order logique.                                                      |
 
 ### Enforcement Guidelines
 
 **Tous les agents IA DOIVENT :**
+
 - Suivre les conventions de nommage ci-dessus sans exception
 - Placer les tests co-localisés avec leurs fichiers sources
 - Utiliser des named exports (pas de default exports)
@@ -446,6 +454,7 @@ const TaskSchema = z.object({
 - Respecter les patterns d'accessibilité (focus, aria-live, reduced-motion)
 
 **Anti-patterns interdits :**
+
 - `useTaskStore()` sans sélecteur → re-render global
 - `export default` → mauvais tree-shaking
 - Logique métier dans le JSX (`if (task.quadrant === 'q1' && ...)`)
@@ -614,23 +623,24 @@ izh/
 
 ### Requirements to Structure Mapping
 
-| Domaine FR | Feature | Fichiers principaux |
-|---|---|---|
-| FR1-FR4 Capture | `features/inbox/` | CaptureInput, TaskItemInbox |
-| FR5-FR8 Inbox | `features/inbox/` | InboxPage |
-| FR9-FR14 Tri assisté | `features/sorting/` | SortingOverlay, Questionnaire, SortConfirmation |
-| FR15-FR16 Tri manuel | `features/sorting/` | SortingOverlay (branche manuelle) |
-| FR17-FR24 Backlog | `features/reserve/` | ReservePage, QuadrantSection |
-| FR25-FR30 Matrice | `features/focus/` | FocusPage, ProminentQuadrant, NavGrid |
-| FR31-FR37 Purge | `features/purge/` | PurgeIntro, PurgeQuestionnaire, PurgeSummary |
-| FR38-FR40 Archive | `features/archive/` | ArchivePage, TaskItemArchive |
-| FR41-FR42 Onboarding | `stores/useUIStore` | Flags onboarding dans le store UI |
-| FR43-FR47 Analytics | `stores/useAnalyticsStore` + `features/survey/` | MicroSurvey |
-| FR48-FR50 Navigation | `shared/BottomNav` + `App.tsx` | Router + nav |
+| Domaine FR           | Feature                                         | Fichiers principaux                             |
+| -------------------- | ----------------------------------------------- | ----------------------------------------------- |
+| FR1-FR4 Capture      | `features/inbox/`                               | CaptureInput, TaskItemInbox                     |
+| FR5-FR8 Inbox        | `features/inbox/`                               | InboxPage                                       |
+| FR9-FR14 Tri assisté | `features/sorting/`                             | SortingOverlay, Questionnaire, SortConfirmation |
+| FR15-FR16 Tri manuel | `features/sorting/`                             | SortingOverlay (branche manuelle)               |
+| FR17-FR24 Backlog    | `features/reserve/`                             | ReservePage, QuadrantSection                    |
+| FR25-FR30 Matrice    | `features/focus/`                               | FocusPage, ProminentQuadrant, NavGrid           |
+| FR31-FR37 Purge      | `features/purge/`                               | PurgeIntro, PurgeQuestionnaire, PurgeSummary    |
+| FR38-FR40 Archive    | `features/archive/`                             | ArchivePage, TaskItemArchive                    |
+| FR41-FR42 Onboarding | `stores/useUIStore`                             | Flags onboarding dans le store UI               |
+| FR43-FR47 Analytics  | `stores/useAnalyticsStore` + `features/survey/` | MicroSurvey                                     |
+| FR48-FR50 Navigation | `shared/BottomNav` + `App.tsx`                  | Router + nav                                    |
 
 ### Architectural Boundaries
 
 **Data Flow :**
+
 ```
 User Input → Composant UI (présentation pure)
                 ↓ appelle action
@@ -642,6 +652,7 @@ User Input → Composant UI (présentation pure)
 ```
 
 **Component Boundaries :**
+
 - `features/` → chaque feature ne consomme que ses propres composants + `shared/` + `stores/`
 - `stores/` → seule couche qui touche localStorage (via persist)
 - `schemas/` → source de vérité pour les types TypeScript (inférés de Zod)
@@ -652,14 +663,14 @@ User Input → Composant UI (présentation pure)
 
 ### Future Evolution Readiness
 
-| Évolution | Impact structural | Risque |
-|---|---|---|
-| Supabase Auth (phase 2a) | Nouveau `features/auth/` + `stores/useAuthStore.ts` + `services/auth.ts` | Aucun |
-| Supabase persistance (phase 2a) | Remplacement middleware persist dans stores | Aucun |
-| Timeblocking (phase 2b) | Nouveau `features/timeblocking/` + extension TaskSchema | Aucun |
-| Sync calendrier (phase 2c) | Nouveau `services/calendar.ts` | Aucun |
-| Dark mode | Ajouter `styles/themes/dark.css` | Aucun |
-| PWA | Service worker config racine | Aucun |
+| Évolution                       | Impact structural                                                        | Risque |
+| ------------------------------- | ------------------------------------------------------------------------ | ------ |
+| Supabase Auth (phase 2a)        | Nouveau `features/auth/` + `stores/useAuthStore.ts` + `services/auth.ts` | Aucun  |
+| Supabase persistance (phase 2a) | Remplacement middleware persist dans stores                              | Aucun  |
+| Timeblocking (phase 2b)         | Nouveau `features/timeblocking/` + extension TaskSchema                  | Aucun  |
+| Sync calendrier (phase 2c)      | Nouveau `services/calendar.ts`                                           | Aucun  |
+| Dark mode                       | Ajouter `styles/themes/dark.css`                                         | Aucun  |
+| PWA                             | Service worker config racine                                             | Aucun  |
 
 ## Architecture Validation Results
 
@@ -690,17 +701,18 @@ L'arbre projet supporte toutes les décisions architecturales. Boundaries claire
 
 ### Gap Analysis Results
 
-| Gap | Sévérité | Recommandation |
-|---|---|---|
-| Pas d'alias d'import `@/` | Moyenne | Configurer dans `tsconfig.json` au setup projet |
-| Pas de lazy loading pages | Faible | `React.lazy()` sur les 4 pages — optimisation non bloquante |
-| Pas de linter CSS | Faible | Stylelint optionnel post-MVP |
+| Gap                       | Sévérité | Recommandation                                              |
+| ------------------------- | -------- | ----------------------------------------------------------- |
+| Pas d'alias d'import `@/` | Moyenne  | Configurer dans `tsconfig.json` au setup projet             |
+| Pas de lazy loading pages | Faible   | `React.lazy()` sur les 4 pages — optimisation non bloquante |
+| Pas de linter CSS         | Faible   | Stylelint optionnel post-MVP                                |
 
 Aucun gap critique bloquant l'implémentation.
 
 ### Architecture Completeness Checklist
 
 **✅ Requirements Analysis**
+
 - [x] Contexte projet analysé en profondeur
 - [x] Complexité et échelle évaluées
 - [x] Contraintes techniques identifiées
@@ -708,6 +720,7 @@ Aucun gap critique bloquant l'implémentation.
 - [x] 4 priorités architecturales utilisateur (scalable, maintenable, testable, standards)
 
 **✅ Architectural Decisions**
+
 - [x] 10 décisions critiques/importantes avec versions vérifiées
 - [x] Stack technologique complet
 - [x] Séparation drag (dnd-kit) / animations (Motion)
@@ -715,6 +728,7 @@ Aucun gap critique bloquant l'implémentation.
 - [x] Machine à états questionnaire (useReducer)
 
 **✅ Implementation Patterns**
+
 - [x] Conventions de nommage (code, CSS, données)
 - [x] Patterns de structure (feature-based, co-location tests)
 - [x] Patterns Zustand (sélecteurs, actions, persist)
@@ -722,6 +736,7 @@ Aucun gap critique bloquant l'implémentation.
 - [x] Anti-patterns interdits
 
 **✅ Project Structure**
+
 - [x] Arbre projet complet
 - [x] Tests co-localisés + E2E séparés
 - [x] Boundaries claires
@@ -735,6 +750,7 @@ Aucun gap critique bloquant l'implémentation.
 **Confidence Level:** Élevé
 
 **Key Strengths:**
+
 - Stack 100% vérifié et compatible (mars 2026)
 - Couverture complète des 50 FRs et 21 NFRs
 - Persistance abstraite — migration Supabase sans réécriture
@@ -743,6 +759,7 @@ Aucun gap critique bloquant l'implémentation.
 - Séparation nette logique métier / composants UI / design system
 
 **Areas for Future Enhancement:**
+
 - Alias d'import `@/` (à configurer au setup)
 - Lazy loading des pages
 - Stylelint
@@ -751,13 +768,16 @@ Aucun gap critique bloquant l'implémentation.
 ### Implementation Handoff
 
 **AI Agent Guidelines:**
+
 - Suivre toutes les décisions architecturales exactement comme documentées
 - Utiliser les patterns d'implémentation de manière consistante
 - Respecter la structure projet et les boundaries
 - Référer à ce document pour toute question architecturale
 
 **First Implementation Priority:**
+
 ```bash
 npm create vite@latest izh -- --template react-swc-ts
 ```
+
 Suivi de : Tailwind CSS v4 → React Router v7 → Zustand + persist + Zod → Design tokens OKLCH → Motion + dnd-kit → Vitest + RTL → GitHub Actions → Coolify
