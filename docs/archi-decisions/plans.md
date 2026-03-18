@@ -161,7 +161,7 @@ export function cn(...inputs: ClassValue[]) {
 type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "icon-only" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
-interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
+interface ButtonProps extends React.ComponentPropsWithRef<"button"> {
   variant?: ButtonVariant;       // défaut: "primary"
   size?: ButtonSize;             // défaut: "md"
   block?: boolean;               // width: 100%
@@ -170,37 +170,46 @@ interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 }
 ```
 
-**Pattern du composant :**
+**Pattern du composant (React 19 — ref as prop) :**
 
 ```tsx
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = "primary", size = "md", block, loading, iconLeft, className, children, disabled, ...rest }, ref) => {
-    return (
-      <button
-        ref={ref}
-        className={cn(
-          "btn",
-          `btn-${variant}`,
-          `btn-${size}`,
-          block && "btn-block",
-          className,  // overrides du parent — twMerge résout les conflits
-        )}
-        disabled={disabled}
-        aria-disabled={disabled || undefined}
-        aria-busy={loading || undefined}
-        {...rest}
-      >
-        {loading ? <Spinner /> : iconLeft}
-        {variant !== "icon-only" && children}
-      </button>
-    );
-  }
-);
+function Button({
+  variant = "primary",
+  size = "md",
+  block,
+  loading,
+  iconLeft,
+  className,
+  children,
+  disabled,
+  ref,
+  ...rest
+}: ButtonProps) {
+  return (
+    <button
+      ref={ref}
+      className={cn(
+        "btn",
+        `btn-${variant}`,
+        `btn-${size}`,
+        block && "btn-block",
+        className,  // overrides du parent — twMerge résout les conflits
+      )}
+      disabled={disabled}
+      aria-disabled={disabled || undefined}
+      aria-busy={loading || undefined}
+      {...rest}
+    >
+      {loading ? <Spinner /> : iconLeft}
+      {variant !== "icon-only" && children}
+    </button>
+  );
+}
 ```
 
 **Décisions de design :**
-- `forwardRef` — permet aux parents d'accéder au DOM node (tooltips, focus programmatique)
-- `ComponentPropsWithoutRef<"button">` — on hérite de TOUTES les props HTML natives (`type`, `onClick`, `id`...)
+- `ref` comme prop (React 19) — `forwardRef` est déprécié depuis React 19. Le `ref` se destructure comme n'importe quelle prop.
+- `ComponentPropsWithRef<"button">` — on hérite de TOUTES les props HTML natives (`type`, `onClick`, `id`, `ref`...)
 - Pas de prop `iconOnly` — `variant="icon-only"` suffit. Une seule source de vérité.
 - `className` en dernier dans `cn()` — le parent peut toujours override
 - Le spinner est un composant interne simple (SVG animé 16px)

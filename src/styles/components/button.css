@@ -1,0 +1,161 @@
+@layer components {
+  /* ===== 1. BASE ===== */
+  .btn {
+    --_btn-bg: transparent;
+    --_btn-fg: var(--color-content);
+    --_btn-border: transparent;
+
+    @apply inline-flex items-center justify-center;
+    @apply cursor-pointer select-none;
+    @apply font-medium;
+
+    background-color: var(--_btn-bg);
+    color: var(--_btn-fg);
+    border: 1px solid var(--_btn-border);
+    border-radius: var(--radius-component);
+    gap: var(--spacing-inline-sm);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  /* ===== 2. ÉTATS INTERACTIFS ===== */
+  .btn:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-surface-base),
+      0 0 0 4px var(--color-edge-focus);
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn[aria-busy="true"] {
+    pointer-events: none;
+  }
+
+  /* ===== 3. VARIANTES DE STYLE ===== */
+
+  /* Primary — Action principale, 1 seul par vue */
+  .btn-primary {
+    --_btn-bg: var(--color-action-primary);
+    --_btn-fg: var(--color-content-inverse);
+    --_btn-border: var(--color-action-primary);
+  }
+
+  .btn-primary:hover {
+    --_btn-bg: var(--color-action-primary-hover);
+    box-shadow: var(--shadow-button-hover);
+  }
+
+  .btn-primary:active {
+    --_btn-bg: var(--color-action-primary-active);
+  }
+
+  /* Secondary — Action importante mais pas principale */
+  .btn-secondary {
+    --_btn-bg: var(--color-surface-subtle);
+    --_btn-fg: var(--color-content);
+    --_btn-border: var(--color-edge);
+  }
+
+  .btn-secondary:hover {
+    --_btn-bg: var(--color-surface-muted);
+  }
+
+  /* Outline — Choix parmi options équivalentes */
+  .btn-outline {
+    --_btn-bg: transparent;
+    --_btn-fg: var(--color-content);
+    --_btn-border: var(--color-edge-strong);
+  }
+
+  .btn-outline:hover {
+    --_btn-bg: var(--color-surface-subtle);
+  }
+
+  /* Text — Action tertiaire, fermeture, retour */
+  .btn-text {
+    --_btn-bg: transparent;
+    --_btn-fg: var(--color-content-accent);
+    --_btn-border: transparent;
+  }
+
+  .btn-text:hover {
+    text-decoration: underline;
+  }
+
+  /* Icon-only — Action contextuelle sans label */
+  .btn-icon-only {
+    --_btn-bg: transparent;
+    --_btn-fg: var(--color-content-secondary);
+    --_btn-border: transparent;
+    aspect-ratio: 1;
+    padding: 0;
+  }
+
+  .btn-icon-only:hover {
+    --_btn-fg: var(--color-content);
+  }
+
+  /* Danger — Action destructive */
+  .btn-danger {
+    --_btn-bg: var(--color-action-danger);
+    --_btn-fg: var(--color-content-inverse);
+    --_btn-border: var(--color-action-danger);
+  }
+
+  .btn-danger:hover {
+    --_btn-bg: var(--color-action-danger-hover);
+    box-shadow: var(--shadow-button-hover);
+  }
+
+  /* ===== 4. VARIANTES DE TAILLE ===== */
+
+  /* sm — 36px visuel, 44px zone tactile min */
+  .btn-sm {
+    height: 36px;
+    padding: var(--spacing-component-sm) var(--spacing-component-md);
+    font-size: var(--text-sm);
+    position: relative;
+  }
+
+  .btn-sm::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    min-height: 44px;
+    border-radius: calc(var(--radius-component) + 4px);
+  }
+
+  /* md — 44px, taille par défaut */
+  .btn-md {
+    height: 44px;
+    padding: var(--spacing-component-md) var(--spacing-component-lg);
+    font-size: var(--text-sm);
+  }
+
+  /* lg — 52px, CTA pleine largeur */
+  .btn-lg {
+    height: 52px;
+    padding: var(--spacing-component-md) var(--spacing-component-xl);
+    font-size: var(--text-base);
+  }
+
+  /* ===== 5. MODIFICATEURS ===== */
+  .btn-block {
+    @apply w-full;
+  }
+}
