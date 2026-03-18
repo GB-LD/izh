@@ -1,0 +1,28 @@
+flowchart TD
+    TRIG_FOCUS(["Tap checkbox\nsur tache Focus"]):::trigger
+
+    TRIG_FOCUS --> COMPLETE[/"Completion\ncompleted_at: now\nSource: Focus"/]:::loading
+
+    COMPLETE --> ANIM["SCR-10 Focus\nAnimation subtile completion\nTache disparait du quadrant\nEmplacement libere"]:::success
+
+    ANIM --> TOAST
+
+    TOAST["Toast undo\nTache completee - Annuler\n5 secondes"]:::screen
+    TOAST -->|"Annuler avant 5s"| UNDO(["Tache restauree\na sa position precedente"]):::success
+    TOAST -->|"Timeout 5s"| ARCHIVE[/"Archivage definitif\nVisible dans SCR-11 Archive"/]:::loading
+
+    ARCHIVE --> DEC_SURVEY{"Conditions\nmicro-survey ?"}:::decision
+    DEC_SURVEY -->|"Oui: post 1er tri\nou 1x par semaine"| SCR12
+    DEC_SURVEY -->|"Non"| DONE(["Fin du flow"]):::success
+
+    SCR12["SCR-12 Micro-survey\nBottom sheet non bloquant\nComment tu te sens ?\nSlider 1-10"]:::screen
+    SCR12 -->|"Envoyer"| SURVEY_DONE(["Score enregistre\nBottom sheet disparait"]):::success
+    SCR12 -->|"Dismiss swipe down"| SURVEY_SKIP(["Pas de donnee\nRevient dans 7 jours"]):::success
+
+    classDef screen   fill:#e8f0fe,stroke:#4285f4,color:#1a1a1a
+    classDef decision fill:#fff8e1,stroke:#f9a825,color:#1a1a1a
+    classDef error    fill:#fce8e6,stroke:#d93025,color:#1a1a1a
+    classDef success  fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef loading  fill:#f3e5f5,stroke:#7b1fa2,color:#1a1a1a
+    classDef empty    fill:#f5f5f5,stroke:#9e9e9e,color:#1a1a1a
+    classDef trigger  fill:#e0f2f1,stroke:#00695c,color:#1a1a1a

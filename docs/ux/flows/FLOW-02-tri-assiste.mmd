@@ -1,0 +1,57 @@
+flowchart TD
+    TRIGGER(["Tap bouton tri\nsur une tache inbox"]):::trigger
+    TRIGGER --> SCR02
+
+    SCR02["SCR-02 Overlay tri fusionne\nTitre de la tache visible\n4 quadrants outline\nBouton Aide-moi a decider primaire"]:::screen
+    SCR02 -->|"Tap Aide-moi a decider"| DEC_FIRST{"Premier tri\nde l utilisateur ?"}:::decision
+    SCR02 -->|"Fermer"| CLOSE(["Retour inbox\ntache intacte"]):::success
+
+    DEC_FIRST -->|"Oui"| MICRO_TEXT["Micro-texte unique\nReponds a l instinct\nPas de mauvaise reponse"]:::screen
+    DEC_FIRST -->|"Non"| SCR03
+    MICRO_TEXT --> SCR03
+
+    SCR03["SCR-03 Question aiguillage\nComment tu vis cette tache ?\n4 reponses orientent vers\nle flux approprie 1-4"]:::screen
+    SCR03 -->|"Oblige - Flux 3"| F3["SCR-03 Flux 3\nAudit source du stress\n1-3 questions"]:::screen
+    SCR03 -->|"Repousse - Flux 4"| F4["SCR-03 Flux 4\nTest du regret\n2 questions"]:::screen
+    SCR03 -->|"Pas prioritaire - Flux 2"| F2["SCR-03 Flux 2\nAncrage aux objectifs\n2 questions"]:::screen
+    SCR03 -->|"Pas sur - Flux 1"| F1["SCR-03 Flux 1\nProjection de consequences\n1 question, 4 reponses"]:::screen
+    SCR03 -->|"Retour"| SCR02
+
+    F2 -.->|"Pas de priorites definies"| F1
+    F1 --> SCR04
+    F2 --> SCR04
+    F3 --> SCR04
+    F4 --> SCR04
+    F1 -->|"Retour"| SCR03
+    F2 -->|"Retour"| SCR03
+    F3 -->|"Retour"| SCR03
+    F4 -->|"Retour"| SCR03
+
+    SCR04["SCR-04 Confirmation\nQuadrant propose colore\nBouton Ca me parle primaire\n3 autres quadrants outline"]:::screen
+    SCR04 -->|"Ca me parle"| CLASSIFY_OK[/"Classement\nuser_override: false"/]:::loading
+    SCR04 -->|"Tap autre quadrant"| CLASSIFY_ALT[/"Classement corrige\nuser_override: true"/]:::loading
+    CLASSIFY_OK --> DEC_BACKLOG
+    CLASSIFY_ALT --> DEC_BACKLOG
+
+    DEC_BACKLOG{"Backlog\nplein ?"}:::decision
+    DEC_BACKLOG -->|"Non, moins de 40"| SCR05
+    DEC_BACKLOG -->|"Oui, 40 sur 40"| ERR_FULL
+
+    ERR_FULL["Backlog plein 40/40\nTache reste inbox avec badge\nQuadrant suggere conserve"]:::error
+    ERR_FULL -->|"Purger le backlog"| FLOW06(["FLOW-06 Purge"]):::success
+    ERR_FULL -->|"Revenir a inbox"| BACK_INBOX(["Retour inbox\ntache intacte + badge"]):::success
+
+    SCR05["SCR-05 Resultat\nTache et quadrant attribue\nAnimation de classement\nCompteur N/M triees"]:::screen
+    SCR05 -->|"Tache suivante"| DEC_NEXT{"Taches restantes\ndans l inbox ?"}:::decision
+    SCR05 -->|"Voir le backlog"| NAV_BACKLOG(["Navigation backlog\nHighlight tache classee"]):::success
+
+    DEC_NEXT -->|"Oui"| SCR02
+    DEC_NEXT -->|"Non, inbox vide"| EMPTY_SUCCESS(["Tout est trie\nLien vers backlog"]):::success
+
+    classDef screen   fill:#e8f0fe,stroke:#4285f4,color:#1a1a1a
+    classDef decision fill:#fff8e1,stroke:#f9a825,color:#1a1a1a
+    classDef error    fill:#fce8e6,stroke:#d93025,color:#1a1a1a
+    classDef success  fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef loading  fill:#f3e5f5,stroke:#7b1fa2,color:#1a1a1a
+    classDef empty    fill:#f5f5f5,stroke:#9e9e9e,color:#1a1a1a
+    classDef trigger  fill:#e0f2f1,stroke:#00695c,color:#1a1a1a

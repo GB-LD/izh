@@ -1,0 +1,33 @@
+flowchart TD
+    TRIGGER(["Premier lancement de l app"]):::trigger
+    TRIGGER --> SCR01_EMPTY
+
+    SCR01_EMPTY["SCR-01 Inbox etat vide\nNav visible, Inbox actif\nBouton + anime pulse"]:::empty
+    SCR01_EMPTY -->|"Tap bouton +"| INPUT
+
+    INPUT["SCR-01 Champ de saisie\nTexte ouvert, clavier affiche"]:::screen
+    INPUT -->|"Saisie + validation"| SAVE
+
+    SAVE[/"Enregistrement localStorage"/]:::loading
+    SAVE --> SCR01
+
+    SCR01["SCR-01 Inbox peuple\nListe de taches\nCompteur N taches dechargees\nBouton + reapparait"]:::screen
+    SCR01 --> DEC_MORE{"Autre tache\na ajouter ?"}:::decision
+
+    DEC_MORE -->|"Oui - Tap +"| INPUT
+    DEC_MORE -->|"Non - Inactivite 5s"| NUDGE
+
+    NUDGE["SCR-01 Nudge tri\nBouton tri 1ere tache\nen surbrillance\nGuidage visuel, pas de popup"]:::screen
+    NUDGE -->|"Tap bouton tri"| FLOW02(["FLOW-02 Tri assiste"]):::success
+    NUDGE -->|"Tap +"| INPUT
+    NUDGE -->|"Navigation ailleurs"| NAV_EXPLORE
+
+    NAV_EXPLORE["Ecrans vides\nPas de taches triees\nRetour naturel vers inbox"]:::empty
+
+    classDef screen   fill:#e8f0fe,stroke:#4285f4,color:#1a1a1a
+    classDef decision fill:#fff8e1,stroke:#f9a825,color:#1a1a1a
+    classDef error    fill:#fce8e6,stroke:#d93025,color:#1a1a1a
+    classDef success  fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef loading  fill:#f3e5f5,stroke:#7b1fa2,color:#1a1a1a
+    classDef empty    fill:#f5f5f5,stroke:#9e9e9e,color:#1a1a1a
+    classDef trigger  fill:#e0f2f1,stroke:#00695c,color:#1a1a1a

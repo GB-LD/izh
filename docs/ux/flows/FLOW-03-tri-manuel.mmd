@@ -1,0 +1,30 @@
+flowchart TD
+    TRIGGER(["Tap bouton tri\nsur une tache inbox"]):::trigger
+    TRIGGER --> SCR02
+
+    SCR02["SCR-02 Overlay tri fusionne\nTitre de la tache visible\n4 quadrants outline\nBouton Aide-moi a decider primaire"]:::screen
+    SCR02 -->|"Tap direct sur quadrant\nex: Critique"| CLASSIFY
+    SCR02 -->|"Fermer"| CLOSE(["Retour inbox\ntache intacte"]):::success
+
+    CLASSIFY[/"Classement direct\nmethod: manual\nsource_flux: null"/]:::loading
+    CLASSIFY --> DEC_BACKLOG{"Backlog\nplein ?"}:::decision
+
+    DEC_BACKLOG -->|"Non, moins de 40"| SCR05
+    DEC_BACKLOG -->|"Oui, 40 sur 40"| ERR_FULL
+
+    ERR_FULL["Backlog plein 40/40\nPurger ou revenir a inbox"]:::error
+
+    SCR05["SCR-05 Resultat\nTache et quadrant attribue\nAnimation de classement\nCompteur N/M triees"]:::screen
+    SCR05 -->|"Tache suivante"| DEC_NEXT{"Taches restantes\ndans l inbox ?"}:::decision
+    SCR05 -->|"Voir le backlog"| NAV_BACKLOG(["Navigation backlog"]):::success
+
+    DEC_NEXT -->|"Oui"| SCR02
+    DEC_NEXT -->|"Non, inbox vide"| EMPTY(["Tout est trie"]):::success
+
+    classDef screen   fill:#e8f0fe,stroke:#4285f4,color:#1a1a1a
+    classDef decision fill:#fff8e1,stroke:#f9a825,color:#1a1a1a
+    classDef error    fill:#fce8e6,stroke:#d93025,color:#1a1a1a
+    classDef success  fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef loading  fill:#f3e5f5,stroke:#7b1fa2,color:#1a1a1a
+    classDef empty    fill:#f5f5f5,stroke:#9e9e9e,color:#1a1a1a
+    classDef trigger  fill:#e0f2f1,stroke:#00695c,color:#1a1a1a
