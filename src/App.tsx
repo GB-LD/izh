@@ -1,9 +1,5 @@
-function App() {
-  return (
-    <>
-      <h1>IZH</h1>
-    </>
-  );
-}
+import { DesignTokensPreview } from "./components/design-tokens-preview/DesignTokensPreview";
 
-export default App;
+export function App() {
+  return <DesignTokensPreview />;
+}
