@@ -1,0 +1,208 @@
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* Base — primitives & tokens non-utility */
+@import "./styles/base/index.css";
+
+/* Thèmes */
+@import "./styles/themes/light.css";
+
+/* Composants (à venir) */
+/* @import "./styles/components/button.css"; */
+
+/* Utilitaires custom (à venir) */
+/* @import "./styles/utilities/index.css"; */
+
+/* ==========================================================
+   @theme — Tokens sémantiques exposés comme utilitaires Tailwind.
+   Chaque --color-* génère bg-*, text-*, border-*, ring-*, etc.
+
+   Convention de nommage adaptée pour Tailwind :
+   - Surfaces   → bg-surface-base, bg-surface-subtle...
+   - Contenu    → text-content, text-content-secondary...
+     (renommé depuis --color-text-* pour éviter text-text-*)
+   - Bordures   → border-edge, border-edge-strong...
+     (renommé depuis --color-border-* pour éviter border-border-*)
+   - Actions    → bg-action-primary, bg-action-accent...
+   - Quadrants  → bg-quadrant-q1, bg-quadrant-q1-surface...
+   - Feedback   → bg-feedback-success, text-feedback-error...
+   ========================================================== */
+
+@theme {
+  /* ===== COULEURS — Primitives (pour preview/debug) =====
+     Exposées comme utilitaires Tailwind pour la preview du design system.
+     En production, utiliser les tokens sémantiques ci-dessous. */
+
+  /* Neutres chauds "Warm Stone" */
+  --color-neutral-0: var(--primitive-neutral-0);
+  --color-neutral-50: var(--primitive-neutral-50);
+  --color-neutral-100: var(--primitive-neutral-100);
+  --color-neutral-200: var(--primitive-neutral-200);
+  --color-neutral-300: var(--primitive-neutral-300);
+  --color-neutral-400: var(--primitive-neutral-400);
+  --color-neutral-500: var(--primitive-neutral-500);
+  --color-neutral-600: var(--primitive-neutral-600);
+  --color-neutral-700: var(--primitive-neutral-700);
+  --color-neutral-800: var(--primitive-neutral-800);
+  --color-neutral-900: var(--primitive-neutral-900);
+  --color-neutral-950: var(--primitive-neutral-950);
+
+  /* Bleu Accent */
+  --color-accent-50: var(--primitive-accent-50);
+  --color-accent-100: var(--primitive-accent-100);
+  --color-accent-200: var(--primitive-accent-200);
+  --color-accent-300: var(--primitive-accent-300);
+  --color-accent-400: var(--primitive-accent-400);
+  --color-accent-500: var(--primitive-accent-500);
+  --color-accent-600: var(--primitive-accent-600);
+  --color-accent-700: var(--primitive-accent-700);
+  --color-accent-800: var(--primitive-accent-800);
+  --color-accent-900: var(--primitive-accent-900);
+
+  /* Rouge "Feu" */
+  --color-red-light: var(--primitive-red-light);
+  --color-red-base: var(--primitive-red-base);
+  --color-red-dark: var(--primitive-red-dark);
+
+  /* Orange "Soleil" */
+  --color-orange-light: var(--primitive-orange-light);
+  --color-orange-base: var(--primitive-orange-base);
+  --color-orange-dark: var(--primitive-orange-dark);
+
+  /* Vert "Sauge" */
+  --color-green-light: var(--primitive-green-light);
+  --color-green-base: var(--primitive-green-base);
+  --color-green-dark: var(--primitive-green-dark);
+
+  /* Jaune "Chartreuse doré" */
+  --color-yellow-light: var(--primitive-yellow-light);
+  --color-yellow-base: var(--primitive-yellow-base);
+  --color-yellow-dark: var(--primitive-yellow-dark);
+
+  /* ===== COULEURS — Surfaces ===== */
+  --color-surface-base: var(--primitive-neutral-0);
+  --color-surface-subtle: var(--primitive-neutral-50);
+  --color-surface-muted: var(--primitive-neutral-100);
+  --color-surface-inverse: var(--primitive-neutral-950);
+  --color-surface-accent: var(--primitive-accent-50);
+
+  /* ===== COULEURS — Contenu (texte) ===== */
+  --color-content: var(--primitive-neutral-800);
+  --color-content-secondary: var(--primitive-neutral-400);
+  --color-content-tertiary: var(--primitive-neutral-300);
+  --color-content-inverse: var(--primitive-neutral-0);
+  --color-content-accent: var(--primitive-accent-500);
+  --color-content-danger: var(--primitive-red-dark);
+
+  /* ===== COULEURS — Actions ===== */
+  --color-action-primary: var(--primitive-neutral-800);
+  --color-action-primary-hover: var(--primitive-neutral-950);
+  --color-action-primary-active: var(--primitive-neutral-950);
+  --color-action-accent: var(--primitive-accent-500);
+  --color-action-accent-hover: var(--primitive-accent-600);
+  --color-action-accent-active: var(--primitive-accent-700);
+  --color-action-ghost: transparent;
+  --color-action-ghost-hover: var(--primitive-neutral-50);
+  --color-action-danger: var(--primitive-red-base);
+  --color-action-danger-hover: var(--primitive-red-dark);
+
+  /* ===== COULEURS — Bordures ===== */
+  --color-edge: var(--primitive-neutral-100);
+  --color-edge-strong: var(--primitive-neutral-200);
+  --color-edge-accent: var(--primitive-accent-500);
+  --color-edge-danger: var(--primitive-red-base);
+  --color-edge-focus: var(--primitive-accent-500);
+
+  /* ===== COULEURS — Quadrants Eisenhower ===== */
+  --color-quadrant-q1: var(--primitive-red-base);
+  --color-quadrant-q1-surface: var(--primitive-red-light);
+  --color-quadrant-q2: var(--primitive-green-base);
+  --color-quadrant-q2-surface: var(--primitive-green-light);
+  --color-quadrant-q3: var(--primitive-orange-base);
+  --color-quadrant-q3-surface: var(--primitive-orange-light);
+  --color-quadrant-q4: var(--primitive-yellow-base);
+  --color-quadrant-q4-surface: var(--primitive-yellow-light);
+  --color-quadrant-active: var(--primitive-yellow-base);
+  --color-quadrant-active-surface: var(--primitive-yellow-light);
+  --color-quadrant-done: var(--primitive-green-base);
+  --color-quadrant-done-surface: var(--primitive-green-light);
+
+  /* ===== COULEURS — Feedback système ===== */
+  --color-feedback-success: var(--primitive-green-base);
+  --color-feedback-success-surface: var(--primitive-green-light);
+  --color-feedback-error: var(--primitive-red-base);
+  --color-feedback-error-surface: var(--primitive-red-light);
+  --color-feedback-warning: var(--primitive-orange-base);
+  --color-feedback-warning-surface: var(--primitive-orange-light);
+  --color-feedback-info: var(--primitive-accent-500);
+  --color-feedback-info-surface: var(--primitive-accent-50);
+
+  /* ===== TYPOGRAPHIE — Familles ===== */
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* ===== TYPOGRAPHIE — Tailles (ratio ~1.25 Major Third) =====
+     Remplace les tailles par défaut de Tailwind pour
+     enforcer l'échelle du design system izh. */
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.5;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.25;
+  --text-xl: 2.125rem;
+  --text-xl--line-height: 1.25;
+
+  /* ===== TYPOGRAPHIE — Tracking (letter-spacing) ===== */
+  --tracking-tight: -0.5px;
+  --tracking-snug: -0.3px;
+  --tracking-normal: 0px;
+
+  /* ===== ESPACEMENT — Sémantique =====
+     Le multiplicateur de base Tailwind (--spacing: 0.25rem = 4px)
+     est conservé. Ces tokens nommés s'ajoutent à l'échelle numérique. */
+  --spacing-component-sm: 0.5rem;
+  --spacing-component-md: 1rem;
+  --spacing-component-lg: 1.5rem;
+  --spacing-inline-xs: 0.25rem;
+  --spacing-inline-sm: 0.5rem;
+  --spacing-inline-md: 0.75rem;
+  --spacing-stack-sm: 0.5rem;
+  --spacing-stack-md: 1rem;
+  --spacing-stack-lg: 1.5rem;
+  --spacing-stack-xl: 2rem;
+  --spacing-page-mobile: 1rem;
+  --spacing-page-desktop: 4rem;
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --radius-component: 8px;
+  --radius-container: 12px;
+  --radius-badge: 4px;
+  --radius-pill: 9999px;
+
+  /* ===== OMBRES ===== */
+  --shadow-xs: 0 1px 3px oklch(0% 0 0 / 0.07);
+  --shadow-sm: 0 2px 6px oklch(0% 0 0 / 0.09);
+  --shadow-md: 0 4px 16px oklch(0% 0 0 / 0.12);
+  --shadow-lg: 0 8px 32px oklch(0% 0 0 / 0.16);
+  --shadow-card-hover: 0 1px 3px oklch(0% 0 0 / 0.07);
+  --shadow-button-hover: 0 2px 8px oklch(0% 0 0 / 0.19);
+  --shadow-dropdown: 0 4px 16px oklch(0% 0 0 / 0.12);
+  --shadow-modal: 0 4px 16px oklch(0% 0 0 / 0.12);
+  --shadow-toast: 0 2px 6px oklch(0% 0 0 / 0.09);
+  --shadow-nav-pill: 0 1px 4px oklch(0% 0 0 / 0.08);
+
+  /* ===== BREAKPOINTS ===== */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}

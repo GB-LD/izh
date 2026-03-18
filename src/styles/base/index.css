@@ -1,0 +1,125 @@
+@layer base {
+  :root {
+    /* ========================================================
+       PRIMITIVE TOKENS — Valeurs brutes, jamais utilisées
+       directement dans les composants. Seuls les tokens
+       sémantiques (@theme) les référencent.
+       ======================================================== */
+
+    /* --- Neutres chauds "Warm Stone" (H ≈ 92-106) --- */
+    --primitive-neutral-0: oklch(100% 0 0);
+    --primitive-neutral-50: oklch(97.6% 0.003 106);
+    --primitive-neutral-100: oklch(91.5% 0.004 106);
+    --primitive-neutral-200: oklch(86% 0.005 100);
+    --primitive-neutral-300: oklch(76.9% 0.006 106);
+    --primitive-neutral-400: oklch(62% 0.005 92);
+    --primitive-neutral-500: oklch(58% 0.006 92);
+    --primitive-neutral-600: oklch(48% 0.008 92);
+    --primitive-neutral-700: oklch(40% 0.01 92);
+    --primitive-neutral-800: oklch(32.9% 0.011 92);
+    --primitive-neutral-900: oklch(25% 0.01 92);
+    --primitive-neutral-950: oklch(18% 0.008 92);
+
+    /* --- Bleu Accent (H ≈ 253) --- */
+    --primitive-accent-50: oklch(96% 0.015 253);
+    --primitive-accent-100: oklch(92% 0.035 253);
+    --primitive-accent-200: oklch(84% 0.07 253);
+    --primitive-accent-300: oklch(75% 0.11 253);
+    --primitive-accent-400: oklch(68% 0.14 253);
+    --primitive-accent-500: oklch(60.6% 0.167 253);
+    --primitive-accent-600: oklch(53% 0.17 253);
+    --primitive-accent-700: oklch(45% 0.155 253);
+    --primitive-accent-800: oklch(37% 0.13 253);
+    --primitive-accent-900: oklch(30% 0.1 253);
+
+    /* --- Rouge "Feu" — Q1 Urgent & Important (H ≈ 24) --- */
+    --primitive-red-light: oklch(92% 0.035 24);
+    --primitive-red-base: oklch(58% 0.183 24);
+    --primitive-red-dark: oklch(48% 0.15 24);
+
+    /* --- Orange "Soleil" — Q3 Urgent, pas important (H ≈ 63) --- */
+    --primitive-orange-light: oklch(93% 0.04 63);
+    --primitive-orange-base: oklch(79.2% 0.152 63);
+    --primitive-orange-dark: oklch(60% 0.13 63);
+
+    /* --- Vert "Sauge" — Complété / Validé (H ≈ 180) --- */
+    --primitive-green-light: oklch(93% 0.03 180);
+    --primitive-green-base: oklch(68% 0.093 180);
+    --primitive-green-dark: oklch(48% 0.08 180);
+
+    /* --- Jaune "Chartreuse doré" — En cours (H ≈ 100) --- */
+    --primitive-yellow-light: oklch(94% 0.045 100);
+    --primitive-yellow-base: oklch(76.8% 0.157 100);
+    --primitive-yellow-dark: oklch(55% 0.12 100);
+
+    /* ========================================================
+       TOKENS NON-UTILITY — Pas de classe Tailwind générée,
+       utilisés directement en CSS dans les composants.
+       ======================================================== */
+
+    /* --- Durées --- */
+    --duration-instant: 0ms;
+    --duration-fast: 120ms;
+    --duration-normal: 200ms;
+    --duration-slow: 300ms;
+    --duration-slower: 500ms;
+
+    /* --- Courbes d'accélération --- */
+    --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-in: cubic-bezier(0.42, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.58, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* --- Transitions composites --- */
+    --transition-hover: var(--duration-fast) var(--ease-default);
+    --transition-expand: var(--duration-normal) var(--ease-out);
+    --transition-modal: var(--duration-slow) var(--ease-out);
+    --transition-drag: var(--duration-fast) var(--ease-spring);
+
+    /* --- Layout --- */
+    --layout-content-max: 600px;
+    --layout-content-min: 320px;
+    --layout-columns: 1;
+    --layout-navbar-height: 52px;
+    --layout-header-height: 48px;
+    --layout-safe-top: env(safe-area-inset-top);
+    --layout-safe-bottom: env(safe-area-inset-bottom);
+
+    /* --- Graisses typographiques --- */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* --- Interlignage --- */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+
+    /* --- Rôles typographiques composites (font shorthand) ---
+       Utilisés dans les composants CSS, pas comme utilitaires.
+       Ex: font: var(--text-h1-weight) var(--text-h1-size)/var(--text-h1-lh) var(--font-family-heading); */
+    --text-h1-size: 2.125rem;
+    --text-h1-weight: 700;
+    --text-h1-lh: 1.25;
+    --text-h1-tracking: -0.5px;
+
+    --text-h2-size: 1.25rem;
+    --text-h2-weight: 700;
+    --text-h2-lh: 1.25;
+    --text-h2-tracking: -0.3px;
+
+    --text-body-size: 0.9375rem;
+    --text-body-weight: 400;
+    --text-body-lh: 1.5;
+    --text-body-tracking: 0;
+
+    --text-label-size: 0.8125rem;
+    --text-label-weight: 500;
+    --text-label-lh: 1.5;
+    --text-label-tracking: 0;
+
+    --text-caption-size: 0.6875rem;
+    --text-caption-weight: 400;
+    --text-caption-lh: 1.5;
+    --text-caption-tracking: 0;
+  }
+}

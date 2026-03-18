@@ -1,0 +1,22 @@
+/*
+  Thème clair (défaut) — izh
+
+  Les valeurs par défaut sont définies dans les primitives (base/index.css)
+  et exposées via @theme (index.css). Ce fichier est le point d'override
+  pour le thème clair. Pour le MVP, les valeurs par défaut suffisent.
+
+  Structure prête pour le dark mode (post-MVP) :
+  - Dupliquer ce fichier en dark.css
+  - Wrapper les overrides dans [data-theme="dark"] { ... }
+  - Les tokens sémantiques (@theme) se mettent à jour automatiquement
+    car ils référencent les primitives via var().
+*/
+
+@layer base {
+  :root,
+  [data-theme="light"] {
+    /* Les primitives de base/index.css sont déjà les valeurs light.
+       Ajouter ici uniquement des overrides spécifiques au thème clair
+       si nécessaire. */
+  }
+}
