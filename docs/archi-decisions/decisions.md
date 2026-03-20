@@ -2,6 +2,7 @@
 updated: 2026-03-18
 ---
 
+
 # Journal des decisions techniques — IZH
 
 ## ADR-001 — Testing : Vitest + jsdom + React Testing Library
@@ -90,3 +91,35 @@ updated: 2026-03-18
 3. PR vers `staging` avec `closes #12` → squash merge → issue fermée auto → board mis à jour
 
 **Raisonnement :** La traçabilité issue → PR → merge est le standard des équipes pro sur GitHub. Les labels complètent les custom fields en rendant le contexte visible partout (liste issues, PRs, notifications).
+
+## ADR-005 — Button : architecture composant classique + CSS @layer
+
+**Date :** 2026-03-18
+**Statut :** Acceptée
+
+**Contexte :** Premier composant du design system IZH. Besoin de poser les patterns qui seront réutilisés par tous les composants suivants.
+
+**Options considérées (architecture) :**
+- **A) Librairie headless (Radix / Base UI)** — Installer une librairie, ne coder que le styling. Apprentissage faible, overkill pour un Button.
+- **B) Inspiré headless from scratch** — Reproduire les patterns compound/hook des librairies headless. Risque d'over-engineering sur un composant leaf.
+- **C) Composant classique monolithique** — Composant React fin + styling CSS séparé. Simple, SOLID, suffisant pour un composant leaf.
+
+**Options considérées (styling) :**
+- **A) Tailwind inline (variant maps en JS)** — Classes Tailwind dans le composant React via des maps `Record<Variant, string>`. Deux sources de vérité potentielles.
+- **B) CSS `@layer components` (pattern DaisyUI)** — Classes sémantiques (`.btn`, `.btn-primary`) dans un fichier CSS séparé. Le composant React mappe les props vers les classes via `cn()`. Séparation claire comportement/visuel.
+
+**Options considérées (utilitaire classes) :**
+- **A) `clsx` seul** — Concaténation conditionnelle. Pas de résolution de conflits Tailwind.
+- **B) `clsx` + `tailwind-merge` (`cn()`)** — Résolution intelligente des conflits (ex: `mt-4` + `mt-8` → `mt-8`). Standard industrie (shadcn/ui).
+
+**Décision :** Architecture C + Styling B + Utilitaire B.
+- Composant React fin : mapping props → classes CSS + ARIA
+- Styling dans `src/styles/components/button.css` avec `@layer components`
+- Utilitaire `cn()` dans `src/lib/utils.ts`
+
+**Principes solidbook appliqués :**
+- ch.13 — SRP : composant React = mapping, CSS = visuel. Deux raisons de changer, deux fichiers.
+- ch.5 — Affordances : colocation tests, dossier par composant, nommage `.btn-{variant}`
+- ch.25 — Pyramide de tests : comportement observable + contrat de classes CSS
+
+**Raisonnement :** Le Button est un composant leaf (pas de composition, pas de sous-composants). Les patterns headless résolvent des problèmes de composition qui n'existent pas ici. Le pattern DaisyUI sépare proprement le visuel (CSS) du comportement (React) et sera réutilisé pour les composants suivants (Card, Input, Toast). L'approche headless sera reconsidérée pour les composants complexes (Dialog, Combobox).

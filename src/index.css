@@ -7,8 +7,8 @@
 /* Thèmes */
 @import "./styles/themes/light.css";
 
-/* Composants (à venir) */
-/* @import "./styles/components/button.css"; */
+/* Composants */
+@import "./styles/components/button.css";
 
 /* Utilitaires custom (à venir) */
 /* @import "./styles/utilities/index.css"; */
@@ -166,6 +166,7 @@
   --spacing-component-sm: 0.5rem;
   --spacing-component-md: 1rem;
   --spacing-component-lg: 1.5rem;
+  --spacing-component-xl: 2rem;
   --spacing-inline-xs: 0.25rem;
   --spacing-inline-sm: 0.5rem;
   --spacing-inline-md: 0.75rem;

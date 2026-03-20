@@ -1,5 +1,9 @@
-import { DesignTokensPreview } from "./components/design-tokens-preview/DesignTokensPreview";
+import { DesignSystemPreview } from "./components/design-system/DesignSystemPreview";
 
 export function App() {
-  return <DesignTokensPreview />;
+  return (
+    <>
+      <DesignSystemPreview />
+    </>
+  );
 }
