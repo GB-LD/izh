@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 docs/solidbook.pdf
+AGENTS.md
+.claude
 
 # Editor directories and files
 .vscode/*
