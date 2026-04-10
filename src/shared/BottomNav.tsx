@@ -20,7 +20,7 @@ export function BottomNav() {
   if (activeOverlay !== null) return null;
 
   return (
-    <nav aria-label="Navigation principale" className="bottom-nav">
+    <nav aria-label="Navigation en bas de page" className="bottom-nav">
       <div role="tablist" className="bottom-nav__track">
         {NAV_ITEMS.map(({ path, label, Icon }) => {
           const isActive = location.pathname === path;

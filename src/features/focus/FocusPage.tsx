@@ -1,3 +1,8 @@
+import { Target } from "lucide-react";
+import { EmptyState } from "@/shared/EmptyState/EmptyState";
+
 export function FocusPage() {
-  return <h1>Focus</h1>;
+  return (
+    <EmptyState icon={Target} message="Tes tâches actives apparaîtront ici" />
+  );
 }

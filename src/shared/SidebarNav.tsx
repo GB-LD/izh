@@ -67,7 +67,11 @@ export function SidebarNav() {
                 {path === "/" && inboxCount > 0 && (
                   <span
                     className="nav-item__badge sidebar-nav__badge"
-                    aria-label={`${inboxCount} tâches à trier`}
+                    aria-label={
+                      inboxCount === 1
+                        ? "1 tâche à trier"
+                        : `${inboxCount} tâches à trier`
+                    }
                   >
                     {inboxCount > 9 ? "9+" : inboxCount}
                   </span>

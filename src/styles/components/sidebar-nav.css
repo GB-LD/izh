@@ -69,7 +69,7 @@
 
   @media (hover: hover) {
     .sidebar-nav__toggle:hover {
-      color: var(--color-content);
+      color: var(--color-content-secondary);
     }
   }
 
