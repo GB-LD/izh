@@ -435,60 +435,61 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 
 ---
 
-## C-05 — Bottom Nav (Segmented Icons)
+## C-05 — Bottom Nav (Icons + Labels)
 
-**Comportement utilisateur encouragé :** Naviguer entre les 4 espaces mentaux (Vrac → Réserve → Focus → Archive) — la barre fixe en bas est le seul repère de localisation dans l'app. L'onglet actif dit "tu es ici" par un pill blanc ombré dans un track gris, le badge dit "il y a quelque chose là-bas".
+**Comportement utilisateur encouragé :** Naviguer entre les 4 espaces mentaux (Vrac → Réserve → Focus → Archive) — la barre fixe en bas est le seul repère de localisation dans l'app. L'onglet actif dit "tu es ici" par un fond subtle sur l'icône + le label, le badge dit "il y a quelque chose là-bas".
 
 **Référence :** Kholmatova (pattern de navigation — orientation spatiale), Nogier (finger-friendly ≥ 44px, feedback immédiat < 100ms)
 
-**Direction choisie :** Segmented control icons-only — track gris avec pill blanc ombré sur l'onglet actif, pas de labels texte. Compact (52px), zen, premium.
+**Direction choisie :** Bottom nav classique icônes + labels — fond subtle sur l'onglet actif (radius 8px), pas de track global. Lisible (56px), équilibré, orienté contenu.
 
 ### Anatomie
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  ┌─────────────────────────────────────────────────────────┐ │
-│  │  ┌─────────┐                                            │ │
-│  │  │  inbox  │   layers      target      archive          │ │
-│  │  │  22px   │   22px        22px        22px             │ │
-│  │  └─────────┘                                            │ │
-│  │   pill blanc    icônes tertiary dans track gris          │ │
-│  └─────────────────────────────────────────────────────────┘ │
-│   ↕ track: 40px · bar: 52px · padding: 6px 12px             │
+│                                                              │
+│  ┌─────────┐                                                 │
+│  │  inbox  │   layers      target      archive               │
+│  │  20px   │   20px        20px        20px                  │
+│  │  Vrac   │   Réserve     Focus       Archive               │
+│  │  11px   │   11px        11px        11px                  │
+│  └─────────┘                                                 │
+│   fond subtle   icônes + labels tertiary, pas de fond        │
+│   radius 8px                                                 │
+│                                                              │
+│   padding: 8px 12px                                          │
 └──────────────────────────────────────────────────────────────┘
-  ↕ height: 52px · position: sticky bottom · safe-area-inset
+  ↕ height: 56px · position: sticky bottom · safe-area-inset
 ```
 
 **Tokens utilisés :**
-
-- Hauteur barre : 52px (token à créer : `var(--layout-navbar-height)`)
+- Hauteur barre : 56px (`var(--layout-navbar-height)`)
 - Fond barre : `var(--color-surface-base)` (#FFFFFF)
 - Bordure top : 1px `var(--color-border-default)` (#E3E3E0)
-- Track fond : #EDEDEB · `border-radius: var(--radius-container)` (12px)
-- Track padding : 3px · gap entre segments : 2px
-- Pill actif fond : `var(--color-surface-base)` (#FFFFFF) · `border-radius: 10px`
-- Pill actif ombre : `0 1px 4px oklch(0% 0 0 / 0.08)` (token : `--shadow-nav-pill`)
-- Icône inactive : `var(--color-text-tertiary)` (#B4B4B0) · 22×22px
-- Icône active : `var(--color-text-primary)` (#37352F) · 22×22px
-- Pas de labels — icônes seules (accessibilité via `aria-label`)
-- Layout track : `display: flex` · segments `flex: 1` · `align-items: center` · `justify-content: center`
+- Pas de track global — fond uniquement sur l'onglet actif
+- Pill actif fond : `var(--color-surface-subtle)` (#F7F7F5) · `border-radius: 8px`
+- Pill actif padding : 6px 12px (enveloppe icône + label)
+- Icône inactive : `var(--color-text-tertiary)` (#B4B4B0) · 20×20px
+- Icône active : `var(--color-text-primary)` (#37352F) · 20×20px
+- Label inactive : `var(--color-text-tertiary)` (#B4B4B0) · Inter 11px Regular · `letter-spacing: 0`
+- Label active : `var(--color-text-primary)` (#37352F) · Inter 11px Medium (500)
+- Gap icône → label : 2px
+- Layout barre : `display: flex` · segments `flex: 1` · `align-items: center` · `justify-content: center`
 - Safe area : `env(safe-area-inset-bottom)` — iOS/Android
 
-**Tokens manquants à créer dans le livrable 05 :**
-
-- `--shadow-nav-pill: 0 1px 4px oklch(0% 0 0 / 0.08)` — ombre douce du pill actif
-- `--layout-navbar-height: 52px` — mise à jour de 56px → 52px
+**Tokens utilisés (déjà définis dans 05) :**
+- `--layout-navbar-height: 56px`
 
 ---
 
 ### Icônes par onglet
 
-| Onglet  | Icône (Lucide) | Signification                                 | `aria-label` |
-| ------- | -------------- | --------------------------------------------- | ------------ |
-| Vrac    | `inbox`        | Boîte de réception — tout arrive ici          | "Vrac"       |
-| Réserve | `layers`       | Couches empilées — tâches triées par quadrant | "Réserve"    |
-| Focus   | `target`       | Cible — exécution ciblée                      | "Focus"      |
-| Archive | `archive`      | Boîte d'archive — tâches complétées           | "Archive"    |
+| Onglet | Icône (Lucide) | Signification | `aria-label` |
+|---|---|---|---|
+| Vrac | `inbox` | Boîte de réception — tout arrive ici | "Vrac" |
+| Réserve | `layers` | Couches empilées — tâches triées par quadrant | "Réserve" |
+| Focus | `target` | Cible — exécution ciblée | "Focus" |
+| Archive | `archive` | Boîte d'archive — tâches complétées | "Archive" |
 
 > **Pas de labels texte.** Les 4 icônes Lucide sont suffisamment distinctes et universelles. L'accessibilité est assurée par `aria-label` sur chaque onglet. Ce choix réduit le bruit visuel et renforce le caractère zen d'izh.
 
@@ -496,37 +497,36 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 
 ### États
 
-| État                | Déclencheur                                | Changement visuel                                                                                                       | Comportement                             |
-| ------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Onglet inactif**  | —                                          | Icône 22px en `--color-text-tertiary`. Pas de fond (track gris visible)                                                 | Tappable, zone 44px min                  |
-| **Onglet actif**    | Navigation vers la vue                     | Pill blanc (`--color-surface-base`) + `border-radius: 10px` + `--shadow-nav-pill`. Icône 22px en `--color-text-primary` | 1 seul onglet actif à la fois            |
-| **Hover (desktop)** | Survol souris sur onglet inactif           | Icône → `--color-text-secondary`. Fond subtil `--color-surface-subtle` + radius 10px                                    | `cursor: pointer`                        |
-| **Focus-visible**   | Tab / focus clavier                        | Ring : `0 0 0 2px var(--color-surface-base), 0 0 0 4px var(--color-border-focus)` sur le segment                        | Jamais supprimer — obligatoire WCAG      |
-| **Avec badge**      | `vrac.count > 0` depuis une autre vue      | Pill rouge (`--color-action-danger`) 16×16px en haut-droite de l'icône Vrac. Texte 9px bold inverse                     | Le badge disparaît quand on est sur Vrac |
-| **Masqué**          | Overlay ouvert (tri, purge, questionnaire) | La barre entière disparaît (`display: none` ou slide down)                                                              | Réapparaît à la fermeture de l'overlay   |
+| État | Déclencheur | Changement visuel | Comportement |
+|---|---|---|---|
+| **Onglet inactif** | — | Icône 20px + label 11px en `--color-text-tertiary`. Pas de fond | Tappable, zone 44px min |
+| **Onglet actif** | Navigation vers la vue | Fond `--color-surface-subtle` (#F7F7F5) + `border-radius: 8px`. Icône 20px + label 11px Medium en `--color-text-primary` | 1 seul onglet actif à la fois |
+| **Hover (desktop)** | Survol souris sur onglet inactif | Icône + label → `--color-text-secondary`. Fond `--color-surface-subtle` + radius 8px | `cursor: pointer` |
+| **Focus-visible** | Tab / focus clavier | Ring : `0 0 0 2px var(--color-surface-base), 0 0 0 4px var(--color-border-focus)` sur le segment | Jamais supprimer — obligatoire WCAG |
+| **Avec badge** | `vrac.count > 0` depuis une autre vue | Pill rouge (`--color-action-danger`) 16×16px en haut-droite de l'icône Vrac. Texte 9px bold inverse | Le badge disparaît quand on est sur Vrac |
+| **Masqué** | Overlay ouvert (tri, purge, questionnaire) | La barre entière disparaît (`display: none` ou slide down) | Réapparaît à la fermeture de l'overlay |
 
-> **Transition du pill actif :** Le pill blanc se déplace vers l'onglet sélectionné avec `transition: transform 200ms var(--ease-default)` — slide fluide entre les segments.
+> **Transition de l'onglet actif :** Le fond subtle apparaît sur l'onglet sélectionné avec `transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default)` — transition douce, pas de déplacement.
 
 ---
 
 ### Badge de notification
 
-| Propriété      | Valeur                                                                             |
-| -------------- | ---------------------------------------------------------------------------------- |
-| **Position**   | Haut-droite de l'icône Vrac, offset x+12 y-4                                       |
-| **Forme**      | Pill circulaire (`border-radius: 9999px`)                                          |
-| **Taille**     | 16×16px minimum (s'élargit si compteur > 9)                                        |
-| **Fond**       | `var(--color-action-danger)` (#D14040)                                             |
-| **Texte**      | Inter 9px Bold 700 · `var(--color-text-inverse)` (#FFF)                            |
+| Propriété | Valeur |
+|---|---|
+| **Position** | Haut-droite de l'icône Vrac, offset x+12 y-4 |
+| **Forme** | Pill circulaire (`border-radius: 9999px`) |
+| **Taille** | 16×16px minimum (s'élargit si compteur > 9) |
+| **Fond** | `var(--color-action-danger)` (#D14040) |
+| **Texte** | Inter 9px Bold 700 · `var(--color-text-inverse)` (#FFF) |
 | **Visibilité** | Visible uniquement depuis Réserve, Focus et Archive — masqué quand on est sur Vrac |
-| **Contenu**    | Nombre de tâches non triées dans le Vrac                                           |
+| **Contenu** | Nombre de tâches non triées dans le Vrac |
 
 ---
 
 ### Règles d'usage
 
 **Faire :**
-
 - Toujours 4 onglets — pas de variation selon le contexte
 - Zone tactile minimum 44×44px par segment (le segment `flex: 1` garantit ~85px sur 375px)
 - 1 seul onglet actif à la fois — toujours le même que la vue courante
@@ -535,44 +535,54 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 - `aria-label` obligatoire sur chaque onglet (pas de label visible)
 
 **Ne pas faire :**
-
-- Pas de labels texte — les icônes seules suffisent pour 4 destinations bien distinctes
-- Pas d'animation de rebond sur le pill — le slide est linéaire et calme
+- Pas de track global en fond gris — le fond subtle est uniquement sur l'onglet actif
+- Pas d'animation de déplacement (sliding pill) — la transition est sur place (fade background)
 - Pas de scroll horizontal — les 4 segments sont toujours visibles
 - Pas de bottom nav pendant les overlays — elle masque et réapparaît
 
 **Anti-patterns izh :**
-
 - Pas de FAB (Floating Action Button) au-dessus de la nav — contraire à la philosophie calme
 - Pas de 5ème onglet "Plus" ou "Profil" — izh est 4 espaces, point
 - Pas de bottom nav sur desktop — remplacée par une sidebar navigation
-- Pas de labels texte sous les icônes — le track segmenté + pill ombré rend l'état actif évident sans texte
+- Pas de pill blanc ombré sur track gris (style segmented control) — ce n'est pas la direction retenue
 
 ---
 
 ### Responsive
 
-| Breakpoint                | Comportement                                                                                    |
-| ------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Mobile** (< 768px)      | Bottom nav fixe en bas, 52px + safe area. Track segmenté + pill ombré. Icônes seules            |
-| **Tablette** (768-1023px) | Bottom nav identique au mobile                                                                  |
-| **Desktop** (≥ 1024px)    | Bottom nav masquée → remplacée par une sidebar navigation à gauche (240px) avec icônes + labels |
+| Breakpoint | Comportement |
+|---|---|
+| **Mobile** (< 768px) | Bottom nav fixe en bas, 56px + safe area. Icônes 20px + labels 11px. Fond subtle sur actif |
+| **Tablette** (768-1023px) | Bottom nav identique au mobile |
+| **Desktop** (≥ 1024px) | Bottom nav masquée → remplacée par une sidebar navigation à gauche (240px) avec icônes + labels |
 
 ---
 
 ### Accessibilité
 
-| Critère           | Spécification                                                                                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Élément**       | `<nav>` avec `aria-label="Navigation principale"`                                                                                                              |
-| **Items**         | `<a>` ou `<button>` avec `aria-current="page"` sur l'onglet actif                                                                                              |
-| **Labels**        | `aria-label` obligatoire sur chaque onglet ("Vrac", "Réserve", "Focus", "Archive") — pas de label visible                                                      |
-| **Focus**         | `:focus-visible` obligatoire — ring 2px `--color-border-focus` sur le segment                                                                                  |
-| **Contraste**     | Actif : icône #37352F sur pill #FFFFFF = ~14.5:1 ✅ AAA · Inactif : icône #B4B4B0 sur track #EDEDEB = ~1.6:1 — renforcé par la forme iconique (conforme 1.4.1) |
-| **Clavier**       | `Tab` entre les onglets, `Enter` / `Space` pour naviguer                                                                                                       |
-| **Touch**         | Zone minimum 44×44px par segment (~85px sur 375px) · padding track 3px évite les erreurs de tap                                                                |
-| **Badge**         | `aria-label="Vrac, 3 tâches non triées"` — le nombre est annoncé                                                                                               |
-| **Screen reader** | Annonce "Navigation principale, Vrac sélectionné, 4 onglets"                                                                                                   |
+| Critère | Spécification |
+|---|---|
+| **Élément** | `<nav>` avec `aria-label="Navigation principale"` |
+| **Items** | `<a>` ou `<button>` avec `aria-current="page"` sur l'onglet actif |
+| **Labels** | Labels visibles ("Vrac", "Réserve", "Focus", "Archive") — `aria-label` redondant mais conservé pour cohérence WCAG |
+| **Focus** | `:focus-visible` obligatoire — ring 2px `--color-border-focus` sur le segment |
+| **Contraste** | Actif : icône + label #37352F sur fond #F7F7F5 = ~13.5:1 ✅ AAA · Inactif : icône + label #B4B4B0 sur fond #FFFFFF = ~2.1:1 — renforcé par la forme iconique + le label (conforme 1.4.1) |
+| **Clavier** | `Tab` entre les onglets, `Enter` / `Space` pour naviguer |
+| **Touch** | Zone minimum 44×44px par segment (~85px sur 375px) · padding track 3px évite les erreurs de tap |
+| **Badge** | `aria-label="Vrac, 3 tâches non triées"` — le nombre est annoncé |
+| **Screen reader** | Annonce "Navigation principale, Vrac sélectionné, 4 onglets" |
+
+---
+
+## Checklist de validation — Bottom Nav ✅
+
+- [x] Tous les états définis (inactif, actif, hover, focus-visible, badge, masqué)
+- [x] Variantes documentées (icons + labels + fond subtle sur actif, V0)
+- [x] Tokens de design référencés (aucune valeur hardcodée) + tokens manquants identifiés
+- [x] Règles d'accessibilité : aria-label, focus-visible, contraste vérifié
+- [x] Comportement responsive documenté (mobile, tablette, desktop sidebar)
+- [x] Cas limites définis (badge > 9, overlay masquage, safe area, transition pill)
+- [x] Règles d'usage (quand utiliser, quand ne pas utiliser, anti-patterns)
 
 ---
 

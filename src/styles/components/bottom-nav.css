@@ -1,0 +1,80 @@
+@layer components {
+  /* ===== -o-table-baseline: ; ===== */
+
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-[100];
+
+    height: calc(var(--layout-navbar-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: var(--color-surface-base);
+    border-top: 1px solid var(--color-edge);
+  }
+
+  @media (width >= 1024px) {
+    .bottom-nav {
+      @apply hidden;
+    }
+  }
+
+  .bottom-nav__track {
+    @apply flex items-center;
+
+    height: var(--layout-navbar-height);
+  }
+
+  .nav-item {
+    @apply flex flex-1 items-center justify-center;
+    @apply min-h-[44px] h-full;
+    @apply cursor-pointer select-none;
+    @apply border-0;
+
+    background-color: transparent;
+    color: var(--color-content-tertiary);
+    transition:
+      background-color 150ms var(--ease-default),
+      color 150ms var(--ease-default);
+  }
+
+  .nav-item:focus-visible {
+    @apply outline-none;
+
+    box-shadow:
+      0 0 0 2px var(--color-surface-base),
+      0 0 0 4px var(--color-edge-focus);
+  }
+
+  /* Hover — onglet inactif uniquement (desktop) */
+  @media (hover: hover) {
+    .nav-item:not(.nav-item--active):hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-content-secondary);
+    }
+  }
+
+  /* ===== ÉTAT ACTIF ===== */
+
+  .nav-item--active {
+    background-color: var(--color-surface-subtle);
+    color: var(--color-content);
+  }
+
+  /* ===== BADGE de notification ===== */
+
+  .nav-item__badge {
+    @apply absolute pointer-events-none text-center;
+
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-action-danger);
+    color: var(--color-content-inverse);
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: var(--font-weight-bold);
+    line-height: 16px;
+  }
+}

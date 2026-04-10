@@ -9,6 +9,7 @@
 
 /* Composants */
 @import "./styles/components/button.css";
+@import "./styles/components/bottom-nav.css";
 
 /* Utilitaires custom (à venir) */
 /* @import "./styles/utilities/index.css"; */
