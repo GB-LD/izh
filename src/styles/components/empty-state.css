@@ -1,0 +1,58 @@
+@layer components {
+  @keyframes empty-state-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 280px;
+    margin: auto; /* centres horizontally + vertically in a flex-column parent */
+    text-align: center;
+
+    animation: empty-state-in var(--duration-normal) var(--ease-out) both;
+  }
+
+  /* Icon → message gap : 12px */
+  .empty-state > svg {
+    flex-shrink: 0;
+    margin-bottom: var(--spacing-inline-md); /* 12px */
+  }
+
+  .empty-state__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-sm); /* 8px entre message et sub-message */
+  }
+
+  .empty-state__message {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-content-secondary);
+  }
+
+  .empty-state__sub-message {
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-content-tertiary);
+  }
+
+  /* Message/text block → CTA gap : 16px */
+  .empty-state > .btn {
+    margin-top: var(--spacing-stack-md); /* 16px */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .empty-state {
+      animation: none;
+    }
+  }
+}

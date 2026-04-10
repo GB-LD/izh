@@ -1,0 +1,19 @@
+.layout {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.layout__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0 auto;
+  padding-bottom: calc(
+    var(--layout-navbar-height) + env(safe-area-inset-bottom)
+  );
+
+  @media (min-width: 1024px) {
+    padding-bottom: 0;
+    margin: 0;
+  }
+}

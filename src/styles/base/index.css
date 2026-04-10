@@ -80,7 +80,7 @@
     --layout-content-max: 600px;
     --layout-content-min: 320px;
     --layout-columns: 1;
-    --layout-navbar-height: 52px;
+    --layout-navbar-height: 56px;
     --layout-header-height: 48px;
     --layout-safe-top: env(safe-area-inset-top);
     --layout-safe-bottom: env(safe-area-inset-bottom);
