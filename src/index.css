@@ -10,9 +10,10 @@
 /* Composants */
 @import "./styles/components/button.css";
 @import "./styles/components/bottom-nav.css";
+@import "./styles/components/sidebar-nav.css";
 
 /* Utilitaires custom (à venir) */
-/* @import "./styles/utilities/index.css"; */
+@import "./styles/utilities/index.css";
 
 /* ==========================================================
    @theme — Tokens sémantiques exposés comme utilitaires Tailwind.

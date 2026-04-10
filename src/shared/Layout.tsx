@@ -1,4 +1,5 @@
 import { BottomNav } from "./BottomNav";
+import { SidebarNav } from "./SidebarNav";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -6,9 +7,10 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <>
-      <main>{children}</main>
+    <div className="layout">
+      <SidebarNav />
+      <main className="layout__content">{children}</main>
       <BottomNav />
-    </>
+    </div>
   );
 }
