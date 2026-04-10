@@ -1,8 +1,5 @@
-import { Button } from "@/components/shared/Button/Button";
-import type {
-  ButtonVariant,
-  ButtonSize,
-} from "@/components/shared/Button/Button";
+import { Button } from "@/shared/Button/Button";
+import type { ButtonVariant, ButtonSize } from "@/shared/Button/Button";
 import { Section } from "../design-tokens-preview/shared";
 
 function StarIcon() {
