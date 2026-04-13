@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import { Inbox, Archive, Target, Layers } from "lucide-react";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -12,8 +12,6 @@ const NAV_ITEMS = [
 ] as const;
 
 export function BottomNav() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const inboxCount = useTaskStore((s) => s.inboxTasks().length);
   const activeOverlay = useUIStore((s) => s.activeOverlay);
 
@@ -21,33 +19,35 @@ export function BottomNav() {
 
   return (
     <nav aria-label="Navigation en bas de page" className="bottom-nav">
-      <div role="tablist" className="bottom-nav__track">
+      <ul className="bottom-nav__list">
         {NAV_ITEMS.map(({ path, label, Icon }) => {
-          const isActive = location.pathname === path;
           return (
-            <button
-              key={path}
-              role="tab"
-              aria-current={isActive ? "page" : undefined}
-              aria-label={label}
-              className={cn("nav-item", isActive && "nav-item--active")}
-              onClick={() => navigate(path)}
-            >
-              <span className="relative inline-flex">
-                <Icon size={20} aria-hidden="true" />
-                {path === "/" && inboxCount > 0 && !isActive && (
-                  <span
-                    className="nav-item__badge"
-                    aria-label={`${inboxCount} tâches à trier`}
-                  >
-                    {inboxCount}
+            <li key={path} className="flex flex-1">
+              <NavLink
+                to={path}
+                aria-label={label}
+                className={({ isActive }) =>
+                  cn("nav-item", isActive && "nav-item--active")
+                }
+              >
+                {({ isActive }) => (
+                  <span className="relative inline-flex">
+                    <Icon size={20} aria-hidden="true" />
+                    {path === "/" && inboxCount > 0 && !isActive && (
+                      <span
+                        className="nav-item__badge"
+                        aria-label={`${inboxCount} tâches à trier`}
+                      >
+                        {inboxCount}
+                      </span>
+                    )}
                   </span>
                 )}
-              </span>
-            </button>
+              </NavLink>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </nav>
   );
 }

@@ -1,22 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach } from "vitest";
 import { BottomNav } from "./BottomNav";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { Task } from "@/schemas/task";
-
-// ---------------------------------------------------------------------------
-// Mocks — only useNavigate, useLocation works via MemoryRouter
-// ---------------------------------------------------------------------------
-
-const mockNavigate = vi.fn();
-
-vi.mock("react-router", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-router")>();
-  return { ...actual, useNavigate: () => mockNavigate };
-});
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -51,7 +39,6 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  mockNavigate.mockClear();
   useTaskStore.setState({ tasks: [] });
   useUIStore.setState({
     activeOverlay: null,
@@ -65,12 +52,12 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe("BottomNav — rendering", () => {
-  it("renders all 4 tabs", () => {
+  it("renders all 4 links", () => {
     renderNav();
-    expect(screen.getByRole("tab", { name: "Vrac" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Réserve" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Focus" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Archive" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Vrac" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Réserve" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Focus" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Archive" })).toBeInTheDocument();
   });
 
   it("renders the nav with the correct aria-label", () => {
@@ -97,7 +84,7 @@ describe("BottomNav — rendering", () => {
 // Active state
 // ---------------------------------------------------------------------------
 
-describe("BottomNav — active tab", () => {
+describe("BottomNav — active link", () => {
   it.each([
     { path: "/", label: "Vrac" },
     { path: "/backlog", label: "Réserve" },
@@ -107,36 +94,36 @@ describe("BottomNav — active tab", () => {
     "applies nav-item--active on '$label' when pathname = '$path'",
     ({ path, label }) => {
       renderNav(path);
-      expect(screen.getByRole("tab", { name: label })).toHaveClass(
+      expect(screen.getByRole("link", { name: label })).toHaveClass(
         "nav-item--active",
       );
     },
   );
 
-  it("does not apply nav-item--active on inactive tabs", () => {
+  it("does not apply nav-item--active on inactive links", () => {
     renderNav("/focus");
-    expect(screen.getByRole("tab", { name: "Vrac" })).not.toHaveClass(
+    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveClass(
       "nav-item--active",
     );
-    expect(screen.getByRole("tab", { name: "Réserve" })).not.toHaveClass(
+    expect(screen.getByRole("link", { name: "Réserve" })).not.toHaveClass(
       "nav-item--active",
     );
-    expect(screen.getByRole("tab", { name: "Archive" })).not.toHaveClass(
+    expect(screen.getByRole("link", { name: "Archive" })).not.toHaveClass(
       "nav-item--active",
     );
   });
 
-  it("sets aria-current='page' on the active tab", () => {
+  it("sets aria-current='page' on the active link", () => {
     renderNav("/archive");
-    expect(screen.getByRole("tab", { name: "Archive" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Archive" })).toHaveAttribute(
       "aria-current",
       "page",
     );
   });
 
-  it("does not set aria-current on inactive tabs", () => {
+  it("does not set aria-current on inactive links", () => {
     renderNav("/archive");
-    expect(screen.getByRole("tab", { name: "Vrac" })).not.toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveAttribute(
       "aria-current",
     );
   });
@@ -146,24 +133,18 @@ describe("BottomNav — active tab", () => {
 // Navigation
 // ---------------------------------------------------------------------------
 
-describe("BottomNav — navigation", () => {
+describe("BottomNav — href", () => {
   it.each([
     { path: "/", label: "Vrac" },
     { path: "/backlog", label: "Réserve" },
     { path: "/focus", label: "Focus" },
     { path: "/archive", label: "Archive" },
-  ])("navigates to '$path' when clicking '$label'", async ({ path, label }) => {
-    const user = userEvent.setup();
+  ])("'$label' has href '$path'", ({ path, label }) => {
     renderNav();
-    await user.click(screen.getByRole("tab", { name: label }));
-    expect(mockNavigate).toHaveBeenCalledWith(path);
-  });
-
-  it("calls navigate exactly once per click", async () => {
-    const user = userEvent.setup();
-    renderNav();
-    await user.click(screen.getByRole("tab", { name: "Focus" }));
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("link", { name: label })).toHaveAttribute(
+      "href",
+      path,
+    );
   });
 });
 

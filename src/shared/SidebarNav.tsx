@@ -1,6 +1,6 @@
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import {
   Inbox,
   Archive,
@@ -19,8 +19,6 @@ const NAV_ITEMS = [
 ] as const;
 
 export function SidebarNav() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const inboxCount = useTaskStore((s) => s.inboxTasks().length);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -46,21 +44,20 @@ export function SidebarNav() {
         </button>
       </div>
 
-      <ul className="sidebar-nav__list" role="tablist">
+      <ul className="sidebar-nav__list">
         {NAV_ITEMS.map(({ path, label, Icon }) => {
-          const isActive = location.pathname === path;
           return (
             <li key={path}>
-              <button
-                role="tab"
-                aria-current={isActive ? "page" : undefined}
+              <NavLink
+                to={path}
                 aria-label={label}
                 title={isCollapsed ? label : undefined}
-                className={cn(
-                  "sidebar-nav__item",
-                  isActive && "sidebar-nav__item--active",
-                )}
-                onClick={() => navigate(path)}
+                className={({ isActive }) =>
+                  cn(
+                    "sidebar-nav__item",
+                    isActive && "sidebar-nav__item--active",
+                  )
+                }
               >
                 <Icon size={22} aria-hidden="true" />
                 <span className="sidebar-nav__label">{label}</span>
@@ -76,7 +73,7 @@ export function SidebarNav() {
                     {inboxCount > 9 ? "9+" : inboxCount}
                   </span>
                 )}
-              </button>
+              </NavLink>
             </li>
           );
         })}
