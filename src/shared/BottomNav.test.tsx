@@ -54,7 +54,9 @@ beforeEach(() => {
 describe("BottomNav — rendering", () => {
   it("renders all 4 links", () => {
     renderNav();
-    expect(screen.getByRole("link", { name: "Vrac" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Réserve" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Focus" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Archive" })).toBeInTheDocument();
@@ -86,7 +88,7 @@ describe("BottomNav — rendering", () => {
 
 describe("BottomNav — active link", () => {
   it.each([
-    { path: "/", label: "Vrac" },
+    { path: "/", label: "Liste des tâches" },
     { path: "/backlog", label: "Réserve" },
     { path: "/focus", label: "Focus" },
     { path: "/archive", label: "Archive" },
@@ -102,9 +104,9 @@ describe("BottomNav — active link", () => {
 
   it("does not apply nav-item--active on inactive links", () => {
     renderNav("/focus");
-    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveClass(
-      "nav-item--active",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).not.toHaveClass("nav-item--active");
     expect(screen.getByRole("link", { name: "Réserve" })).not.toHaveClass(
       "nav-item--active",
     );
@@ -123,9 +125,9 @@ describe("BottomNav — active link", () => {
 
   it("does not set aria-current on inactive links", () => {
     renderNav("/archive");
-    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveAttribute(
-      "aria-current",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).not.toHaveAttribute("aria-current");
   });
 });
 
@@ -135,7 +137,7 @@ describe("BottomNav — active link", () => {
 
 describe("BottomNav — href", () => {
   it.each([
-    { path: "/", label: "Vrac" },
+    { path: "/", label: "Liste des tâches" },
     { path: "/backlog", label: "Réserve" },
     { path: "/focus", label: "Focus" },
     { path: "/archive", label: "Archive" },
@@ -153,13 +155,13 @@ describe("BottomNav — href", () => {
 // ---------------------------------------------------------------------------
 
 describe("BottomNav — inbox badge", () => {
-  it("shows the badge when inboxCount > 0 and not on Vrac", () => {
+  it("shows the badge when inboxCount > 0 and not on Inbox", () => {
     useTaskStore.setState({ tasks: [makeTask(), makeTask()] });
     renderNav("/focus");
     expect(screen.getByLabelText("2 tâches à trier")).toBeInTheDocument();
   });
 
-  it("hides the badge when on Vrac (active tab)", () => {
+  it("hides the badge when on Inbox (active tab)", () => {
     useTaskStore.setState({ tasks: [makeTask()] });
     renderNav("/");
     expect(screen.queryByLabelText(/tâches à trier/)).not.toBeInTheDocument();

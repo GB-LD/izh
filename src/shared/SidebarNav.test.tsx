@@ -49,7 +49,9 @@ beforeEach(() => {
 describe("SidebarNav — rendering", () => {
   it("renders all 4 links", () => {
     renderNav();
-    expect(screen.getByRole("link", { name: "Vrac" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Réserve" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Focus" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Archive" })).toBeInTheDocument();
@@ -81,7 +83,7 @@ describe("SidebarNav — rendering", () => {
 
 describe("SidebarNav — active link", () => {
   it.each([
-    { path: "/", label: "Vrac" },
+    { path: "/", label: "Liste des tâches" },
     { path: "/backlog", label: "Réserve" },
     { path: "/focus", label: "Focus" },
     { path: "/archive", label: "Archive" },
@@ -97,9 +99,9 @@ describe("SidebarNav — active link", () => {
 
   it("does not apply sidebar-nav__item--active on inactive links", () => {
     renderNav("/focus");
-    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveClass(
-      "sidebar-nav__item--active",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).not.toHaveClass("sidebar-nav__item--active");
     expect(screen.getByRole("link", { name: "Réserve" })).not.toHaveClass(
       "sidebar-nav__item--active",
     );
@@ -118,9 +120,9 @@ describe("SidebarNav — active link", () => {
 
   it("does not set aria-current on inactive links", () => {
     renderNav("/archive");
-    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveAttribute(
-      "aria-current",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).not.toHaveAttribute("aria-current");
   });
 });
 
@@ -130,7 +132,7 @@ describe("SidebarNav — active link", () => {
 
 describe("SidebarNav — href", () => {
   it.each([
-    { path: "/", label: "Vrac" },
+    { path: "/", label: "Liste des tâches" },
     { path: "/backlog", label: "Réserve" },
     { path: "/focus", label: "Focus" },
     { path: "/archive", label: "Archive" },
@@ -198,10 +200,9 @@ describe("SidebarNav — collapse toggle", () => {
     await user.click(
       screen.getByRole("button", { name: "Réduire la navigation" }),
     );
-    expect(screen.getByRole("link", { name: "Vrac" })).toHaveAttribute(
-      "title",
-      "Vrac",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).toHaveAttribute("title", "Liste des tâches");
     expect(screen.getByRole("link", { name: "Focus" })).toHaveAttribute(
       "title",
       "Focus",
@@ -210,9 +211,9 @@ describe("SidebarNav — collapse toggle", () => {
 
   it("has no title attribute on links when expanded", () => {
     renderNav();
-    expect(screen.getByRole("link", { name: "Vrac" })).not.toHaveAttribute(
-      "title",
-    );
+    expect(
+      screen.getByRole("link", { name: "Liste des tâches" }),
+    ).not.toHaveAttribute("title");
   });
 });
 
@@ -227,7 +228,7 @@ describe("SidebarNav — inbox badge", () => {
     expect(screen.getByLabelText("2 tâches à trier")).toBeInTheDocument();
   });
 
-  it("shows the badge even when on Vrac (active tab)", () => {
+  it("shows the badge even when on Liste des tâches (active tab)", () => {
     useTaskStore.setState({ tasks: [makeTask()] });
     renderNav("/");
     expect(screen.getByLabelText("1 tâche à trier")).toBeInTheDocument();

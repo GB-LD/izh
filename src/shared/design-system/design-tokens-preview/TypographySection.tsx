@@ -10,7 +10,7 @@ interface TypeRowDef {
 const typeRows: TypeRowDef[] = [
   {
     role: "H1 — 34px",
-    example: "Vrac",
+    example: "Inbox",
     spec: "Space Grotesk Bold · tracking -0.5px · line-height 1.25",
     className: "font-heading font-bold text-xl tracking-tight",
   },
@@ -71,7 +71,7 @@ export function TypographySection() {
         <div className="grid gap-8 sm:grid-cols-2">
           <div className="rounded-container border border-edge bg-surface-base p-component-lg">
             <h3 className="font-heading font-bold text-xl tracking-tight text-content">
-              Vrac
+              Inbox
             </h3>
             <p className="mt-1 text-xs text-content-secondary">
               12 tâches non triées

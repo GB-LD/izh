@@ -15,7 +15,7 @@ export function LayoutSection() {
           <div className="mx-auto max-w-80 overflow-hidden rounded-container border border-edge bg-surface-base">
             <div className="flex h-12 items-center justify-between border-b border-edge px-4">
               <span className="font-heading text-xl font-bold tracking-tight text-content">
-                Vrac
+                Inbox
               </span>
               <span className="text-content-secondary">+</span>
             </div>
@@ -60,10 +60,10 @@ export function LayoutSection() {
             </div>
 
             <div className="flex h-13 items-center justify-around border-t border-edge">
-              {["Vrac", "Réserve", "Focus", "Archive"].map((label) => (
+              {["Inbox", "Réserve", "Focus", "Archive"].map((label) => (
                 <span
                   key={label}
-                  className={`text-xs ${label === "Vrac" ? "font-medium text-content" : "text-content-secondary"}`}
+                  className={`text-xs ${label === "Inbox" ? "font-medium text-content" : "text-content-secondary"}`}
                 >
                   {label}
                 </span>
@@ -87,7 +87,7 @@ export function LayoutSection() {
               </p>
               <div className="text-center">
                 <span className="font-heading text-xl font-bold tracking-tight text-content">
-                  Vrac
+                  Inbox
                 </span>
               </div>
               <div className="mt-3 flex flex-col gap-2">

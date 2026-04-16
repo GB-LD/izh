@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { path: "/", label: "Vrac", Icon: Inbox },
+  { path: "/", label: "Liste des tâches", Icon: Inbox },
   { path: "/backlog", label: "Réserve", Icon: Layers },
   { path: "/focus", label: "Focus", Icon: Target },
   { path: "/archive", label: "Archive", Icon: Archive },
