@@ -58,7 +58,7 @@ describe("addTask", () => {
     get().addTask("Task A");
     get().addTask("Task B");
     get().addTask("Task C");
-    const inboxTasks = get().inboxTasks();
+    const inboxTasks = get().getInboxTasks();
     expect(inboxTasks[2].position).toBe(3);
   });
 
@@ -311,41 +311,41 @@ describe("selectors", () => {
     });
   });
 
-  it("inboxTasks returns only inbox tasks", () => {
-    const result = get().inboxTasks();
+  it("getInboxTasks returns only inbox tasks", () => {
+    const result = get().getInboxTasks();
     expect(result).toHaveLength(2);
     expect(result.every((t) => t.status === "inbox")).toBe(true);
   });
 
-  it("backlogTasks returns only backlog tasks", () => {
-    const result = get().backlogTasks();
+  it("getBacklogTasks returns only backlog tasks", () => {
+    const result = get().getBacklogTasks();
     expect(result).toHaveLength(2);
     expect(result.every((t) => t.status === "backlog")).toBe(true);
   });
 
-  it("activeTasks returns only active tasks", () => {
-    const result = get().activeTasks();
+  it("getActiveTasks returns only active tasks", () => {
+    const result = get().getActiveTasks();
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("id-5");
   });
 
-  it("archivedTasks returns only archived tasks", () => {
-    const result = get().archivedTasks();
+  it("getArchivedTasks returns only archived tasks", () => {
+    const result = get().getArchivedTasks();
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("id-6");
   });
 
   it("backlogCount returns the number of backlog tasks", () => {
-    expect(get().backlogCount()).toBe(2);
+    expect(get().getBacklogCount()).toBe(2);
   });
 
   it("quadrantTasks filters by quadrant", () => {
-    const result = get().quadrantTasks("q1");
+    const result = get().getQuadrantTasks("q1");
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("id-3");
   });
 
   it("quadrantTasks returns empty array when no match", () => {
-    expect(get().quadrantTasks("q4")).toHaveLength(0);
+    expect(get().getQuadrantTasks("q4")).toHaveLength(0);
   });
 });

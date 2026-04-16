@@ -3,6 +3,7 @@ import { persist, type PersistStorage } from "zustand/middleware";
 import { z } from "zod";
 import { MAX_BACKLOG_SIZE } from "@/lib/constants";
 import { validateAndLoad } from "@/lib/persistence";
+import { createUuidV4 } from "@/lib/uuid";
 import { TaskSchemaList } from "@/schemas/task";
 import type {
   Task,
@@ -16,12 +17,12 @@ type TaskState = {
 };
 
 type TaskSelectors = {
-  inboxTasks: () => Task[];
-  backlogTasks: () => Task[];
-  activeTasks: () => Task[];
-  archivedTasks: () => Task[];
-  backlogCount: () => number;
-  quadrantTasks: (quadrant: Quadrant) => Task[];
+  getInboxTasks: () => Task[];
+  getBacklogTasks: () => Task[];
+  getActiveTasks: () => Task[];
+  getArchivedTasks: () => Task[];
+  getBacklogCount: () => number;
+  getQuadrantTasks: (quadrant: Quadrant) => Task[];
 };
 
 type TaskActions = {
@@ -45,16 +46,34 @@ type TaskActions = {
 };
 
 const taskStorage: PersistStorage<TaskState> = {
-  getItem: (name) =>
-    validateAndLoad(
-      name,
-      z.object({
-        state: z.object({ tasks: TaskSchemaList }),
-        version: z.number().optional(),
-      }),
-    ),
-  setItem: (name, value) => localStorage.setItem(name, JSON.stringify(value)),
-  removeItem: (name) => localStorage.removeItem(name),
+  getItem: (name) => {
+    try {
+      return validateAndLoad(
+        name,
+        z.object({
+          state: z.object({ tasks: TaskSchemaList }),
+          version: z.number().optional(),
+        }),
+      );
+    } catch (error) {
+      console.warn(`task storage read failed for ${name}:`, error);
+      return null;
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      localStorage.setItem(name, JSON.stringify(value));
+    } catch (error) {
+      console.warn("task storage write failed for", name, ":", error);
+    }
+  },
+  removeItem: (name) => {
+    try {
+      localStorage.removeItem(name);
+    } catch (error) {
+      console.warn("task storage remove failed for", name, ":", error);
+    }
+  },
 };
 
 export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
@@ -67,7 +86,7 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
       addTask: (taskTitle) =>
         set((s) => {
           const newTask: Task = {
-            id: crypto.randomUUID(),
+            id: createUuidV4(),
             title: taskTitle,
             status: "inbox",
             quadrant: null,
@@ -146,14 +165,34 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
           return { tasks: updatedTasks };
         }),
 
-      // store selectors
-      inboxTasks: () => get().tasks.filter((t) => t.status === "inbox"),
-      backlogTasks: () => get().tasks.filter((t) => t.status === "backlog"),
-      activeTasks: () => get().tasks.filter((t) => t.status === "active"),
-      archivedTasks: () => get().tasks.filter((t) => t.status === "archived"),
-      backlogCount: () =>
+      /**
+       * Store getters for imperative/non-reactive access only.
+       *
+       * Do NOT use these as React selectors, e.g.
+       * `useTaskStore((state) => state.getInboxTasks())`.
+       *
+       * These getters call `filter(...)`, which creates a new array on every
+       * invocation. In React, that means the selector result will get a new
+       * reference on every store update and can trigger unnecessary re-renders.
+       *
+       * Correct imperative usage:
+       * `const inboxTasks = useTaskStore.getState().getInboxTasks()`
+       *
+       * Correct React usage (as in navigation components):
+       * `const tasks = useTaskStore((state) => state.tasks)`
+       * `const inboxTasks = useMemo(
+       *   () => tasks.filter((t) => t.status === "inbox"),
+       *   [tasks],
+       * )`
+       */
+      getInboxTasks: () => get().tasks.filter((t) => t.status === "inbox"),
+      getBacklogTasks: () => get().tasks.filter((t) => t.status === "backlog"),
+      getActiveTasks: () => get().tasks.filter((t) => t.status === "active"),
+      getArchivedTasks: () =>
+        get().tasks.filter((t) => t.status === "archived"),
+      getBacklogCount: () =>
         get().tasks.filter((t) => t.status === "backlog").length,
-      quadrantTasks: (quadrant) =>
+      getQuadrantTasks: (quadrant) =>
         get().tasks.filter((t) => t.quadrant === quadrant),
     }),
     {
