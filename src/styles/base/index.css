@@ -76,6 +76,9 @@
     --transition-modal: var(--duration-slow) var(--ease-out);
     --transition-drag: var(--duration-fast) var(--ease-spring);
 
+    /* --- Focus --- */
+    --shadow-focus-ring: 0 0 0 2px oklch(60.6% 0.167 253 / 0.2);
+
     /* --- Layout --- */
     --layout-content-max: 600px;
     --layout-content-min: 320px;
@@ -122,4 +125,12 @@
     --text-caption-lh: 1.5;
     --text-caption-tracking: 0;
   }
+}
+
+/* iOS Safari zooms focused form controls when font-size < 16px.
+   max() clamps to at least 1rem (16px) without overriding larger sizes. */
+input,
+textarea,
+select {
+  font-size: max(1rem, 1em);
 }

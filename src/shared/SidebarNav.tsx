@@ -19,7 +19,9 @@ const NAV_ITEMS = [
 ] as const;
 
 export function SidebarNav() {
-  const inboxCount = useTaskStore((s) => s.inboxTasks().length);
+  const inboxCount = useTaskStore(
+    (s) => s.tasks.filter((t) => t.status === "inbox").length,
+  );
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (

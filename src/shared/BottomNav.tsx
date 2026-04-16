@@ -12,7 +12,9 @@ const NAV_ITEMS = [
 ] as const;
 
 export function BottomNav() {
-  const inboxCount = useTaskStore((s) => s.inboxTasks().length);
+  const inboxCount = useTaskStore(
+    (s) => s.tasks.filter((t) => t.status === "inbox").length,
+  );
   const activeOverlay = useUIStore((s) => s.activeOverlay);
 
   if (activeOverlay !== null) return null;
