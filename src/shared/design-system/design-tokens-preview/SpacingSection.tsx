@@ -57,7 +57,7 @@ export function SpacingSection() {
                 Écran mobile — page-margin: 16px
               </p>
               <h3 className="font-heading font-bold text-xl tracking-tight text-content">
-                Vrac
+                Inbox
               </h3>
               <p className="mt-1 text-xs text-content-accent">
                 ↕ stack-md: 16px entre cards

@@ -60,7 +60,7 @@ export function RadiusSection() {
                 Trier les tâches
               </p>
               <p className="mt-1 text-sm text-content-secondary">
-                Choisir l'ordre d'affichage dans Vrac
+                Choisir l'ordre d'affichage dans Inbox
               </p>
               <div className="mt-4 flex gap-2">
                 <button

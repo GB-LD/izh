@@ -1,8 +1,9 @@
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { Plus, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function CaptureInput() {
+export function CaptureInput({ classes = "" }: { classes?: string }) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const addTask = useTaskStore((s) => s.addTask);
@@ -35,7 +36,7 @@ export function CaptureInput() {
 
   return (
     <form
-      className="input-capture"
+      className={cn("input-capture", classes)}
       onSubmit={handleSubmit}
       aria-label="Capture rapide"
     >

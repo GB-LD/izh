@@ -1,0 +1,42 @@
+@layer components {
+  .inbox-page {
+    @apply w-full;
+  }
+
+  .inbox-page__top {
+    @apply sticky top-0 z-20 left-0 right-0 backdrop-blur-md border-b border-transparent;
+    padding: var(--spacing-component-lg) 0;
+    box-shadow: none;
+    transition: border-color var(--duration-fast) var(--ease-default);
+  }
+
+  .inbox-page__top--stuck {
+    @apply border-edge;
+  }
+
+  .inbox-page__sticky-sentinel {
+    height: 1px;
+  }
+
+  .inbox-page__container {
+    @apply mx-auto w-11/12 md:w-[var(--layout-content-max)];
+  }
+
+  .inbox-page__header {
+    @apply flex justify-between items-baseline text-content-secondary;
+    padding-bottom: var(--spacing-component-md);
+  }
+
+  .inbox-page__title {
+    color: var(--color-content);
+    font-family: var(--font-heading);
+    font-size: var(--text-h1-size);
+    font-weight: var(--text-h1-weight);
+    letter-spacing: var(--text-h1-tracking);
+    line-height: var(--text-h1-lh);
+  }
+
+  .inbox-page__list {
+    @apply flex flex-col gap-[var(--spacing-component-md)];
+  }
+}

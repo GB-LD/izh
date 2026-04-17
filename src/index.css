@@ -10,9 +10,11 @@
 /* Composants */
 @import "./styles/components/button.css";
 @import "./styles/components/input.css";
+@import "./styles/components/card.css";
 @import "./styles/components/bottom-nav.css";
 @import "./styles/components/sidebar-nav.css";
 @import "./styles/components/empty-state.css";
+@import "./styles/components/inbox-page.css";
 
 /* Utilitaires custom (à venir) */
 @import "./styles/utilities/index.css";
@@ -167,6 +169,7 @@
   /* ===== ESPACEMENT — Sémantique =====
      Le multiplicateur de base Tailwind (--spacing: 0.25rem = 4px)
      est conservé. Ces tokens nommés s'ajoutent à l'échelle numérique. */
+  --spacing-component-xs: 0.25rem;
   --spacing-component-sm: 0.5rem;
   --spacing-component-md: 1rem;
   --spacing-component-lg: 1.5rem;

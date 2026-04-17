@@ -1,32 +1,58 @@
 import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useStickyState } from "@/hooks/useStickyState";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { CaptureInput } from "./CaptureInput";
+import { TaskItemInbox } from "./TaskItemInbox";
+import { cn } from "@/lib/utils";
 
 export function InboxPage() {
-  const tasks = useTaskStore((s) => s.tasks);
+  const { sentinelRef, isStuck: isTopStuck } = useStickyState<HTMLDivElement>();
+
+  const inboxTasks = useTaskStore(
+    useShallow((s) => s.tasks.filter((task) => task.status === "inbox")),
+  );
+
+  const inboxCount = inboxTasks.length;
 
   const sortedInboxTasks = useMemo(
     () =>
-      tasks
-        .filter((task) => task.status === "inbox")
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
-    [tasks],
+      [...inboxTasks].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      ),
+    [inboxTasks],
   );
 
   return (
-    <section aria-label="Vrac" className="w-11/12 mx-auto xl:w-3/5">
-      <h1>Vrac</h1>
-      <CaptureInput />
+    <section aria-label="Liste des tâches à trier" className="inbox-page">
+      <div
+        ref={sentinelRef}
+        className="inbox-page__sticky-sentinel"
+        aria-hidden="true"
+      />
+
+      <div
+        className={cn(
+          "inbox-page__top",
+          isTopStuck && "inbox-page__top--stuck",
+        )}
+      >
+        <header className="inbox-page__header inbox-page__container">
+          <h1 className="inbox-page__title">Liste</h1>
+          <p aria-live="polite" aria-atomic="true">
+            {inboxCount} tâche{inboxCount !== 1 ? "s" : ""} à trier
+          </p>
+        </header>
+        <CaptureInput classes="inbox-page__container" />
+      </div>
 
       {sortedInboxTasks.length === 0 ? (
         <p>Aucune tâche pour le moment.</p>
       ) : (
-        <ul>
+        <ul className="inbox-page__list inbox-page__container" role="list">
           {sortedInboxTasks.map((task) => (
-            <li key={task.id}>{task.title}</li>
+            <TaskItemInbox key={task.id} task={task} />
           ))}
         </ul>
       )}
