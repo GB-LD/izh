@@ -155,13 +155,13 @@ describe("BottomNav — href", () => {
 // ---------------------------------------------------------------------------
 
 describe("BottomNav — inbox badge", () => {
-  it("shows the badge when inboxCount > 0 and not on Inbox", () => {
+  it('shows the badge when inboxCount > 0 and not on "Liste des tâches"', () => {
     useTaskStore.setState({ tasks: [makeTask(), makeTask()] });
     renderNav("/focus");
     expect(screen.getByLabelText("2 tâches à trier")).toBeInTheDocument();
   });
 
-  it("hides the badge when on Inbox (active tab)", () => {
+  it("hides the badge when on 'Liste des tâches' (active tab)", () => {
     useTaskStore.setState({ tasks: [makeTask()] });
     renderNav("/");
     expect(screen.queryByLabelText(/tâches à trier/)).not.toBeInTheDocument();

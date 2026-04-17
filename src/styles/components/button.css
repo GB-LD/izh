@@ -123,6 +123,20 @@
   }
 
   /* ===== 4. VARIANTES DE TAILLE ===== */
+  .btn-xs {
+    height: 28px;
+    padding: var(--spacing-component-xs) var(--spacing-component-sm);
+    font-size: var(--text-xs);
+    position: relative;
+  }
+
+  .btn-xs::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    min-height: 44px;
+    border-radius: var(--radius-component);
+  }
 
   /* sm — 36px visuel, 44px zone tactile min */
   .btn-sm {
