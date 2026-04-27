@@ -1,6 +1,5 @@
 @layer components {
   .task-item {
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: var(--spacing-inline-md);
@@ -13,18 +12,55 @@
   }
 
   .task-item:hover {
-    border-color: var(--color-edge-strong);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-edge-strong);
   }
 
-  .task-item__grip {
+  .task-item__action {
+    @apply inline-flex gap-2 items-center justify-center shrink-0 border-0 bg-transparent;
+
+    width: auto;
+    max-width: 0;
+    height: 44px;
+    margin-inline-start: 0;
+    color: var(--color-content-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(12px);
+    transition:
+      max-width var(--transition-hover),
+      color var(--transition-hover),
+      background-color var(--transition-hover),
+      opacity var(--transition-hover),
+      transform var(--transition-hover);
+  }
+
+  .task-item-inbox:hover .task-item__action,
+  .task-item-inbox:focus-within .task-item__action {
+    max-width: 120px;
+    margin-inline-start: 0;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .task-item__action-edit,
+  .task-item__action-delete {
+    cursor: pointer;
     color: var(--color-content-tertiary);
     flex-shrink: 0;
+  }
+
+  .task-item__action-edit:hover,
+  .task-item__action-delete:hover {
+    color: var(--color-content-secondary);
   }
 
   .task-item__title {
     flex: 1;
     min-width: 0;
+    cursor: default;
     color: var(--color-content);
     font-family: var(--font-body);
     font-size: var(--text-body-size);
@@ -34,6 +70,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .task-item__edit-form {
+    flex: 1;
+  }
+
+  .task-item__edit-input {
+    padding: 0;
+    background-color: var(--color-surface-base);
+    border: none;
+    outline: none;
+    box-shadow: none;
   }
 
   .task-item-inbox {
