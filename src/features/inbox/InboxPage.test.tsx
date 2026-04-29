@@ -1,7 +1,16 @@
 import { act, render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { InboxPage } from "./InboxPage";
 import { useTaskStore } from "@/stores/useTaskStore";
 import type { Task } from "@/schemas/task";
+
+function renderInboxPage() {
+  return render(
+    <MemoryRouter>
+      <InboxPage />
+    </MemoryRouter>,
+  );
+}
 
 const makeTask = (overrides: Partial<Task> = {}): Task => ({
   id: crypto.randomUUID(),
@@ -34,7 +43,7 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
     expect(screen.getByDisplayValue("Préparer la rétro")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Envoyer le rapport")).toBeInTheDocument();
@@ -58,7 +67,7 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
     const list = screen.getByRole("list");
     const items = within(list).getAllByRole("listitem");
@@ -79,13 +88,13 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
     expect(screen.getByText(/2\s+tâches\s+à trier/i)).toBeInTheDocument();
   });
 
   it("met à jour le compteur quand addTask est appelé", () => {
-    render(<InboxPage />);
+    renderInboxPage();
 
     expect(screen.getByText(/0\s+tâches\s+à trier/i)).toBeInTheDocument();
 
@@ -97,7 +106,7 @@ describe("InboxPage", () => {
   });
 
   it("affiche le H1 Liste et le CaptureInput", () => {
-    const { container } = render(<InboxPage />);
+    const { container } = renderInboxPage();
 
     expect(
       screen.getByRole("heading", {

@@ -5,6 +5,8 @@ import { useTaskStore } from "@/stores/useTaskStore";
 import { CaptureInput } from "./CaptureInput";
 import { TaskItemInbox } from "./TaskItemInbox";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/shared/EmptyState/EmptyState";
+import { Brain } from "lucide-react";
 
 export function InboxPage() {
   const { sentinelRef, isStuck: isTopStuck } = useStickyState<HTMLDivElement>();
@@ -46,16 +48,23 @@ export function InboxPage() {
         </header>
         <CaptureInput classes="inbox-page__container" />
       </div>
-
-      {sortedInboxTasks.length === 0 ? (
-        <p>Aucune tâche pour le moment.</p>
-      ) : (
-        <ul className="inbox-page__list inbox-page__container" role="list">
-          {sortedInboxTasks.map((task) => (
-            <TaskItemInbox key={task.id} task={task} />
-          ))}
-        </ul>
-      )}
+      <div className="inbox-page__body">
+        {sortedInboxTasks.length === 0 ? (
+          <EmptyState
+            icon={Brain}
+            message={
+              "Aucune tâche pour le moment.\nAjoute ce que tu as en tête pour te libérer l'esprit !"
+            }
+            classes="w-4/5 mt-32"
+          />
+        ) : (
+          <ul className="inbox-page__list inbox-page__container" role="list">
+            {sortedInboxTasks.map((task) => (
+              <TaskItemInbox key={task.id} task={task} />
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 }

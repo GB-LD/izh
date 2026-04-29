@@ -57,6 +57,7 @@ export function TaskItemInbox({ task }: TaskItemInboxProps) {
         onChange={(e) => setInputValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        aria-label={`Modifier le titre de la tâche "${task.title}"`}
       />
       <div className="task-item__action">
         <button
