@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import { InboxPage } from "./InboxPage";
 import { useTaskStore } from "@/stores/useTaskStore";
 import type { Task } from "@/schemas/task";
@@ -36,9 +36,9 @@ describe("InboxPage", () => {
 
     render(<InboxPage />);
 
-    expect(screen.getByText("Préparer la rétro")).toBeInTheDocument();
-    expect(screen.getByText("Envoyer le rapport")).toBeInTheDocument();
-    expect(screen.queryByText("Tâche triée")).not.toBeInTheDocument();
+    expect(screen.getByDisplayValue("Préparer la rétro")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Envoyer le rapport")).toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Tâche triée")).not.toBeInTheDocument();
     expect(screen.getByRole("list")).toHaveClass("inbox-page__list");
   });
 
@@ -60,9 +60,14 @@ describe("InboxPage", () => {
 
     render(<InboxPage />);
 
-    const items = screen.getAllByRole("listitem");
-    expect(items[0]).toHaveTextContent("Tâche récente");
-    expect(items[1]).toHaveTextContent("Tâche ancienne");
+    const list = screen.getByRole("list");
+    const items = within(list).getAllByRole("listitem");
+    expect(
+      within(items[0]).getByDisplayValue("Tâche récente"),
+    ).toBeInTheDocument();
+    expect(
+      within(items[1]).getByDisplayValue("Tâche ancienne"),
+    ).toBeInTheDocument();
   });
 
   it("affiche un compteur basé sur le nombre de tâches inbox", () => {

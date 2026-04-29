@@ -3,6 +3,9 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-inline-md);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 44px;
     padding: 0 var(--spacing-component-md);
     background-color: transparent;
@@ -36,7 +39,6 @@
       transform var(--transition-hover);
   }
 
-  .task-item-inbox:hover .task-item__action,
   .task-item-inbox:focus-within .task-item__action {
     max-width: 120px;
     margin-inline-start: 0;
@@ -45,21 +47,52 @@
     transform: translateX(0);
   }
 
-  .task-item__action-edit,
+  .task-item__edit-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    max-width: 0;
+    height: 44px;
+    color: var(--color-content-tertiary);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-12px);
+    transition:
+      max-width var(--transition-hover),
+      opacity var(--transition-hover),
+      transform var(--transition-hover);
+  }
+
+  .task-item-inbox:focus-within .task-item__edit-indicator {
+    max-width: 24px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
   .task-item__action-delete {
     cursor: pointer;
     color: var(--color-content-tertiary);
     flex-shrink: 0;
   }
 
-  .task-item__action-edit:hover,
   .task-item__action-delete:hover {
     color: var(--color-content-secondary);
   }
 
-  .task-item__title {
+  .task-item__edit-input {
     flex: 1;
+    width: 100%;
     min-width: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     cursor: default;
     color: var(--color-content);
     font-family: var(--font-body);
@@ -67,21 +100,11 @@
     font-weight: var(--text-body-weight);
     line-height: var(--text-body-lh);
     letter-spacing: var(--text-body-tracking);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .task-item__edit-form {
-    flex: 1;
-  }
-
-  .task-item__edit-input {
-    padding: 0;
-    background-color: var(--color-surface-base);
-    border: none;
-    outline: none;
-    box-shadow: none;
+  .task-item__edit-input:hover,
+  .task-item__edit-input:focus {
+    cursor: text;
   }
 
   .task-item-inbox {
