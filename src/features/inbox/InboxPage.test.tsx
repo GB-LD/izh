@@ -1,7 +1,16 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { InboxPage } from "./InboxPage";
 import { useTaskStore } from "@/stores/useTaskStore";
 import type { Task } from "@/schemas/task";
+
+function renderInboxPage() {
+  return render(
+    <MemoryRouter>
+      <InboxPage />
+    </MemoryRouter>,
+  );
+}
 
 const makeTask = (overrides: Partial<Task> = {}): Task => ({
   id: crypto.randomUUID(),
@@ -34,11 +43,11 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
-    expect(screen.getByText("Préparer la rétro")).toBeInTheDocument();
-    expect(screen.getByText("Envoyer le rapport")).toBeInTheDocument();
-    expect(screen.queryByText("Tâche triée")).not.toBeInTheDocument();
+    expect(screen.getByDisplayValue("Préparer la rétro")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Envoyer le rapport")).toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Tâche triée")).not.toBeInTheDocument();
     expect(screen.getByRole("list")).toHaveClass("inbox-page__list");
   });
 
@@ -58,11 +67,16 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
-    const items = screen.getAllByRole("listitem");
-    expect(items[0]).toHaveTextContent("Tâche récente");
-    expect(items[1]).toHaveTextContent("Tâche ancienne");
+    const list = screen.getByRole("list");
+    const items = within(list).getAllByRole("listitem");
+    expect(
+      within(items[0]).getByDisplayValue("Tâche récente"),
+    ).toBeInTheDocument();
+    expect(
+      within(items[1]).getByDisplayValue("Tâche ancienne"),
+    ).toBeInTheDocument();
   });
 
   it("affiche un compteur basé sur le nombre de tâches inbox", () => {
@@ -74,13 +88,13 @@ describe("InboxPage", () => {
       ],
     });
 
-    render(<InboxPage />);
+    renderInboxPage();
 
     expect(screen.getByText(/2\s+tâches\s+à trier/i)).toBeInTheDocument();
   });
 
   it("met à jour le compteur quand addTask est appelé", () => {
-    render(<InboxPage />);
+    renderInboxPage();
 
     expect(screen.getByText(/0\s+tâches\s+à trier/i)).toBeInTheDocument();
 
@@ -92,7 +106,7 @@ describe("InboxPage", () => {
   });
 
   it("affiche le H1 Liste et le CaptureInput", () => {
-    const { container } = render(<InboxPage />);
+    const { container } = renderInboxPage();
 
     expect(
       screen.getByRole("heading", {

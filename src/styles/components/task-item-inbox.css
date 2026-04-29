@@ -1,0 +1,93 @@
+@layer components {
+  .task-item {
+    @apply flex items-center w-full max-w-full min-w-0 bg-transparent list-none;
+
+    gap: var(--spacing-inline-md);
+    height: 44px;
+    padding: 0 var(--spacing-component-md);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-component);
+  }
+
+  .task-item:hover {
+    border: 1px solid var(--color-edge-strong);
+  }
+
+  .task-item__action {
+    @apply inline-flex gap-2 items-center justify-center shrink-0 border-0 bg-transparent overflow-hidden pointer-events-none;
+
+    width: auto;
+    max-width: 0;
+    height: 44px;
+    margin-inline-start: 0;
+    color: var(--color-content-tertiary);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transform: translateX(12px);
+    transition:
+      max-width var(--transition-hover),
+      color var(--transition-hover),
+      background-color var(--transition-hover),
+      opacity var(--transition-hover),
+      transform var(--transition-hover);
+  }
+
+  .task-item-inbox:focus-within .task-item__action {
+    @apply pointer-events-auto;
+
+    max-width: 120px;
+    margin-inline-start: 0;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .task-item__edit-indicator {
+    @apply flex items-center justify-center shrink-0 overflow-hidden pointer-events-none;
+
+    max-width: 0;
+    height: 44px;
+    color: var(--color-content-tertiary);
+    opacity: 0;
+    transform: translateX(-12px);
+    transition:
+      max-width var(--transition-hover),
+      opacity var(--transition-hover),
+      transform var(--transition-hover);
+  }
+
+  .task-item-inbox:focus-within .task-item__edit-indicator {
+    max-width: 24px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .task-item__action-delete {
+    @apply cursor-pointer shrink-0;
+
+    color: var(--color-content-tertiary);
+  }
+
+  .task-item__action-delete:hover {
+    color: var(--color-content-secondary);
+  }
+
+  .task-item__edit-input {
+    @apply flex-1 w-full min-w-0 p-0 bg-transparent border-0 outline-none shadow-none overflow-hidden text-ellipsis whitespace-nowrap cursor-default;
+
+    color: var(--color-content);
+    font-family: var(--font-body);
+    font-size: var(--text-body-size);
+    font-weight: var(--text-body-weight);
+    line-height: var(--text-body-lh);
+    letter-spacing: var(--text-body-tracking);
+  }
+
+  .task-item__edit-input:hover,
+  .task-item__edit-input:focus {
+    @apply cursor-text;
+  }
+
+  .task-item-inbox {
+    @apply bg-transparent;
+  }
+}

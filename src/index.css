@@ -10,7 +10,7 @@
 /* Composants */
 @import "./styles/components/button.css";
 @import "./styles/components/input.css";
-@import "./styles/components/card.css";
+@import "./styles/components/task-item-inbox.css";
 @import "./styles/components/bottom-nav.css";
 @import "./styles/components/sidebar-nav.css";
 @import "./styles/components/empty-state.css";
