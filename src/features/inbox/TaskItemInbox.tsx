@@ -3,6 +3,7 @@ import { PenLine, Trash2 } from "lucide-react";
 import type { Task } from "@/schemas/task";
 import { Button } from "@/shared/Button";
 import { useTaskStore } from "@/stores/useTaskStore";
+import { useUIStore } from "@/stores/useUIStore";
 
 interface TaskItemInboxProps {
   task: Task;
@@ -10,6 +11,7 @@ interface TaskItemInboxProps {
 
 export function TaskItemInbox({ task }: TaskItemInboxProps) {
   const { updateTask, deleteTask } = useTaskStore();
+  const openOverlay = useUIStore((s) => s.openOverlay);
   const [inputValue, setInputValue] = useState(task.title);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +79,7 @@ export function TaskItemInbox({ task }: TaskItemInboxProps) {
         variant="secondary"
         size="xs"
         aria-label={`Trier "${task.title}"`}
+        onClick={() => openOverlay("sorting")}
       >
         Trier
       </Button>

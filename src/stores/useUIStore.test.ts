@@ -28,6 +28,11 @@ describe("openOverlay", () => {
     expect(get().activeOverlay).toBe("purge");
   });
 
+  it("sets activeOverlay to 'survey'", () => {
+    get().openOverlay("survey");
+    expect(get().activeOverlay).toBe("survey");
+  });
+
   it("overwrites a previously open overlay on successive calls", () => {
     get().openOverlay("sorting");
     get().openOverlay("purge");

@@ -32,7 +32,7 @@
       transform var(--transition-hover);
   }
 
-  .task-item-inbox:focus-within .task-item__action {
+  .task-item-inbox:has(:focus-visible) .task-item__action {
     @apply pointer-events-auto;
 
     max-width: 120px;
@@ -55,7 +55,7 @@
       transform var(--transition-hover);
   }
 
-  .task-item-inbox:focus-within .task-item__edit-indicator {
+  .task-item-inbox:has(:focus-visible) .task-item__edit-indicator {
     max-width: 24px;
     opacity: 1;
     transform: translateX(0);

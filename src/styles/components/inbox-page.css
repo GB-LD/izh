@@ -20,7 +20,7 @@
   }
 
   .inbox-page__container {
-    @apply mx-auto w-11/12 md:w-[var(--layout-content-max)];
+    @apply mx-auto w-11/12 md:md:w-(--layout-content-max);
   }
 
   .inbox-page__header {
@@ -43,6 +43,6 @@
   }
 
   .inbox-page__list {
-    @apply flex flex-col gap-[var(--spacing-component-md)];
+    @apply flex flex-col gap-(--spacing-component-md);
   }
 }
