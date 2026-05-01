@@ -15,12 +15,13 @@ export function BottomNav() {
   const inboxCount = useTaskStore(
     (s) => s.tasks.filter((t) => t.status === "inbox").length,
   );
-  const activeOverlay = useUIStore((s) => s.activeOverlay);
-
-  if (activeOverlay !== null) return null;
+  const isOverlayOpen = useUIStore((s) => s.activeOverlay !== null);
 
   return (
-    <nav aria-label="Navigation en bas de page" className="bottom-nav">
+    <nav
+      aria-label="Navigation en bas de page"
+      className={cn("bottom-nav", isOverlayOpen && "hidden")}
+    >
       <ul className="bottom-nav__list">
         {NAV_ITEMS.map(({ path, label, Icon }) => {
           return (

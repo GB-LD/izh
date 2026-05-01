@@ -6,6 +6,9 @@ import { FocusPage } from "./features/focus/FocusPage";
 import { ArchivePage } from "./features/archive/ArchivePage";
 import { Layout } from "./shared/Layout";
 import { Route, Routes } from "react-router";
+import { SortingOverlay } from "./features/sorting/SortingOverlay";
+import { PurgeOverlay } from "./features/purge/PurgeOverlay";
+import { SurveyOverlay } from "./features/survey/SurveyOverlay";
 
 export function App() {
   return (
@@ -19,6 +22,9 @@ export function App() {
           <Route path="/design-system" element={<DesignSystemPreview />} />
         </Routes>
       </Layout>
+      <SortingOverlay />
+      <PurgeOverlay />
+      <SurveyOverlay />
     </ErrorBoundary>
   );
 }

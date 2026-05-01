@@ -69,16 +69,28 @@ describe("BottomNav — rendering", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders nothing when the 'sorting' overlay is active", () => {
+  it("hides the nav when the 'sorting' overlay is active", () => {
     useUIStore.setState({ activeOverlay: "sorting" });
-    const { container } = renderNav();
-    expect(container).toBeEmptyDOMElement();
+    renderNav();
+    expect(screen.getByRole("navigation", { hidden: true })).toHaveClass(
+      "hidden",
+    );
   });
 
-  it("renders nothing when the 'purge' overlay is active", () => {
+  it("hides the nav when the 'purge' overlay is active", () => {
     useUIStore.setState({ activeOverlay: "purge" });
-    const { container } = renderNav();
-    expect(container).toBeEmptyDOMElement();
+    renderNav();
+    expect(screen.getByRole("navigation", { hidden: true })).toHaveClass(
+      "hidden",
+    );
+  });
+
+  it("hides the nav when the 'survey' overlay is active", () => {
+    useUIStore.setState({ activeOverlay: "survey" });
+    renderNav();
+    expect(screen.getByRole("navigation", { hidden: true })).toHaveClass(
+      "hidden",
+    );
   });
 });
 
