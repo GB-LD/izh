@@ -1,19 +1,78 @@
+import { useState } from "react";
 import { useUIStore } from "@/stores/useUIStore";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useTaskStore } from "@/stores/useTaskStore";
 import { OverlayShell } from "@/shared/OverlayShell";
+import { TaskContextHeader } from "@/shared/TaskContextHeader";
+import { QuadrantButton } from "@/shared/QuadrantButton";
+import { Button } from "@/shared/Button";
+import type { Quadrant } from "@/schemas/task";
+
+type SortingStep = "choice" | "questionnaire" | "result";
+
+const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 
 export function SortingOverlay() {
+  const [step, setStep] = useState<SortingStep>("choice");
+
   const isOpen = useUIStore((s) => s.activeOverlay === "sorting");
-  const { closeOverlay } = useUIStore.getState();
+  const closeOverlay = useUIStore((s) => s.closeOverlay);
+  const taskId = useFlowStore((s) => s.taskId);
+  const startFlow = useFlowStore((s) => s.startFlow);
+  const resetFlow = useFlowStore((s) => s.resetFlow);
+  const task = useTaskStore(
+    (s) => s.tasks.find((t) => t.id === taskId) ?? null,
+  );
+  const classifyTask = useTaskStore((s) => s.classifyTask);
+
+  function handleClose() {
+    closeOverlay();
+    resetFlow();
+    setStep("choice");
+  }
+
+  function handleManualClassify(quadrant: Quadrant) {
+    if (!taskId) return;
+    classifyTask(taskId, quadrant, "manual");
+    setStep("result");
+  }
+
+  function handleAssistedStart() {
+    if (!taskId) return;
+    startFlow(taskId);
+    setStep("questionnaire");
+  }
 
   return (
     <OverlayShell
       isOpen={isOpen}
-      onClose={closeOverlay}
+      onClose={handleClose}
       variant="flow"
-      aria-labelledby="sorting-overlay-title"
+      aria-labelledby="sorting-task-title"
     >
-      <h2 id="sorting-overlay-title">Trier les tâches</h2>
-      <p>Contenu du tri à venir.</p>
+      {step === "choice" && task && (
+        <div className="sorting-overlay__content">
+          <TaskContextHeader title={task.title} id="sorting-task-title" />
+          <div className="sorting-overlay__actions">
+            <Button variant="primary" block onClick={handleAssistedStart}>
+              Aide-moi à décider
+            </Button>
+            <div className="sorting-overlay__grid">
+              {QUADRANTS.map((q) => (
+                <QuadrantButton
+                  key={q}
+                  quadrant={q}
+                  onClick={handleManualClassify}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {step === "questionnaire" && <div>{/* TODO Story 3.3 */}</div>}
+
+      {step === "result" && <div>{/* TODO Story 3.4 */}</div>}
     </OverlayShell>
   );
 }

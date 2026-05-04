@@ -4,6 +4,7 @@ import type { Task } from "@/schemas/task";
 import { Button } from "@/shared/Button";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useUIStore } from "@/stores/useUIStore";
+import { useFlowStore } from "@/stores/useFlowStore";
 
 interface TaskItemInboxProps {
   task: Task;
@@ -12,6 +13,7 @@ interface TaskItemInboxProps {
 export function TaskItemInbox({ task }: TaskItemInboxProps) {
   const { updateTask, deleteTask } = useTaskStore();
   const openOverlay = useUIStore((s) => s.openOverlay);
+  const startFlow = useFlowStore((s) => s.startFlow);
   const [inputValue, setInputValue] = useState(task.title);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +81,10 @@ export function TaskItemInbox({ task }: TaskItemInboxProps) {
         variant="secondary"
         size="xs"
         aria-label={`Trier "${task.title}"`}
-        onClick={() => openOverlay("sorting")}
+        onClick={() => {
+          startFlow(task.id);
+          openOverlay("sorting");
+        }}
       >
         Trier
       </Button>

@@ -1,8 +1,6 @@
 @layer components {
   .overlay-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 40;
+    @apply fixed inset-0 z-40;
     background: oklch(0% 0 0 / 0.55);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -13,19 +11,12 @@
   }
 
   .overlay-shell {
-    position: fixed;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+    @apply fixed z-50 flex flex-col w-full overflow-hidden;
     background: var(--color-surface-base);
-    overflow: hidden;
   }
 
   .overlay-shell--flow {
-    right: 0;
-    bottom: 0;
-    left: 0;
+    @apply right-0 bottom-0 left-0;
     height: 85dvh;
     border-radius: var(--radius-container) var(--radius-container) 0 0;
     box-shadow: var(--shadow-modal);
@@ -33,9 +24,7 @@
   }
 
   .overlay-shell--micro {
-    right: 0;
-    bottom: 0;
-    left: 0;
+    @apply right-0 bottom-0 left-0;
     height: 30dvh;
     border-radius: var(--radius-container) var(--radius-container) 0 0;
     box-shadow: var(--shadow-modal);
@@ -43,18 +32,13 @@
   }
 
   .overlay-handle {
-    display: flex;
-    justify-content: center;
-    flex-shrink: 0;
+    @apply flex justify-center shrink-0;
+    @apply cursor-grab touch-none;
     padding: var(--spacing-inline-xl);
-    cursor: grab;
-    touch-action: none;
   }
 
   .overlay-handle-bar {
-    width: 32px;
-    height: 4px;
-    border-radius: 2px;
+    @apply w-8 h-1 rounded-sm;
     background: var(--color-edge);
   }
 
@@ -63,52 +47,37 @@
   }
 
   .overlay-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-shrink: 0;
+    @apply flex items-center justify-end shrink-0;
     padding: var(--spacing-component-md) var(--spacing-component-md)
       var(--spacing-inline-md);
   }
 
   .overlay-shell__content {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
+    @apply flex-1 min-h-0 overflow-y-auto;
     padding: 0 var(--spacing-component-md) var(--spacing-component-md);
   }
 
   @media (width >= 1280px) {
     .overlay-shell--flow {
-      top: 50%;
-      right: auto;
-      bottom: auto;
-      left: 50%;
+      @apply top-1/2 right-auto bottom-auto left-1/2 h-auto pb-0;
+      @apply -translate-x-1/2 -translate-y-1/2;
       width: min(480px, calc(100vw - 32px));
-      height: auto;
       max-height: calc(100dvh - 32px);
-      transform: translate(-50%, -50%);
       border-radius: var(--radius-container);
       box-shadow: var(--shadow-lg);
-      padding-bottom: 0;
     }
 
     .overlay-shell--micro {
-      top: 50%;
-      right: auto;
-      bottom: auto;
-      left: 50%;
+      @apply top-1/2 right-auto bottom-auto left-1/2 h-auto pb-0;
+      @apply -translate-x-1/2 -translate-y-1/2;
       width: min(320px, calc(100vw - 32px));
-      height: auto;
       max-height: calc(100dvh - 32px);
-      transform: translate(-50%, -50%);
       border-radius: var(--radius-container);
       box-shadow: var(--shadow-lg);
-      padding-bottom: 0;
     }
 
     .overlay-handle {
-      display: none;
+      @apply hidden;
     }
   }
 }
