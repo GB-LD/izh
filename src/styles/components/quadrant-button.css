@@ -1,0 +1,78 @@
+@layer components {
+  .quadrant-btn {
+    --_q-color: currentColor;
+    --_q-icon-color: var(--_q-color);
+
+    @apply flex items-center h-12 w-full bg-transparent cursor-pointer font-medium;
+
+    gap: var(--spacing-inline-sm);
+    padding: var(--spacing-inline-md) var(--spacing-component-md);
+    border: 1px solid var(--_q-color);
+    border-radius: var(--radius-component);
+    color: var(--color-content);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  .quadrant-btn__icon {
+    @apply shrink-0;
+    color: var(--_q-icon-color);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .quadrant-btn__label {
+    @apply flex-1 text-left;
+  }
+
+  .quadrant-btn:hover {
+    border-width: 1.5px;
+    box-shadow: var(--shadow-button-hover);
+  }
+
+  .quadrant-btn:active {
+    background-color: var(--_q-color);
+    color: var(--color-content-inverse);
+    --_q-icon-color: var(--color-content-inverse);
+    transform: scale(0.97);
+  }
+
+  .quadrant-btn:focus-visible {
+    @apply outline-none;
+    box-shadow:
+      0 0 0 2px var(--color-surface-base),
+      0 0 0 4px var(--color-edge-focus);
+  }
+
+  .quadrant-btn:disabled,
+  .quadrant-btn[aria-disabled="true"] {
+    @apply cursor-not-allowed pointer-events-none;
+    opacity: 0.4;
+    background-color: var(--color-surface-muted);
+    border-color: var(--color-edge);
+    --_q-icon-color: var(--color-content-tertiary);
+  }
+
+  /* Compact variant — SCR-04 alternatives */
+  .quadrant-btn--compact {
+    @apply relative h-9;
+    padding: var(--spacing-component-xs) var(--spacing-component-sm);
+    font-size: var(--text-xs);
+  }
+
+  .quadrant-btn--compact::after {
+    @apply absolute -inset-1 min-h-11;
+    content: "";
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quadrant-btn:active {
+      @apply transform-none;
+    }
+  }
+}

@@ -1,0 +1,36 @@
+@layer components {
+  .task-context-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--color-surface-subtle);
+    border-radius: var(--radius-component);
+    padding: 10px 12px;
+  }
+
+  .task-context-header__title {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-content);
+    line-height: var(--line-height-tight);
+  }
+
+  .sorting-overlay__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-lg);
+  }
+
+  .sorting-overlay__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-sm);
+  }
+
+  .sorting-overlay__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-inline-md);
+  }
+}

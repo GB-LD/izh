@@ -18,8 +18,7 @@ export const useUIStore = create<UIStoreState & UIStoreActions>()((set) => ({
   activeOverlay: null,
   activeFocusQuadrant: null,
   onboardingFlags: {},
-  openOverlay: (id: "sorting" | "purge" | "survey") =>
-    set({ activeOverlay: id }),
+  openOverlay: (id) => set({ activeOverlay: id }),
   closeOverlay: () => set({ activeOverlay: null }),
   setActiveFocusQuadrant: (q: Quadrant) => set({ activeFocusQuadrant: q }),
   markOnboardingDone: (key) =>
