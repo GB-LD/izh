@@ -6,7 +6,9 @@ import { OverlayShell } from "@/shared/OverlayShell";
 import { TaskContextHeader } from "@/shared/TaskContextHeader";
 import { QuadrantButton } from "@/shared/QuadrantButton";
 import { Button } from "@/shared/Button";
+import { Questionnaire } from "@/features/sorting/Questionnaire";
 import type { Quadrant } from "@/schemas/task";
+import type { TerminalResult } from "@/lib/questionnaire";
 
 type SortingStep = "choice" | "questionnaire" | "result";
 
@@ -43,6 +45,12 @@ export function SortingOverlay() {
     setStep("questionnaire");
   }
 
+  function handleQuestionnaireResult(result: TerminalResult) {
+    if (!taskId) return;
+    classifyTask(taskId, result.quadrant, "assisted", result.sourceFlux);
+    setStep("result");
+  }
+
   return (
     <OverlayShell
       isOpen={isOpen}
@@ -70,7 +78,12 @@ export function SortingOverlay() {
         </div>
       )}
 
-      {step === "questionnaire" && <div>{/* TODO Story 3.3 */}</div>}
+      {step === "questionnaire" && task && (
+        <Questionnaire
+          taskTitle={task.title}
+          onResult={handleQuestionnaireResult}
+        />
+      )}
 
       {step === "result" && <div>{/* TODO Story 3.4 */}</div>}
     </OverlayShell>
