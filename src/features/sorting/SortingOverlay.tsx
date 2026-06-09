@@ -1,12 +1,16 @@
 import { useState } from "react";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { useUIStore } from "@/stores/useUIStore";
 import { useFlowStore } from "@/stores/useFlowStore";
 import { useTaskStore } from "@/stores/useTaskStore";
+import { useFlowReducer } from "@/hooks/useFlowReducer";
 import { OverlayShell } from "@/shared/OverlayShell";
 import { TaskContextHeader } from "@/shared/TaskContextHeader";
 import { QuadrantButton } from "@/shared/QuadrantButton";
 import { Button } from "@/shared/Button";
+import { Questionnaire } from "@/features/sorting/Questionnaire";
 import type { Quadrant } from "@/schemas/task";
+import type { TerminalResult } from "@/lib/questionnaire";
 
 type SortingStep = "choice" | "questionnaire" | "result";
 
@@ -14,6 +18,8 @@ const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 
 export function SortingOverlay() {
   const [step, setStep] = useState<SortingStep>("choice");
+  const flow = useFlowReducer();
+  const isDesktop = useIsDesktop();
 
   const isOpen = useUIStore((s) => s.activeOverlay === "sorting");
   const closeOverlay = useUIStore((s) => s.closeOverlay);
@@ -43,12 +49,36 @@ export function SortingOverlay() {
     setStep("questionnaire");
   }
 
+  function handleQuestionnaireResult(result: TerminalResult) {
+    if (!taskId) return;
+    classifyTask(taskId, result.quadrant, "assisted", result.sourceFlux);
+    setStep("result");
+  }
+
+  const headerStart =
+    isDesktop && step === "questionnaire" ? (
+      <button
+        type="button"
+        className="btn btn-text btn-sm"
+        onClick={
+          flow.canGoBack ? () => flow.dispatch({ type: "BACK" }) : undefined
+        }
+        aria-label="Retour à la question précédente"
+        aria-hidden={!flow.canGoBack || undefined}
+        tabIndex={!flow.canGoBack ? -1 : undefined}
+        style={!flow.canGoBack ? { visibility: "hidden" } : undefined}
+      >
+        ← Retour
+      </button>
+    ) : undefined;
+
   return (
     <OverlayShell
       isOpen={isOpen}
       onClose={handleClose}
       variant="flow"
       aria-labelledby="sorting-task-title"
+      headerStart={headerStart}
     >
       {step === "choice" && task && (
         <div className="sorting-overlay__content">
@@ -70,7 +100,13 @@ export function SortingOverlay() {
         </div>
       )}
 
-      {step === "questionnaire" && <div>{/* TODO Story 3.3 */}</div>}
+      {step === "questionnaire" && task && (
+        <Questionnaire
+          taskTitle={task.title}
+          flow={flow}
+          onResult={handleQuestionnaireResult}
+        />
+      )}
 
       {step === "result" && <div>{/* TODO Story 3.4 */}</div>}
     </OverlayShell>

@@ -1,16 +1,30 @@
 @layer components {
   .task-context-header {
+    @apply flex items-start;
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--color-surface-subtle);
-    border-radius: var(--radius-component);
-    padding: 10px 12px;
+    gap: var(--spacing-inline-xs);
+    background: var(--color-surface-base);
+    border-bottom: 1px solid var(--color-edge);
+    padding-bottom: var(--spacing-inline-md);
+  }
+
+  .task-context-header__text {
+    @apply flex flex-col min-w-0;
+    gap: 2px;
+  }
+
+  .task-context-header__label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.05em;
+    color: var(--color-content-tertiary);
   }
 
   .task-context-header__title {
     margin: 0;
-    font-size: var(--text-sm);
+    font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     color: var(--color-content);
     line-height: var(--line-height-tight);
@@ -25,7 +39,7 @@
   .sorting-overlay__actions {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-stack-sm);
+    gap: var(--spacing-stack-md);
   }
 
   .sorting-overlay__grid {

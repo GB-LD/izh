@@ -47,22 +47,26 @@
   }
 
   .overlay-header {
-    @apply flex items-center justify-end shrink-0;
+    @apply flex items-center justify-between shrink-0;
     padding: var(--spacing-component-md) var(--spacing-component-md)
       var(--spacing-inline-md);
   }
 
+  .overlay-header__start {
+    @apply flex items-center;
+  }
+
   .overlay-shell__content {
     @apply flex-1 min-h-0 overflow-y-auto;
-    padding: 0 var(--spacing-component-md) var(--spacing-component-md);
+    padding: 0 var(--spacing-component-lg) var(--spacing-component-lg);
   }
 
   @media (width >= 1280px) {
     .overlay-shell--flow {
-      @apply top-1/2 right-auto bottom-auto left-1/2 h-auto pb-0;
+      @apply top-1/2 right-auto bottom-auto left-1/2 pb-0;
       @apply -translate-x-1/2 -translate-y-1/2;
       width: min(480px, calc(100vw - 32px));
-      max-height: calc(100dvh - 32px);
+      height: min(560px, calc(100dvh - 32px));
       border-radius: var(--radius-container);
       box-shadow: var(--shadow-lg);
     }

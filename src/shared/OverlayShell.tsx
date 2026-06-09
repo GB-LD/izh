@@ -50,6 +50,9 @@ type OverlayShellProps = {
   children: ReactNode;
   triggerRef?: RefObject<HTMLElement | null>;
   "aria-labelledby"?: string;
+  /** Optional content rendered at the start (left) of the header, e.g. a back
+   *  button. When provided, the header also renders on mobile. */
+  headerStart?: ReactNode;
 };
 
 export function OverlayShell({
@@ -59,6 +62,7 @@ export function OverlayShell({
   children,
   triggerRef,
   "aria-labelledby": ariaLabelledBy,
+  headerStart,
 }: OverlayShellProps) {
   const shellRef = useRef<HTMLDivElement>(null);
   const triggerElementRef = useRef<HTMLElement | null>(null);
@@ -181,16 +185,19 @@ export function OverlayShell({
               </div>
             ) : null}
 
-            {isDesktop ? (
+            {isDesktop || headerStart ? (
               <div className="overlay-header">
-                <button
-                  type="button"
-                  className="btn btn-icon-only btn-text btn-sm"
-                  onClick={onClose}
-                  aria-label="Fermer"
-                >
-                  <X size={16} aria-hidden="true" />
-                </button>
+                <div className="overlay-header__start">{headerStart}</div>
+                {isDesktop ? (
+                  <button
+                    type="button"
+                    className="btn btn-icon-only btn-text btn-sm"
+                    onClick={onClose}
+                    aria-label="Fermer"
+                  >
+                    <X size={16} aria-hidden="true" />
+                  </button>
+                ) : null}
               </div>
             ) : null}
 
