@@ -8,31 +8,38 @@ function setup() {
 }
 
 describe("useFlowReducer", () => {
-  it("starts at aiguillage", () => {
+  it("starts at aiguillage-q1", () => {
     const { result } = setup();
-    expect(result.current.currentNode).toBe("aiguillage");
+    expect(result.current.currentNode).toBe("aiguillage-q1");
     expect(result.current.canGoBack).toBe(false);
     expect(result.current.done).toBeNull();
   });
 
   it("ANSWER forward — advances to correct node", () => {
     const { result } = setup();
-    const answer = result.current.currentQuestion.answers[0]; // 😬 → flux3-q1
+    const answer = result.current.currentQuestion.answers[0]; // 🔥 → aiguillage-q2a
     act(() => {
       result.current.dispatch({ type: "ANSWER", answer });
     });
-    expect(result.current.currentNode).toBe("flux3-q1");
+    expect(result.current.currentNode).toBe("aiguillage-q2a");
     expect(result.current.direction).toBe("forward");
     expect(result.current.canGoBack).toBe(true);
   });
 
   it("ANSWER terminal — sets done, no new node in history", () => {
     const { result } = setup();
-    // Navigate to flux1
+    // aiguillage-q1 → aiguillage-q2b (💤)
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
-        answer: result.current.currentQuestion.answers[3], // 🤷 → flux1
+        answer: result.current.currentQuestion.answers[1],
+      });
+    });
+    // aiguillage-q2b → flux1 (🤷)
+    act(() => {
+      result.current.dispatch({
+        type: "ANSWER",
+        answer: result.current.currentQuestion.answers[1],
       });
     });
     expect(result.current.currentNode).toBe("flux1");
@@ -55,33 +62,40 @@ describe("useFlowReducer", () => {
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
-        answer: result.current.currentQuestion.answers[3], // → flux1
+        answer: result.current.currentQuestion.answers[0], // → aiguillage-q2a
       });
     });
-    expect(result.current.currentNode).toBe("flux1");
+    expect(result.current.currentNode).toBe("aiguillage-q2a");
     act(() => {
       result.current.dispatch({ type: "BACK" });
     });
-    expect(result.current.currentNode).toBe("aiguillage");
+    expect(result.current.currentNode).toBe("aiguillage-q1");
     expect(result.current.direction).toBe("backward");
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it("BACK on aiguillage — does nothing", () => {
+  it("BACK on aiguillage-q1 — does nothing", () => {
     const { result } = setup();
     act(() => {
       result.current.dispatch({ type: "BACK" });
     });
-    expect(result.current.currentNode).toBe("aiguillage");
+    expect(result.current.currentNode).toBe("aiguillage-q1");
   });
 
   it('Flux 2 "no priorities" → flux1 redirect — transparent', () => {
     const { result } = setup();
-    // aiguillage → flux2-q1 (3rd answer: 🤔)
+    // aiguillage-q1 → aiguillage-q2b (💤)
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
-        answer: result.current.currentQuestion.answers[2], // 🤔 → flux2-q1
+        answer: result.current.currentQuestion.answers[1],
+      });
+    });
+    // aiguillage-q2b → flux2-q1 (🤔)
+    act(() => {
+      result.current.dispatch({
+        type: "ANSWER",
+        answer: result.current.currentQuestion.answers[0],
       });
     });
     expect(result.current.currentNode).toBe("flux2-q1");
@@ -95,24 +109,24 @@ describe("useFlowReducer", () => {
     expect(result.current.currentNode).toBe("flux1");
   });
 
-  it("Flux 3 with rebond — correct history", () => {
+  it("Flux 3 — flux3-q1 leads to flux3-q2a", () => {
     const { result } = setup();
-    // aiguillage → flux3-q1 (😬)
+    // aiguillage-q1 → aiguillage-q2a (🔥)
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
         answer: result.current.currentQuestion.answers[0],
       });
     });
-    // flux3-q1 → flux3-rebond ("Je sais pas")
+    // aiguillage-q2a → flux3-q1 (😬 pression)
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
-        answer: result.current.currentQuestion.answers[2],
+        answer: result.current.currentQuestion.answers[0],
       });
     });
-    expect(result.current.currentNode).toBe("flux3-rebond");
-    // flux3-rebond → flux3-q2a ("On me relance")
+    expect(result.current.currentNode).toBe("flux3-q1");
+    // flux3-q1 → flux3-q2a (🔔 "Quelqu'un me relance")
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
@@ -122,47 +136,51 @@ describe("useFlowReducer", () => {
     expect(result.current.currentNode).toBe("flux3-q2a");
   });
 
-  it("previousAnswer returns correct answer after BACK", () => {
+  it("GO_TO — jumps back to an earlier step, truncating history", () => {
     const { result } = setup();
-    const firstAnswer = result.current.currentQuestion.answers[3]; // 🤷 → flux1
-    act(() => {
-      result.current.dispatch({ type: "ANSWER", answer: firstAnswer });
-    });
-    act(() => {
-      result.current.dispatch({ type: "BACK" });
-    });
-    expect(result.current.currentNode).toBe("aiguillage");
-    expect(result.current.previousAnswer).toBeNull();
-  });
-
-  it("previousAnswer points to the answer that led to current node", () => {
-    const { result } = setup();
-    const answer = result.current.currentQuestion.answers[3]; // 🤷 → flux1
-    act(() => {
-      result.current.dispatch({ type: "ANSWER", answer });
-    });
-    // Now at flux1; go back to aiguillage
-    act(() => {
-      result.current.dispatch({ type: "BACK" });
-    });
-    // aiguillage has no previous (it's the root)
-    expect(result.current.previousAnswer).toBeNull();
-
-    // Go forward again, then check previousAnswer from flux1
+    // aiguillage-q1 → aiguillage-q2a → flux3-q1
     act(() => {
       result.current.dispatch({
         type: "ANSWER",
-        answer: result.current.currentQuestion.answers[3],
+        answer: result.current.currentQuestion.answers[0],
       });
     });
-    expect(result.current.currentNode).toBe("flux1");
-    // previousAnswer should be the answer from aiguillage that led to flux1
-    expect(result.current.previousAnswer?.label).toBe(
-      "🤷 Je sais pas ce qui se passe si je le fais pas",
-    );
+    act(() => {
+      result.current.dispatch({
+        type: "ANSWER",
+        answer: result.current.currentQuestion.answers[0],
+      });
+    });
+    expect(result.current.currentNode).toBe("flux3-q1");
+    expect(result.current.progressState.stepIndex).toBe(2);
+    act(() => {
+      result.current.dispatch({ type: "GO_TO", index: 0 });
+    });
+    expect(result.current.currentNode).toBe("aiguillage-q1");
+    expect(result.current.direction).toBe("backward");
+    expect(result.current.canGoBack).toBe(false);
   });
 
-  it("RESET — resets history to aiguillage", () => {
+  it("GO_TO — current or forward index is a no-op", () => {
+    const { result } = setup();
+    act(() => {
+      result.current.dispatch({
+        type: "ANSWER",
+        answer: result.current.currentQuestion.answers[0], // → aiguillage-q2a
+      });
+    });
+    // index 1 is the current step, index 5 is ahead — both ignored
+    act(() => {
+      result.current.dispatch({ type: "GO_TO", index: 1 });
+    });
+    expect(result.current.currentNode).toBe("aiguillage-q2a");
+    act(() => {
+      result.current.dispatch({ type: "GO_TO", index: 5 });
+    });
+    expect(result.current.currentNode).toBe("aiguillage-q2a");
+  });
+
+  it("RESET — resets history to aiguillage-q1", () => {
     const { result } = setup();
     act(() => {
       result.current.dispatch({
@@ -170,45 +188,49 @@ describe("useFlowReducer", () => {
         answer: result.current.currentQuestion.answers[0],
       });
     });
-    expect(result.current.currentNode).not.toBe("aiguillage");
+    expect(result.current.currentNode).not.toBe("aiguillage-q1");
     act(() => {
       result.current.dispatch({ type: "RESET" });
     });
-    expect(result.current.currentNode).toBe("aiguillage");
+    expect(result.current.currentNode).toBe("aiguillage-q1");
     expect(result.current.canGoBack).toBe(false);
     expect(result.current.done).toBeNull();
   });
 });
 
 describe("getProgressState", () => {
-  it("returns null at aiguillage", () => {
-    expect(getProgressState("aiguillage", ["aiguillage"])).toBeNull();
+  it("shows 4 fixed dots from the first aiguillage question", () => {
+    expect(getProgressState(["aiguillage-q1"])).toEqual({
+      stepIndex: 0,
+      totalSteps: 4,
+    });
+    expect(getProgressState(["aiguillage-q1", "aiguillage-q2a"])).toEqual({
+      stepIndex: 1,
+      totalSteps: 4,
+    });
   });
 
-  it("returns correct stepIndex and totalSteps in flux 2", () => {
-    // At flux2-q1: history = ['aiguillage', 'flux2-q1'], currentNode = 'flux2-q1'
-    // fluxEntryIdx = 1 (flux2-q1), stepIndex = history.length - fluxEntryIdx = 2 - 1 = 1? Wait
-    // Actually currentNode is NOT in history yet when getProgressState is called
-    // history = ['aiguillage', 'flux2-q1'], currentNode = 'flux2-q1'
-    // fluxEntryIdx = 1 (finds 'flux2-q1' in history)
-    // stepIndex = history.length - fluxEntryIdx = 2 - 1 = 1 → but that's 1-based, should be 0?
-    // Re-reading: stepIndex = history.length - fluxEntryIdx = 2 - 1 = 1
-    // totalSteps for flux2 = 2, so min(1, 2-1) = min(1,1) = 1 → step 1 of 2
-    const result = getProgressState("flux2-q1", ["aiguillage", "flux2-q1"]);
-    expect(result).not.toBeNull();
-    expect(result!.totalSteps).toBe(2);
-    // stepIndex is 1 (= history.length - fluxEntryIdx = 2 - 1 = 1, capped to totalSteps-1=1)
-    expect(result!.stepIndex).toBe(1);
+  it("advances stepIndex with history length through a flux", () => {
+    const atFluxEntry = getProgressState([
+      "aiguillage-q1",
+      "aiguillage-q2b",
+      "flux2-q1",
+    ]);
+    expect(atFluxEntry).toEqual({ stepIndex: 2, totalSteps: 4 });
+
+    const atFluxLast = getProgressState([
+      "aiguillage-q1",
+      "aiguillage-q2b",
+      "flux2-q1",
+      "flux2-q2a",
+    ]);
+    expect(atFluxLast).toEqual({ stepIndex: 3, totalSteps: 4 });
   });
 
-  it("returns stepIndex 0 for first question in flux 1", () => {
-    // history = ['aiguillage'], currentNode = 'flux1' (not in history yet)
-    // Wait — in useFlowReducer, when ANSWER is dispatched, 'flux1' is added to history
-    // So when we're AT flux1: history = ['aiguillage', 'flux1']
-    // fluxEntryIdx = 1, stepIndex = 2 - 1 = 1, totalSteps = 1, min(1, 0) = 0
-    const result = getProgressState("flux1", ["aiguillage", "flux1"]);
-    expect(result).not.toBeNull();
-    expect(result!.totalSteps).toBe(1);
-    expect(result!.stepIndex).toBe(0);
+  it("leaves the last dot inactive on the shortest path (Flux 1 direct)", () => {
+    // 3-question path → stepIndex 2 of 4: dots render ●●●○
+    expect(
+      getProgressState(["aiguillage-q1", "aiguillage-q2b", "flux1"]),
+    ).toEqual({ stepIndex: 2, totalSteps: 4 });
   });
 });

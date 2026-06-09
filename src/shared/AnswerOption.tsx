@@ -1,17 +1,20 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
 interface AnswerOptionProps {
   label: string;
-  emoji?: string;
   onClick: () => void;
-  isPreSelected?: boolean;
 }
 
 export const AnswerOption = forwardRef<HTMLButtonElement, AnswerOptionProps>(
-  ({ label, onClick, isPreSelected = false }, ref) => {
+  ({ label, onClick }, ref) => {
     const [isFlashing, setIsFlashing] = useState(false);
     const prefersReduced = useReducedMotion();
+    const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    // Clear a pending flash timer if the button unmounts mid-flash (rapid BACK,
+    // GO_TO, or close) so we don't fire a stale onClick for the old answer.
+    useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
     const handleClick = () => {
       if (prefersReduced) {
@@ -19,7 +22,7 @@ export const AnswerOption = forwardRef<HTMLButtonElement, AnswerOptionProps>(
         return;
       }
       setIsFlashing(true);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setIsFlashing(false);
         onClick();
       }, 150);
@@ -28,7 +31,6 @@ export const AnswerOption = forwardRef<HTMLButtonElement, AnswerOptionProps>(
     const className = [
       "answer-option",
       isFlashing ? "answer-option--flashing" : "",
-      isPreSelected && !isFlashing ? "answer-option--preselected" : "",
     ]
       .filter(Boolean)
       .join(" ");
@@ -39,8 +41,6 @@ export const AnswerOption = forwardRef<HTMLButtonElement, AnswerOptionProps>(
         type="button"
         className={className}
         onClick={handleClick}
-        role="option"
-        aria-selected={isPreSelected}
       >
         {label}
       </button>

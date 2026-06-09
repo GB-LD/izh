@@ -1,4 +1,4 @@
-import { useReducer, useMemo } from "react";
+import { useReducer } from "react";
 import {
   QUESTIONNAIRE,
   getProgressState,
@@ -19,10 +19,11 @@ type FlowReducerState = {
 type FlowAction =
   | { type: "ANSWER"; answer: AnswerConfig }
   | { type: "BACK" }
+  | { type: "GO_TO"; index: number }
   | { type: "RESET" };
 
 const INITIAL_STATE: FlowReducerState = {
-  history: ["aiguillage"],
+  history: ["aiguillage-q1"],
   direction: "forward",
   done: null,
 };
@@ -51,6 +52,18 @@ function reducer(
         done: null,
       };
     }
+    case "GO_TO": {
+      // Only navigate to a strictly past step; jumping to the current step or
+      // forward is a no-op (you cannot skip ahead without answering).
+      if (action.index < 0 || action.index >= state.history.length - 1) {
+        return state;
+      }
+      return {
+        history: state.history.slice(0, action.index + 1),
+        direction: "backward",
+        done: null,
+      };
+    }
     case "RESET":
       return INITIAL_STATE;
     default:
@@ -65,24 +78,12 @@ export function useFlowReducer() {
   const currentQuestion = QUESTIONNAIRE[currentNode];
   const canGoBack = state.history.length > 1;
 
-  const previousAnswer = useMemo<AnswerConfig | null>(() => {
-    if (state.history.length < 2) return null;
-    const prevNode = state.history[state.history.length - 2];
-    const prevQuestion = QUESTIONNAIRE[prevNode];
-    return (
-      prevQuestion.answers.find(
-        (a) => !isTerminal(a.next) && a.next === currentNode,
-      ) ?? null
-    );
-  }, [state.history, currentNode]);
-
-  const progressState = getProgressState(currentNode, state.history);
+  const progressState = getProgressState(state.history);
 
   return {
     currentNode,
     currentQuestion,
     canGoBack,
-    previousAnswer,
     progressState,
     direction: state.direction,
     done: state.done,

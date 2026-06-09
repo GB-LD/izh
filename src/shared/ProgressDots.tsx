@@ -3,9 +3,16 @@ import { motion, useReducedMotion } from "motion/react";
 interface ProgressDotsProps {
   stepIndex: number;
   total: number;
+  /** When provided, completed dots become buttons that navigate back to the
+   *  matching step. The active and upcoming dots stay non-interactive. */
+  onNavigate?: (index: number) => void;
 }
 
-export function ProgressDots({ stepIndex, total }: ProgressDotsProps) {
+export function ProgressDots({
+  stepIndex,
+  total,
+  onNavigate,
+}: ProgressDotsProps) {
   const prefersReduced = useReducedMotion();
 
   return (
@@ -36,6 +43,20 @@ export function ProgressDots({ stepIndex, total }: ProgressDotsProps) {
               }
               transition={{ duration: 0.3, ease: "easeOut" }}
             />
+          );
+        }
+
+        if (isCompleted && onNavigate) {
+          return (
+            <button
+              key={i}
+              type="button"
+              className="progress-dot-hit"
+              onClick={() => onNavigate(i)}
+              aria-label={`Revenir à la question ${i + 1}`}
+            >
+              <span className={dotClass} aria-hidden="true" />
+            </button>
           );
         }
 

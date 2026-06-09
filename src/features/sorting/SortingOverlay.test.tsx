@@ -21,6 +21,9 @@ vi.mock("motion/react", async () => {
     initial?: unknown;
     animate?: unknown;
     exit?: unknown;
+    variants?: unknown;
+    transition?: unknown;
+    onAnimationComplete?: (definition: string) => void;
     onDragEnd?: (
       event: Event,
       info: {
@@ -43,24 +46,36 @@ vi.mock("motion/react", async () => {
         initial: _initial,
         animate: _animate,
         exit: _exit,
+        variants: _variants,
+        transition: _transition,
+        onAnimationComplete,
         onDragEnd,
         ...props
       },
       ref,
-    ) => (
-      <div
-        ref={ref}
-        {...props}
-        onDragEnd={(event) => {
-          onDragEnd?.(event as unknown as Event, {
-            offset: { x: 0, y: 120 },
-            velocity: { x: 0, y: 600 },
-          });
-        }}
-      >
-        {children}
-      </div>
-    ),
+    ) => {
+      // Simulate the enter animation finishing so consumers relying on
+      // onAnimationComplete (e.g. focusing the first option) run in tests.
+      React.useEffect(() => {
+        onAnimationComplete?.("animate");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return (
+        <div
+          ref={ref}
+          {...props}
+          onDragEnd={(event) => {
+            onDragEnd?.(event as unknown as Event, {
+              offset: { x: 0, y: 120 },
+              velocity: { x: 0, y: 600 },
+            });
+          }}
+        >
+          {children}
+        </div>
+      );
+    },
   );
 
   MotionDiv.displayName = "MockMotionDiv";

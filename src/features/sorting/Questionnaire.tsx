@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import { useFlowReducer } from "@/hooks/useFlowReducer";
+import type { useFlowReducer } from "@/hooks/useFlowReducer";
 import { AnswerOption } from "@/shared/AnswerOption";
 import { ProgressDots } from "@/shared/ProgressDots";
 import { TaskContextHeader } from "@/shared/TaskContextHeader";
@@ -8,20 +8,19 @@ import type { TerminalResult } from "@/lib/questionnaire";
 
 interface Props {
   taskTitle: string;
+  flow: ReturnType<typeof useFlowReducer>;
   onResult: (result: TerminalResult) => void;
 }
 
-export function Questionnaire({ taskTitle, onResult }: Props) {
+export function Questionnaire({ taskTitle, flow, onResult }: Props) {
   const {
     currentNode,
     currentQuestion,
-    canGoBack,
-    previousAnswer,
     progressState,
     direction,
     done,
     dispatch,
-  } = useFlowReducer();
+  } = flow;
 
   const prefersReduced = useReducedMotion();
   const firstOptionRef = useRef<HTMLButtonElement>(null);
@@ -29,10 +28,6 @@ export function Questionnaire({ taskTitle, onResult }: Props) {
   useEffect(() => {
     if (done) onResult(done);
   }, [done, onResult]);
-
-  useEffect(() => {
-    firstOptionRef.current?.focus();
-  }, [currentNode]);
 
   useEffect(() => {
     return () => dispatch({ type: "RESET" });
@@ -54,65 +49,50 @@ export function Questionnaire({ taskTitle, onResult }: Props) {
 
   return (
     <div className="question-card">
-      {canGoBack && (
-        <button
-          type="button"
-          className="btn btn-text btn-sm question-card__back"
-          onClick={() => dispatch({ type: "BACK" })}
-          aria-label="Retour à la question précédente"
-        >
-          ← Retour
-        </button>
-      )}
-
       <TaskContextHeader title={taskTitle} />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentNode}
-          variants={slideVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={transition}
-        >
-          {currentNode === "aiguillage" && (
-            <p className="micro-text-reassuring" aria-hidden>
-              Réponds à l&apos;instinct — il n&apos;y a pas de mauvaise réponse.
-            </p>
-          )}
-
-          <h3 className="question-card__title">{currentQuestion.text}</h3>
-
-          <div
-            role="listbox"
-            className="question-card__answers"
-            aria-label={
-              progressState
-                ? `Question ${progressState.stepIndex + 1} sur ${progressState.totalSteps} : ${currentQuestion.text}`
-                : currentQuestion.text
-            }
-            aria-live="polite"
+      <div className="question-card__body">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentNode}
+            variants={slideVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={transition}
+            onAnimationComplete={(definition) => {
+              // Focus the first option only once the entering question has
+              // settled — with `mode="wait"` the new content mounts after the
+              // outgoing one finishes exiting, so focusing earlier would land
+              // on the element being removed.
+              if (definition === "animate") firstOptionRef.current?.focus();
+            }}
           >
-            {currentQuestion.answers.map((answer, idx) => (
-              <AnswerOption
-                key={answer.label}
-                label={answer.label}
-                onClick={() => dispatch({ type: "ANSWER", answer })}
-                isPreSelected={previousAnswer?.label === answer.label}
-                ref={idx === 0 ? firstOptionRef : undefined}
-              />
-            ))}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+            <h3 className="question-card__title">{currentQuestion.text}</h3>
 
-      {progressState && (
-        <ProgressDots
-          stepIndex={progressState.stepIndex}
-          total={progressState.totalSteps}
-        />
-      )}
+            <div
+              role="group"
+              className="question-card__answers"
+              aria-label={`Question ${progressState.stepIndex + 1} sur ${progressState.totalSteps}`}
+            >
+              {currentQuestion.answers.map((answer, idx) => (
+                <AnswerOption
+                  key={answer.label}
+                  label={answer.label}
+                  onClick={() => dispatch({ type: "ANSWER", answer })}
+                  ref={idx === 0 ? firstOptionRef : undefined}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <ProgressDots
+        stepIndex={progressState.stepIndex}
+        total={progressState.totalSteps}
+        onNavigate={(index) => dispatch({ type: "GO_TO", index })}
+      />
     </div>
   );
 }
