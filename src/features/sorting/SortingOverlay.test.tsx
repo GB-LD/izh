@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router";
 import { SortingOverlay } from "./SortingOverlay";
 import { useUIStore } from "@/stores/useUIStore";
 import { useTaskStore } from "@/stores/useTaskStore";
@@ -90,6 +91,10 @@ vi.mock("motion/react", async () => {
   };
 });
 
+function renderOverlay() {
+  return render(<SortingOverlay />, { wrapper: MemoryRouter });
+}
+
 function mockMatchMedia(matches: boolean) {
   Object.defineProperty(window, "matchMedia", {
     writable: true,
@@ -121,6 +126,13 @@ const TASK: Task = {
   position: 0,
 };
 
+const TASK2: Task = {
+  ...TASK,
+  id: "task-2",
+  title: "Appeler le dentiste",
+  position: 1,
+};
+
 const FLOW_WITH_TASK = {
   taskId: "task-1",
   isActive: false,
@@ -148,7 +160,7 @@ beforeEach(() => {
 
 describe("SortingOverlay", () => {
   it("renders nothing when overlay is closed", () => {
-    render(<SortingOverlay />);
+    renderOverlay();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
@@ -157,7 +169,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
@@ -167,7 +179,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     expect(screen.getByText("Acheter du pain")).toBeInTheDocument();
   });
@@ -177,7 +189,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     expect(
       screen.getByRole("button", { name: /Classer dans Faire maintenant/ }),
@@ -198,7 +210,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     expect(
       screen.getByRole("button", { name: /Aide-moi à décider/ }),
@@ -211,7 +223,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     await user.click(
       screen.getByRole("button", { name: /Classer dans Faire maintenant/ }),
@@ -249,7 +261,7 @@ describe("SortingOverlay", () => {
         ],
       });
 
-      const { unmount } = render(<SortingOverlay />);
+      const { unmount } = renderOverlay();
       await user.click(screen.getByRole("button", { name }));
 
       const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
@@ -264,7 +276,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     await user.click(
       screen.getByRole("button", { name: /Aide-moi à décider/ }),
@@ -283,7 +295,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     await user.click(
       screen.getByRole("button", { name: /Aide-moi à décider/ }),
@@ -297,7 +309,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     const backdrop = document.querySelector(".overlay-backdrop");
     expect(backdrop).not.toBeNull();
@@ -315,7 +327,7 @@ describe("SortingOverlay", () => {
     useFlowStore.setState(FLOW_WITH_TASK);
     useTaskStore.setState({ tasks: [TASK] });
 
-    render(<SortingOverlay />);
+    renderOverlay();
 
     fireEvent.keyDown(document, { key: "Escape" });
 
@@ -324,5 +336,124 @@ describe("SortingOverlay", () => {
     const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
     expect(task?.status).toBe("inbox");
     expect(task?.quadrant).toBeNull();
+  });
+
+  // Walk the assisted questionnaire to its shortest terminal node
+  // (Flux 1 → q1): "traîne" → "ne me rappelle plus" → "conséquence sérieuse".
+  async function reachConfirmation(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(
+      screen.getByRole("button", { name: /Aide-moi à décider/ }),
+    );
+    await user.click(
+      await screen.findByText("💤 Non, elle traîne dans ma liste"),
+    );
+    await user.click(
+      await screen.findByText(
+        "🤷 Je ne me rappelle plus pourquoi je l'ai notée",
+      ),
+    );
+    await user.click(
+      await screen.findByText(
+        "💥 Conséquence sérieuse : deadline ratée, projet bloqué",
+      ),
+    );
+    await screen.findByRole("button", { name: /Ça me parle/ });
+  }
+
+  it("moves to confirmation after the questionnaire without classifying", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ activeOverlay: "sorting" });
+    useFlowStore.setState(FLOW_WITH_TASK);
+    useTaskStore.setState({ tasks: [TASK] });
+
+    renderOverlay();
+    await reachConfirmation(user);
+
+    const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
+    expect(task?.status).toBe("inbox");
+    expect(task?.quadrant).toBeNull();
+  });
+
+  it("classifies with userOverride false when 'Ça me parle' is confirmed", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ activeOverlay: "sorting" });
+    useFlowStore.setState(FLOW_WITH_TASK);
+    useTaskStore.setState({ tasks: [TASK, TASK2] });
+
+    renderOverlay();
+    await reachConfirmation(user);
+    await user.click(screen.getByRole("button", { name: /Ça me parle/ }));
+
+    const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
+    expect(task?.status).toBe("backlog");
+    expect(task?.quadrant).toBe("q1");
+    expect(task?.classificationMethod).toBe("assisted");
+    expect(task?.sourceFlux).toBe("flux1");
+    expect(task?.userOverride).toBe(false);
+    expect(
+      screen.getByRole("button", { name: /Voir la Réserve/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("classifies with userOverride true when an alternative is chosen", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ activeOverlay: "sorting" });
+    useFlowStore.setState(FLOW_WITH_TASK);
+    useTaskStore.setState({ tasks: [TASK, TASK2] });
+
+    renderOverlay();
+    await reachConfirmation(user);
+    await user.click(
+      screen.getByRole("button", { name: /Classer dans Planifier/ }),
+    );
+
+    const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
+    expect(task?.status).toBe("backlog");
+    expect(task?.quadrant).toBe("q2");
+    expect(task?.userOverride).toBe(true);
+  });
+
+  it("blocks sorting and shows the reserve-full notice when the Réserve is full", () => {
+    const backlog: Task[] = Array.from({ length: 40 }, (_, i) => ({
+      ...TASK,
+      id: `backlog-${i}`,
+      status: "backlog",
+      quadrant: "q1",
+    }));
+    useUIStore.setState({ activeOverlay: "sorting" });
+    useFlowStore.setState(FLOW_WITH_TASK);
+    useTaskStore.setState({ tasks: [TASK, ...backlog] });
+
+    renderOverlay();
+
+    expect(screen.getByText("Réserve pleine")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Aide-moi à décider/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Classer dans/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("skips confirmation for manual classification (userOverride null)", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ activeOverlay: "sorting" });
+    useFlowStore.setState(FLOW_WITH_TASK);
+    useTaskStore.setState({ tasks: [TASK, TASK2] });
+
+    renderOverlay();
+    await user.click(
+      screen.getByRole("button", { name: /Classer dans Faire maintenant/ }),
+    );
+
+    const task = useTaskStore.getState().tasks.find((t) => t.id === "task-1");
+    expect(task?.status).toBe("backlog");
+    expect(task?.userOverride).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /Ça me parle/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Voir la Réserve/ }),
+    ).toBeInTheDocument();
   });
 });

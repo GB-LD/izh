@@ -1,0 +1,190 @@
+@layer components {
+  .quadrant-badge {
+    --_q-color: currentColor;
+
+    @apply flex flex-col items-center justify-center;
+
+    width: 115px;
+    height: 115px;
+    gap: 4px;
+    padding: 10px;
+    background: var(--color-surface-base);
+    border: 1.5px solid var(--_q-color);
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-md);
+  }
+
+  .quadrant-badge svg {
+    color: var(--_q-color);
+  }
+
+  .quadrant-badge__label {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-content);
+    text-align: center;
+  }
+
+  .quadrant-badge__subtitle {
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--_q-color);
+    text-align: center;
+  }
+
+  .quadrant-badge--q1 {
+    --_q-color: var(--color-quadrant-q1);
+  }
+  .quadrant-badge--q2 {
+    --_q-color: var(--color-quadrant-q2);
+  }
+  .quadrant-badge--q3 {
+    --_q-color: var(--color-quadrant-q3);
+  }
+  .quadrant-badge--q4 {
+    --_q-color: var(--color-quadrant-q4);
+  }
+
+  .quadrant-badge--confirmed {
+    border-width: 2.5px;
+    box-shadow: 0 4px 16px oklch(from var(--_q-color) l c h / 0.1);
+  }
+
+  .result-card {
+    @apply flex flex-col items-center justify-center;
+
+    min-height: 100%;
+    gap: var(--spacing-inline-md);
+    padding: var(--spacing-component-md) var(--spacing-component-md)
+      var(--spacing-component-lg);
+    text-align: center;
+  }
+
+  .result-card__subtle {
+    font-size: var(--text-xs);
+    color: var(--color-content-secondary);
+    text-align: center;
+  }
+
+  .result-proposal {
+    @apply flex flex-col items-center;
+    gap: var(--spacing-inline-sm);
+  }
+
+  .result-proposal .quadrant-badge {
+    box-shadow:
+      var(--shadow-md),
+      0 0 32px -2px oklch(from var(--_q-color) l c h / 0.28);
+  }
+
+  .result-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.1em;
+    color: var(--color-content-secondary);
+  }
+
+  .sort-alt {
+    @apply flex flex-col items-center;
+    width: 100%;
+    max-width: 17rem;
+    gap: var(--spacing-inline-sm);
+  }
+
+  .sort-alt::before {
+    content: "";
+    width: 2rem;
+    height: 1px;
+    margin-bottom: var(--spacing-inline-xs);
+    background: var(--color-edge-strong);
+  }
+
+  .result-card__alternatives {
+    @apply flex flex-row flex-wrap justify-center;
+    gap: var(--spacing-inline-sm);
+    width: 100%;
+  }
+
+  /* 2 per row; with only 3 items the orphan stays half-width and the
+     justify-center above centers it on the second row. */
+  .result-card__alternatives .quadrant-btn {
+    flex: 0 1 calc(50% - var(--spacing-inline-sm) / 2);
+    justify-content: center;
+  }
+
+  /* Center icon + label as a group instead of the left-aligned, full-width
+     layout used on the choice screen. */
+  .result-card__alternatives .quadrant-btn__label {
+    flex: 0 1 auto;
+    text-align: center;
+  }
+
+  .sort-progress {
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: var(--color-content-secondary);
+    text-align: center;
+  }
+
+  .result-state {
+    @apply flex flex-col items-center;
+
+    gap: var(--spacing-inline-md);
+    max-width: 30ch;
+    text-align: center;
+  }
+
+  .result-medallion {
+    @apply grid shrink-0;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-full);
+  }
+
+  .result-medallion--success {
+    background: var(--color-feedback-success-surface);
+    color: var(--color-feedback-success);
+    box-shadow: 0 0 36px 6px
+      oklch(from var(--color-feedback-success) l c h / 0.2);
+  }
+
+  .result-medallion--warning {
+    background: var(--color-feedback-warning-surface);
+    color: var(--color-feedback-warning);
+    box-shadow: 0 0 36px 6px
+      oklch(from var(--color-feedback-warning) l c h / 0.2);
+  }
+
+  .result-state__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--line-height-tight);
+    color: var(--color-content);
+  }
+
+  .result-state__subtitle {
+    font-size: var(--text-sm);
+    line-height: var(--line-height-normal);
+    color: var(--color-content-secondary);
+    text-wrap: balance;
+  }
+
+  .result-state__actions {
+    @apply flex flex-col items-center;
+    gap: var(--spacing-inline-sm);
+    margin-top: var(--spacing-inline-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quadrant-badge--confirmed {
+      animation: none;
+      transform: none;
+    }
+  }
+}
