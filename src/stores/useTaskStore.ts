@@ -39,6 +39,7 @@ type TaskActions = {
     quadrant: Quadrant,
     classificationMethod: ClassificationMethod,
     sourceFlux?: SourceFlux,
+    userOverride?: boolean | null,
   ) => void;
   activateTask: (id: string) => void;
   completeTask: (id: string) => void;
@@ -110,7 +111,13 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
         }),
       deleteTask: (taskId: string) =>
         set((s) => ({ tasks: s.tasks.filter((t) => t.id !== taskId) })),
-      classifyTask: (id, quadrant, classificationMethod, sourceFlux) =>
+      classifyTask: (
+        id,
+        quadrant,
+        classificationMethod,
+        sourceFlux,
+        userOverride = null,
+      ) =>
         set((s) => {
           if (
             s.tasks.filter((t) => t.status === "backlog").length >=
@@ -125,6 +132,7 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
                   quadrant,
                   classificationMethod,
                   sourceFlux: sourceFlux ?? null,
+                  userOverride,
                   classifiedAt: new Date().toISOString(),
                 } satisfies Task)
               : t,

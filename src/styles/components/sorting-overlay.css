@@ -30,6 +30,27 @@
     line-height: var(--line-height-tight);
   }
 
+  .task-context-header--result {
+    position: static;
+    justify-content: center;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .task-context-header--result .task-context-header__text {
+    align-items: center;
+  }
+
+  .task-context-header--result .task-context-header__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--line-height-tight);
+    text-align: center;
+    text-wrap: balance;
+  }
+
   .sorting-overlay__content {
     display: flex;
     flex-direction: column;

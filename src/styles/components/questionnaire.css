@@ -18,8 +18,8 @@
 
   .question-card__answers {
     @apply flex flex-col;
-    gap: var(--spacing-stack-md);
-    margin-block-start: var(--spacing-stack-lg);
+    gap: var(--spacing-stack-sm);
+    margin-block-start: var(--spacing-stack-md);
   }
 
   .micro-text-reassuring {
