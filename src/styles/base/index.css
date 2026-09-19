@@ -1,4 +1,10 @@
 @layer base {
+  /* Réserve en permanence la gouttière de la scrollbar pour éviter le
+     décalage horizontal du layout quand elle apparaît/disparaît. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   :root {
     /* ========================================================
        PRIMITIVE TOKENS — Valeurs brutes, jamais utilisées

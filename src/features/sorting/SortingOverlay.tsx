@@ -119,13 +119,13 @@ export function SortingOverlay() {
 
   function handleSeeReserve() {
     handleClose();
-    navigate("/reserve");
+    navigate("/backlog");
   }
 
   function handlePurge() {
     // TODO Epic 7 : ouvrir directement l'overlay de purge
     handleClose();
-    navigate("/reserve");
+    navigate("/backlog");
   }
 
   const headerStart =
