@@ -20,6 +20,7 @@
 @import "./styles/components/sidebar-nav.css";
 @import "./styles/components/empty-state.css";
 @import "./styles/components/inbox-page.css";
+@import "./styles/components/reserve-section.css";
 
 /* Utilitaires custom (à venir) */
 @import "./styles/utilities/index.css";

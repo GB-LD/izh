@@ -14,7 +14,6 @@ dist-ssr
 docs/solidbook.pdf
 AGENTS.md
 .claude
-stories
 
 # Editor directories and files
 .vscode/*
