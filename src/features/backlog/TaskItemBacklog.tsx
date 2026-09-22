@@ -1,8 +1,16 @@
-import { useRef, useState } from "react";
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import { createPortal } from "react-dom";
 import { Trash2 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { Task } from "@/schemas/task";
 import { MAX_FOCUS_PER_QUADRANT } from "@/lib/constants";
+import { QUADRANT_META } from "@/lib/quadrants";
 import { Button } from "@/shared/Button";
 import { useTaskStore } from "@/stores/useTaskStore";
 
@@ -14,6 +22,12 @@ interface TaskItemBacklogProps {
 
 const SWIPE_REVEAL_PX = 24;
 const SWIPE_COMMIT_PX = 48;
+
+interface TooltipPosition {
+  top: number;
+  left: number;
+  side: "above" | "below";
+}
 
 export function TaskItemBacklog({
   task,
@@ -30,12 +44,51 @@ export function TaskItemBacklog({
       ).length,
   );
   const pointerStartX = useRef<number | null>(null);
+  const activationRef = useRef<HTMLSpanElement>(null);
   const [isDeleteRevealed, setIsDeleteRevealed] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [tooltipPosition, setTooltipPosition] =
+    useState<TooltipPosition | null>(null);
+  const tooltipId = useId();
   const isFocusFull = activeCount >= MAX_FOCUS_PER_QUADRANT;
+  const quadrantLabel = task.quadrant
+    ? QUADRANT_META[task.quadrant].label
+    : "Non classé";
+  const unavailableActivationLabel = `Activer "${task.title}" indisponible`;
+  const focusFullMessage = `Le quadrant « ${quadrantLabel} » de ton Focus est plein (${MAX_FOCUS_PER_QUADRANT}/${MAX_FOCUS_PER_QUADRANT}). Termine une tâche ou remets-en une dans ta Réserve pour libérer une place.`;
 
   function requestDelete() {
     onDelete(task);
   }
+
+  useLayoutEffect(() => {
+    if (!isTooltipOpen || !activationRef.current) return;
+
+    function updateTooltipPosition() {
+      const rect = activationRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const tooltipWidth = Math.min(304, window.innerWidth - 32);
+      const left = Math.min(
+        Math.max(16, rect.right - tooltipWidth),
+        window.innerWidth - tooltipWidth - 16,
+      );
+      const side = rect.top >= 116 ? "above" : "below";
+      setTooltipPosition({
+        top: side === "above" ? rect.top - 8 : rect.bottom + 8,
+        left,
+        side,
+      });
+    }
+
+    updateTooltipPosition();
+    window.addEventListener("resize", updateTooltipPosition);
+    window.addEventListener("scroll", updateTooltipPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateTooltipPosition);
+      window.removeEventListener("scroll", updateTooltipPosition, true);
+    };
+  }, [isTooltipOpen]);
 
   return (
     <motion.li
@@ -87,27 +140,67 @@ export function TaskItemBacklog({
           />
         </button>
       </div>
-      <Button
-        variant="secondary"
-        size="xs"
-        disabled={isFocusFull}
-        aria-label={
-          isFocusFull
-            ? `Focus plein pour ce quadrant (${MAX_FOCUS_PER_QUADRANT}/${MAX_FOCUS_PER_QUADRANT})`
-            : `Activer "${task.title}"`
-        }
-        onClick={() => {
-          if (activateTask(task.id)) onActivated();
+      <span
+        ref={activationRef}
+        className="task-item-backlog__activation"
+        data-focus-full={isFocusFull || undefined}
+        tabIndex={isFocusFull ? 0 : undefined}
+        role={isFocusFull ? "group" : undefined}
+        aria-label={isFocusFull ? unavailableActivationLabel : undefined}
+        aria-disabled={isFocusFull || undefined}
+        aria-describedby={isFocusFull ? tooltipId : undefined}
+        onFocus={() => {
+          if (isFocusFull) setIsTooltipOpen(true);
+        }}
+        onBlur={() => setIsTooltipOpen(false)}
+        onMouseEnter={() => {
+          if (isFocusFull) setIsTooltipOpen(true);
+        }}
+        onMouseLeave={() => setIsTooltipOpen(false)}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          if (event.pointerType === "touch" && isFocusFull) {
+            event.preventDefault();
+            setIsTooltipOpen((isOpen) => !isOpen);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") setIsTooltipOpen(false);
         }}
       >
-        Activer
-      </Button>
-      {isFocusFull && (
-        <p className="task-item-backlog__full">
-          Focus plein pour ce quadrant ({MAX_FOCUS_PER_QUADRANT}/
-          {MAX_FOCUS_PER_QUADRANT})
-        </p>
-      )}
+        <Button
+          variant="secondary"
+          size="xs"
+          disabled={isFocusFull}
+          aria-label={
+            isFocusFull ? unavailableActivationLabel : `Activer "${task.title}"`
+          }
+          onClick={() => {
+            if (activateTask(task.id)) onActivated();
+          }}
+        >
+          Activer
+        </Button>
+      </span>
+      {isTooltipOpen &&
+        tooltipPosition &&
+        createPortal(
+          <span
+            id={tooltipId}
+            className="task-item-backlog__tooltip"
+            data-side={tooltipPosition.side}
+            role="tooltip"
+            style={
+              {
+                "--_tooltip-top": `${tooltipPosition.top}px`,
+                "--_tooltip-left": `${tooltipPosition.left}px`,
+              } as CSSProperties
+            }
+          >
+            {focusFullMessage}
+          </span>,
+          document.body,
+        )}
     </motion.li>
   );
 }

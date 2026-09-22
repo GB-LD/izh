@@ -52,6 +52,9 @@ describe("TaskItemBacklog", () => {
     expect(
       deleteButton.querySelector(".task-item__action-delete"),
     ).not.toBeNull();
+
+    fireEvent.focus(activateButton);
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 
   it("activates a backlog task and notifies its parent", async () => {
@@ -75,7 +78,7 @@ describe("TaskItemBacklog", () => {
     expect(onActivated).toHaveBeenCalledOnce();
   });
 
-  it("disables activation when the matching Focus quadrant is full", () => {
+  it("explains a full named Focus quadrant without adding text to the task row", () => {
     const task = makeTask({ id: "backlog" });
     const active = Array.from({ length: MAX_FOCUS_PER_QUADRANT }, (_, index) =>
       makeTask({ id: `active-${index}`, status: "active" }),
@@ -91,12 +94,48 @@ describe("TaskItemBacklog", () => {
 
     expect(
       screen.getByRole("button", {
-        name: "Focus plein pour ce quadrant (4/4)",
+        name: `Activer "${task.title}" indisponible`,
       }),
     ).toBeDisabled();
     expect(
-      screen.getByText("Focus plein pour ce quadrant (4/4)"),
-    ).toBeInTheDocument();
+      screen.queryByText("Focus plein pour ce quadrant (4/4)"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+  });
+
+  it("reveals and dismisses the full Focus explanation through mouse, keyboard, and touch", () => {
+    const task = makeTask({ id: "backlog" });
+    const active = Array.from({ length: MAX_FOCUS_PER_QUADRANT }, (_, index) =>
+      makeTask({ id: `active-${index}`, status: "active" }),
+    );
+    useTaskStore.setState({ tasks: [...active, task] });
+    render(
+      <TaskItemBacklog
+        task={task}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
+    );
+
+    const activation = screen.getByRole("group", {
+      name: `Activer "${task.title}" indisponible`,
+    });
+
+    fireEvent.mouseEnter(activation);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Faire maintenant");
+
+    fireEvent.mouseLeave(activation);
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+
+    fireEvent.focus(activation);
+    const tooltip = screen.getByRole("tooltip");
+    expect(activation).toHaveAttribute("aria-describedby", tooltip.id);
+
+    fireEvent.keyDown(activation, { key: "Escape" });
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+
+    fireEvent.pointerDown(activation, { pointerType: "touch" });
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
   });
 
   it("deletes through its explicit action", async () => {
