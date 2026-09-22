@@ -1,5 +1,5 @@
 import { useTaskStore } from "./useTaskStore";
-import { MAX_BACKLOG_SIZE } from "@/lib/constants";
+import { MAX_BACKLOG_SIZE, MAX_FOCUS_PER_QUADRANT } from "@/lib/constants";
 import type { Task } from "@/schemas/task";
 
 const get = () => useTaskStore.getState();
@@ -138,6 +138,25 @@ describe("deleteTask", () => {
   });
 });
 
+describe("restoreTask", () => {
+  it("restores a previously deleted task with all its properties", () => {
+    const task = makeTask({ status: "backlog", quadrant: "q2", position: 3 });
+    const restored = get().restoreTask(task);
+
+    expect(restored).toBe(true);
+    expect(get().tasks).toEqual([task]);
+  });
+
+  it("does not duplicate a task that is already present", () => {
+    const task = makeTask();
+    useTaskStore.setState({ tasks: [task] });
+    const restored = get().restoreTask(task);
+
+    expect(restored).toBe(false);
+    expect(get().tasks).toEqual([task]);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // classifyTask
 // ---------------------------------------------------------------------------
@@ -227,7 +246,8 @@ describe("activateTask", () => {
   it("changes status from backlog to active", () => {
     const task = makeTask({ status: "backlog", quadrant: "q1" });
     useTaskStore.setState({ tasks: [task] });
-    get().activateTask(task.id);
+    const activated = get().activateTask(task.id);
+    expect(activated).toBe(true);
     expect(get().tasks[0].status).toBe("active");
   });
 
@@ -241,6 +261,42 @@ describe("activateTask", () => {
     get().activateTask(task.id);
     expect(get().tasks[0].title).toBe("Focus");
     expect(get().tasks[0].quadrant).toBe("q2");
+  });
+
+  it("does not activate a fifth task in the same quadrant", () => {
+    const activeTasks = Array.from({ length: MAX_FOCUS_PER_QUADRANT }, () =>
+      makeTask({ status: "active", quadrant: "q1" }),
+    );
+    const backlogTask = makeTask({ status: "backlog", quadrant: "q1" });
+    useTaskStore.setState({ tasks: [...activeTasks, backlogTask] });
+
+    const activated = get().activateTask(backlogTask.id);
+
+    expect(activated).toBe(false);
+    expect(get().tasks.at(-1)?.status).toBe("backlog");
+  });
+
+  it.each([
+    ["is absent", "missing"],
+    ["is not in the Réserve", "inbox"],
+  ] as const)("refuses activation when the task %s", (_description, id) => {
+    const task = makeTask({ id: "inbox", status: "inbox", quadrant: null });
+    useTaskStore.setState({ tasks: [task] });
+
+    expect(get().activateTask(id)).toBe(false);
+    expect(get().tasks).toEqual([task]);
+  });
+
+  it("only counts active tasks from the target quadrant", () => {
+    const activeTasks = Array.from({ length: MAX_FOCUS_PER_QUADRANT }, () =>
+      makeTask({ status: "active", quadrant: "q2" }),
+    );
+    const backlogTask = makeTask({ status: "backlog", quadrant: "q1" });
+    useTaskStore.setState({ tasks: [...activeTasks, backlogTask] });
+
+    get().activateTask(backlogTask.id);
+
+    expect(get().tasks.at(-1)?.status).toBe("active");
   });
 });
 

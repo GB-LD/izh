@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, type PersistStorage } from "zustand/middleware";
 import { z } from "zod";
-import { MAX_BACKLOG_SIZE } from "@/lib/constants";
+import { MAX_BACKLOG_SIZE, MAX_FOCUS_PER_QUADRANT } from "@/lib/constants";
 import { validateAndLoad } from "@/lib/persistence";
 import { createUuidV4 } from "@/lib/uuid";
 import { TaskSchemaList } from "@/schemas/task";
@@ -34,6 +34,7 @@ type TaskActions = {
     >,
   ) => void;
   deleteTask: (id: string) => void;
+  restoreTask: (task: Task) => boolean;
   classifyTask: (
     id: string,
     quadrant: Quadrant,
@@ -41,7 +42,7 @@ type TaskActions = {
     sourceFlux?: SourceFlux,
     userOverride?: boolean | null,
   ) => void;
-  activateTask: (id: string) => void;
+  activateTask: (id: string) => boolean;
   completeTask: (id: string) => void;
   undoComplete: (id: string) => void;
 };
@@ -111,6 +112,13 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
         }),
       deleteTask: (taskId: string) =>
         set((s) => ({ tasks: s.tasks.filter((t) => t.id !== taskId) })),
+      restoreTask: (task) => {
+        if (get().tasks.some((candidate) => candidate.id === task.id)) {
+          return false;
+        }
+        set((s) => ({ tasks: [...s.tasks, task] }));
+        return true;
+      },
       classifyTask: (
         id,
         quadrant,
@@ -139,13 +147,27 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
           );
           return { tasks: updatedTasks };
         }),
-      activateTask: (taskId) =>
-        set((s) => {
-          const updatedTasks = s.tasks.map((t) =>
-            t.id === taskId ? ({ ...t, status: "active" } satisfies Task) : t,
-          );
-          return { tasks: updatedTasks };
-        }),
+      activateTask: (taskId) => {
+        const state = get();
+        const task = state.tasks.find((candidate) => candidate.id === taskId);
+        if (!task || task.status !== "backlog" || !task.quadrant) return false;
+
+        const activeInQuadrant = state.tasks.filter(
+          (candidate) =>
+            candidate.status === "active" &&
+            candidate.quadrant === task.quadrant,
+        ).length;
+        if (activeInQuadrant >= MAX_FOCUS_PER_QUADRANT) return false;
+
+        set((s) => ({
+          tasks: s.tasks.map((candidate) =>
+            candidate.id === taskId
+              ? ({ ...candidate, status: "active" } satisfies Task)
+              : candidate,
+          ),
+        }));
+        return true;
+      },
       completeTask: (taskId) =>
         set((s) => {
           const updatedTasks = s.tasks.map((t) =>

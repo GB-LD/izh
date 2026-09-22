@@ -32,7 +32,7 @@ vi.mock("motion/react", async () => {
   );
   MotionDiv.displayName = "MockMotionDiv";
   return {
-    motion: { div: MotionDiv },
+    motion: { div: MotionDiv, li: MotionDiv },
     AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
     useReducedMotion: () => false,
   };
@@ -65,6 +65,8 @@ describe("QuadrantSection", () => {
         ]}
         isOpen
         onToggle={() => {}}
+        onDelete={() => {}}
+        onActivated={() => {}}
       />,
     );
     expect(screen.getByText("Faire maintenant")).toBeInTheDocument();
@@ -82,6 +84,8 @@ describe("QuadrantSection", () => {
         tasks={[]}
         isOpen={false}
         onToggle={() => {}}
+        onDelete={() => {}}
+        onActivated={() => {}}
       />,
     );
     expect(screen.getByRole("button")).toHaveAttribute(
@@ -89,7 +93,14 @@ describe("QuadrantSection", () => {
       "false",
     );
     rerender(
-      <QuadrantSection quadrant="q2" tasks={[]} isOpen onToggle={() => {}} />,
+      <QuadrantSection
+        quadrant="q2"
+        tasks={[]}
+        isOpen
+        onToggle={() => {}}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
     );
     expect(screen.getByRole("button")).toHaveAttribute("aria-expanded", "true");
   });
@@ -103,6 +114,8 @@ describe("QuadrantSection", () => {
         tasks={[]}
         isOpen={false}
         onToggle={onToggle}
+        onDelete={() => {}}
+        onActivated={() => {}}
       />,
     );
     await user.click(screen.getByRole("button"));
@@ -111,7 +124,14 @@ describe("QuadrantSection", () => {
 
   it("shows an empty message when open with no tasks", () => {
     render(
-      <QuadrantSection quadrant="q4" tasks={[]} isOpen onToggle={() => {}} />,
+      <QuadrantSection
+        quadrant="q4"
+        tasks={[]}
+        isOpen
+        onToggle={() => {}}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
     );
     expect(screen.getByText("Aucune tâche")).toBeInTheDocument();
     expect(

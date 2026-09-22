@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Layers } from "lucide-react";
 import { useTaskStore } from "@/stores/useTaskStore";
@@ -8,12 +8,34 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/shared/EmptyState/EmptyState";
 import { CounterCapacity } from "@/shared/CounterCapacity/CounterCapacity";
 import { QuadrantSection } from "./QuadrantSection";
+import { Toast } from "@/shared/Toast";
+import { useUndo } from "@/hooks/useUndo";
+import type { Task } from "@/schemas/task";
 
 const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 
 export function BacklogPage() {
   const { sentinelRef, isStuck: isTopStuck } = useStickyState<HTMLDivElement>();
   const [openQuadrant, setOpenQuadrant] = useState<Quadrant | null>("q1");
+  const [confirmationToast, setConfirmationToast] = useState<
+    "activation" | "undo" | null
+  >(null);
+  const { deleteTask, restoreTask } = useTaskStore(
+    useShallow((s) => ({
+      deleteTask: s.deleteTask,
+      restoreTask: s.restoreTask,
+    })),
+  );
+  const undo = useUndo<Task>();
+
+  useEffect(() => {
+    if (!confirmationToast) return;
+    const timer = window.setTimeout(
+      () => setConfirmationToast(null),
+      confirmationToast === "undo" ? 1500 : 3000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [confirmationToast]);
 
   const backlogTasks = useTaskStore(
     useShallow((s) => s.tasks.filter((t) => t.status === "backlog")),
@@ -30,7 +52,12 @@ export function BacklogPage() {
       if (task.quadrant) groups[task.quadrant].push(task);
     }
     for (const quadrant of QUADRANTS) {
-      groups[quadrant].sort((a, b) => a.position - b.position);
+      groups[quadrant].sort(
+        (a, b) =>
+          a.position - b.position ||
+          a.createdAt.localeCompare(b.createdAt) ||
+          a.id.localeCompare(b.id),
+      );
     }
     return groups;
   }, [backlogTasks]);
@@ -78,11 +105,43 @@ export function BacklogPage() {
                     prev === quadrant ? null : quadrant,
                   )
                 }
+                onActivated={() => {
+                  if (!undo.pending) setConfirmationToast("activation");
+                }}
+                onDelete={(task) => {
+                  deleteTask(task.id);
+                  setConfirmationToast(null);
+                  undo.start(task);
+                }}
               />
             ))}
           </div>
         )}
       </div>
+      {undo.pending && (
+        <Toast
+          variant="undo"
+          message="Tâche supprimée"
+          taskTitle={undo.pending.title}
+          remainingMs={undo.remainingMs}
+          onPause={undo.pause}
+          onResume={undo.resume}
+          onClose={undo.clear}
+          onUndo={() => {
+            const task = undo.undo();
+            if (task && restoreTask(task)) setConfirmationToast("undo");
+          }}
+        />
+      )}
+      {!undo.pending && confirmationToast && (
+        <Toast
+          message={
+            confirmationToast === "activation"
+              ? "Ajoutée à ton Focus"
+              : "Annulé !"
+          }
+        />
+      )}
     </section>
   );
 }
