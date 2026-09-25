@@ -10,6 +10,8 @@ interface QuadrantSectionProps {
   quadrant: Quadrant;
   tasks: Task[];
   isOpen: boolean;
+  revealedDeleteTaskId: string | null;
+  onDeleteRevealChange: (taskId: string | null) => void;
   onToggle: () => void;
   onDelete: (task: Task) => void;
   onActivated: () => void;
@@ -25,6 +27,8 @@ export function QuadrantSection({
   quadrant,
   tasks,
   isOpen,
+  revealedDeleteTaskId,
+  onDeleteRevealChange,
   onToggle,
   onDelete,
   onActivated,
@@ -122,6 +126,10 @@ export function QuadrantSection({
                       <TaskItemBacklog
                         key={task.id}
                         task={task}
+                        isDeleteRevealed={revealedDeleteTaskId === task.id}
+                        onDeleteRevealChange={(revealed) =>
+                          onDeleteRevealChange(revealed ? task.id : null)
+                        }
                         onDelete={onDelete}
                         onActivated={onActivated}
                       />

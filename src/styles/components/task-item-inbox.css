@@ -45,9 +45,7 @@
     outline-offset: -2px;
   }
 
-  .task-item-inbox:has(:focus-visible) .task-item__action,
-  .task-item-backlog:focus-visible .task-item__action,
-  .task-item-backlog:has(:focus-visible) .task-item__action {
+  .task-item-inbox:has(:focus-visible) .task-item__action {
     @apply pointer-events-auto;
 
     max-width: 120px;

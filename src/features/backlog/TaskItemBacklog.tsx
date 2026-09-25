@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -16,12 +17,23 @@ import { useTaskStore } from "@/stores/useTaskStore";
 
 interface TaskItemBacklogProps {
   task: Task;
+  isDeleteRevealed: boolean;
+  onDeleteRevealChange: (revealed: boolean) => void;
   onDelete: (task: Task) => void;
   onActivated: () => void;
 }
 
 const SWIPE_REVEAL_PX = 24;
 const SWIPE_COMMIT_PX = 48;
+const SWIPE_AXIS_PX = 8;
+const TOUCH_ONLY_QUERY = "(hover: none) and (pointer: coarse)";
+
+interface SwipeGesture {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  axis: "pending" | "horizontal" | "vertical";
+}
 
 interface TooltipPosition {
   top: number;
@@ -31,6 +43,8 @@ interface TooltipPosition {
 
 export function TaskItemBacklog({
   task,
+  isDeleteRevealed,
+  onDeleteRevealChange,
   onDelete,
   onActivated,
 }: TaskItemBacklogProps) {
@@ -43,9 +57,13 @@ export function TaskItemBacklog({
           candidate.status === "active" && candidate.quadrant === task.quadrant,
       ).length,
   );
-  const pointerStartX = useRef<number | null>(null);
+  const itemRef = useRef<HTMLLIElement>(null);
+  const swipeGesture = useRef<SwipeGesture | null>(null);
+  const suppressPointerClick = useRef(false);
   const activationRef = useRef<HTMLSpanElement>(null);
-  const [isDeleteRevealed, setIsDeleteRevealed] = useState(false);
+  const [isTouchOnly, setIsTouchOnly] = useState(
+    () => window.matchMedia?.(TOUCH_ONLY_QUERY).matches ?? false,
+  );
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [tooltipPosition, setTooltipPosition] =
     useState<TooltipPosition | null>(null);
@@ -60,6 +78,14 @@ export function TaskItemBacklog({
   function requestDelete() {
     onDelete(task);
   }
+
+  useEffect(() => {
+    const media = window.matchMedia?.(TOUCH_ONLY_QUERY);
+    if (!media) return;
+    const update = () => setIsTouchOnly(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useLayoutEffect(() => {
     if (!isTooltipOpen || !activationRef.current) return;
@@ -92,9 +118,12 @@ export function TaskItemBacklog({
 
   return (
     <motion.li
+      ref={itemRef}
       className="reserve-task-item task-item task-item-backlog"
+      data-task-id={task.id}
       data-delete-revealed={isDeleteRevealed || undefined}
       tabIndex={0}
+      aria-keyshortcuts={isTouchOnly ? "Delete ArrowLeft" : "Delete"}
       initial={prefersReducedMotion ? false : { opacity: 0 }}
       animate={prefersReducedMotion ? {} : { opacity: 1 }}
       exit={prefersReducedMotion ? {} : { opacity: 0 }}
@@ -104,31 +133,93 @@ export function TaskItemBacklog({
           event.preventDefault();
           requestDelete();
         }
+        if (
+          event.key === "ArrowLeft" &&
+          event.target === event.currentTarget &&
+          isTouchOnly
+        ) {
+          event.preventDefault();
+          onDeleteRevealChange(true);
+        }
+        if (event.key === "Escape" && isDeleteRevealed) {
+          event.preventDefault();
+          onDeleteRevealChange(false);
+          itemRef.current?.focus();
+        }
       }}
-      onPointerDown={(event) => {
-        if ((event.target as HTMLElement).closest("button")) return;
-        pointerStartX.current = event.clientX;
-      }}
-      onPointerUp={(event) => {
-        if (pointerStartX.current === null) return;
-        const offset = event.clientX - pointerStartX.current;
-        pointerStartX.current = null;
-        setIsDeleteRevealed(offset <= -SWIPE_COMMIT_PX);
+      onPointerDownCapture={(event) => {
+        suppressPointerClick.current = false;
+        swipeGesture.current = null;
+        if (
+          event.isPrimary === false ||
+          (event.pointerType === "mouse" && isTouchOnly)
+        )
+          return;
+        if ((event.target as HTMLElement).closest("[data-delete-action]"))
+          return;
+        if (!isTouchOnly && (event.target as HTMLElement).closest("button"))
+          return;
+        swipeGesture.current = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          axis: "pending",
+        };
       }}
       onPointerMove={(event) => {
-        if (pointerStartX.current === null) return;
-        setIsDeleteRevealed(
-          event.clientX - pointerStartX.current <= -SWIPE_REVEAL_PX,
-        );
+        const gesture = swipeGesture.current;
+        if (!gesture || event.pointerId !== gesture.pointerId) return;
+        const dx = event.clientX - gesture.startX;
+        const dy = event.clientY - gesture.startY;
+        if (gesture.axis === "pending") {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_AXIS_PX) return;
+          gesture.axis =
+            Math.abs(dy) >= Math.abs(dx) || dx >= 0 ? "vertical" : "horizontal";
+        }
+        if (gesture.axis === "horizontal") {
+          onDeleteRevealChange(-dx >= SWIPE_REVEAL_PX);
+        }
+      }}
+      onPointerUp={(event) => {
+        const gesture = swipeGesture.current;
+        if (!gesture || event.pointerId !== gesture.pointerId) return;
+        swipeGesture.current = null;
+        const dx = event.clientX - gesture.startX;
+        const dy = event.clientY - gesture.startY;
+        if (gesture.axis === "pending") {
+          gesture.axis =
+            Math.abs(dx) >= SWIPE_AXIS_PX &&
+            Math.abs(dx) > Math.abs(dy) &&
+            dx < 0
+              ? "horizontal"
+              : "vertical";
+        }
+        if (gesture.axis !== "horizontal") return;
+        suppressPointerClick.current = true;
+        onDeleteRevealChange(-dx >= SWIPE_COMMIT_PX);
       }}
       onPointerCancel={() => {
-        pointerStartX.current = null;
+        if (swipeGesture.current?.axis === "horizontal") {
+          onDeleteRevealChange(false);
+        }
+        swipeGesture.current = null;
+      }}
+      onClickCapture={(event) => {
+        if (suppressPointerClick.current && event.detail !== 0) {
+          suppressPointerClick.current = false;
+          event.preventDefault();
+          event.stopPropagation();
+        }
       }}
     >
       <span className="task-item-backlog__title">{task.title}</span>
-      <div className="task-item__action">
+      <div
+        className="task-item__action"
+        inert={isTouchOnly && !isDeleteRevealed}
+      >
         <button
           type="button"
+          data-delete-action
           aria-label={`Supprimer la tâche "${task.title}"`}
           onMouseDown={(event) => event.preventDefault()}
           onClick={requestDelete}
@@ -157,9 +248,15 @@ export function TaskItemBacklog({
           if (isFocusFull) setIsTooltipOpen(true);
         }}
         onMouseLeave={() => setIsTooltipOpen(false)}
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          if (event.pointerType === "touch" && isFocusFull) {
+        onPointerUp={(event) => {
+          const gesture = swipeGesture.current;
+          if (
+            event.pointerType === "touch" &&
+            isFocusFull &&
+            gesture?.axis === "pending" &&
+            Math.abs(event.clientX - gesture.startX) < SWIPE_AXIS_PX &&
+            Math.abs(event.clientY - gesture.startY) < SWIPE_AXIS_PX
+          ) {
             event.preventDefault();
             setIsTooltipOpen((isOpen) => !isOpen);
           }

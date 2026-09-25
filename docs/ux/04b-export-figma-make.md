@@ -281,7 +281,7 @@
 - Long press tâche + drag → headers collapsed en surbrillance couleur (zones de drop). Drop sur header = reclassement + toast "Déplacée vers [quadrant]".
 - Drag vertical dans section ouverte → réordonnancement intra-quadrant.
 - Tap "Activer" → tâche disparaît (animation) → toast "Ajoutée à ta matrice". Grisé si quadrant matrice plein (4/4).
-- Swipe gauche → reveal bouton supprimer. Toast undo 5s.
+- Swipe gauche → révélation du bouton supprimer à droite de « Activer », puis tap pour supprimer. Toast undo 5s.
 - Long press titre → édition inline (DT-01), vibration haptique.
 - Highlight post-tri : tâche classée depuis overlay → highlight 2-3s dans son quadrant.
 - Toggle tri discret : "Par date" / "Manuel" (défaut : manuel).

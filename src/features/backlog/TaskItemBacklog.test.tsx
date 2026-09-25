@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState, type ComponentProps } from "react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Task } from "@/schemas/task";
@@ -22,7 +23,35 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
   ...overrides,
 });
 
+function ControlledTaskItemBacklog(
+  props: Omit<
+    ComponentProps<typeof TaskItemBacklog>,
+    "isDeleteRevealed" | "onDeleteRevealChange"
+  >,
+) {
+  const [isDeleteRevealed, setIsDeleteRevealed] = useState(false);
+  return (
+    <TaskItemBacklog
+      {...props}
+      isDeleteRevealed={isDeleteRevealed}
+      onDeleteRevealChange={setIsDeleteRevealed}
+    />
+  );
+}
+
+function setTouchOnly(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn().mockReturnValue({
+      matches,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }),
+  });
+}
+
 beforeEach(() => {
+  setTouchOnly(false);
   useTaskStore.setState({ tasks: [] });
   localStorage.clear();
 });
@@ -31,7 +60,7 @@ describe("TaskItemBacklog", () => {
   it("is a list item with a non-editable task title and its actions", () => {
     const task = makeTask();
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={() => {}}
         onActivated={() => {}}
@@ -63,7 +92,7 @@ describe("TaskItemBacklog", () => {
     const task = makeTask({ id: "task-1" });
     useTaskStore.setState({ tasks: [task] });
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={() => {}}
         onActivated={onActivated}
@@ -85,7 +114,7 @@ describe("TaskItemBacklog", () => {
     );
     useTaskStore.setState({ tasks: [...active, task] });
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={() => {}}
         onActivated={() => {}}
@@ -110,7 +139,7 @@ describe("TaskItemBacklog", () => {
     );
     useTaskStore.setState({ tasks: [...active, task] });
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={() => {}}
         onActivated={() => {}}
@@ -134,7 +163,19 @@ describe("TaskItemBacklog", () => {
     fireEvent.keyDown(activation, { key: "Escape" });
     expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 
-    fireEvent.pointerDown(activation, { pointerType: "touch" });
+    fireEvent.pointerDown(activation, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerUp(activation, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 100,
+      clientY: 40,
+    });
     expect(screen.getByRole("tooltip")).toBeInTheDocument();
   });
 
@@ -143,7 +184,7 @@ describe("TaskItemBacklog", () => {
     const task = makeTask();
     const onDelete = vi.fn();
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={onDelete}
         onActivated={() => {}}
@@ -159,7 +200,7 @@ describe("TaskItemBacklog", () => {
     const task = makeTask();
     const onDelete = vi.fn();
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={onDelete}
         onActivated={() => {}}
@@ -171,11 +212,12 @@ describe("TaskItemBacklog", () => {
     expect(onDelete).toHaveBeenCalledWith(task);
   });
 
-  it("reveals but does not delete after a left swipe", () => {
+  it("reveals but does not delete after a left touch swipe", () => {
+    setTouchOnly(true);
     const task = makeTask();
     const onDelete = vi.fn();
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={onDelete}
         onActivated={() => {}}
@@ -183,18 +225,44 @@ describe("TaskItemBacklog", () => {
     );
     const item = screen.getByRole("listitem");
 
-    fireEvent.pointerDown(item, { clientX: 100 });
-    fireEvent.pointerMove(item, { clientX: 70 });
-    fireEvent.pointerUp(item, { clientX: 50 });
+    fireEvent.pointerDown(item, {
+      pointerType: "touch",
+      isPrimary: true,
+      pointerId: 1,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerMove(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 70,
+      clientY: 41,
+    });
+    fireEvent.pointerUp(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 50,
+      clientY: 41,
+    });
 
     expect(item).toHaveAttribute("data-delete-revealed", "true");
     expect(onDelete).not.toHaveBeenCalled();
+
+    const deleteButton = screen.getByRole("button", { name: /supprimer/i });
+    fireEvent.pointerDown(deleteButton, {
+      pointerType: "touch",
+      pointerId: 2,
+      isPrimary: true,
+    });
+    fireEvent.click(deleteButton, { detail: 1 });
+    expect(onDelete).toHaveBeenCalledWith(task);
   });
 
-  it("closes the revealed action when the swipe ends before 40% of its width", () => {
+  it("closes the revealed action when the swipe ends before 48px", () => {
+    setTouchOnly(true);
     const task = makeTask();
     render(
-      <TaskItemBacklog
+      <ControlledTaskItemBacklog
         task={task}
         onDelete={() => {}}
         onActivated={() => {}}
@@ -202,10 +270,188 @@ describe("TaskItemBacklog", () => {
     );
     const item = screen.getByRole("listitem");
 
-    fireEvent.pointerDown(item, { clientX: 100 });
-    fireEvent.pointerMove(item, { clientX: 70 });
-    fireEvent.pointerUp(item, { clientX: 70 });
+    fireEvent.pointerDown(item, {
+      pointerType: "touch",
+      isPrimary: true,
+      pointerId: 1,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerMove(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 70,
+      clientY: 41,
+    });
+    fireEvent.pointerUp(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 70,
+      clientY: 41,
+    });
 
     expect(item).not.toHaveAttribute("data-delete-revealed");
+  });
+
+  it("ignores a mostly vertical touch movement", () => {
+    setTouchOnly(true);
+    const task = makeTask();
+    render(
+      <ControlledTaskItemBacklog
+        task={task}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
+    );
+    const item = screen.getByRole("listitem");
+
+    fireEvent.pointerDown(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerMove(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 110,
+      clientY: 75,
+    });
+    fireEvent.pointerMove(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 160,
+      clientY: 100,
+    });
+    fireEvent.pointerUp(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 160,
+      clientY: 100,
+    });
+
+    expect(item).not.toHaveAttribute("data-delete-revealed");
+  });
+
+  it("does not reveal the action after a right touch swipe", () => {
+    setTouchOnly(true);
+    const task = makeTask();
+    render(
+      <ControlledTaskItemBacklog
+        task={task}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
+    );
+    const item = screen.getByRole("listitem");
+    fireEvent.pointerDown(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerMove(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 150,
+      clientY: 40,
+    });
+    fireEvent.pointerUp(item, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 150,
+      clientY: 40,
+    });
+    expect(item).not.toHaveAttribute("data-delete-revealed");
+  });
+
+  it("swipes from Activer without activating, but still activates on a tap", () => {
+    setTouchOnly(true);
+    const task = makeTask({ id: "swipe-activation" });
+    useTaskStore.setState({ tasks: [task] });
+    const onActivated = vi.fn();
+    render(
+      <ControlledTaskItemBacklog
+        task={task}
+        onDelete={() => {}}
+        onActivated={onActivated}
+      />,
+    );
+    const item = screen.getByRole("listitem");
+    const activate = screen.getByRole("button", {
+      name: `Activer "${task.title}"`,
+    });
+
+    fireEvent.pointerDown(activate, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerMove(activate, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 50,
+      clientY: 41,
+    });
+    fireEvent.pointerUp(activate, {
+      pointerType: "touch",
+      pointerId: 1,
+      clientX: 50,
+      clientY: 41,
+    });
+    fireEvent.click(activate, { detail: 1 });
+
+    expect(item).toHaveAttribute("data-delete-revealed", "true");
+    expect(onActivated).not.toHaveBeenCalled();
+
+    fireEvent.pointerDown(activate, {
+      pointerType: "touch",
+      pointerId: 2,
+      isPrimary: true,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.pointerUp(activate, {
+      pointerType: "touch",
+      pointerId: 2,
+      clientX: 100,
+      clientY: 40,
+    });
+    fireEvent.click(activate, { detail: 1 });
+    expect(onActivated).toHaveBeenCalledOnce();
+  });
+
+  it("opens explicitly from the keyboard and closes with Escape", () => {
+    setTouchOnly(true);
+    const task = makeTask();
+    render(
+      <ControlledTaskItemBacklog
+        task={task}
+        onDelete={() => {}}
+        onActivated={() => {}}
+      />,
+    );
+    const item = screen.getByRole("listitem");
+    const deleteButton = screen.getByRole("button", { name: /supprimer/i });
+    const action = deleteButton.parentElement;
+    expect(action).toHaveAttribute("inert");
+
+    item.focus();
+    expect(item).not.toHaveAttribute("data-delete-revealed");
+    screen.getByRole("button", { name: /activer/i }).focus();
+    expect(item).not.toHaveAttribute("data-delete-revealed");
+    item.focus();
+    fireEvent.keyDown(item, { key: "ArrowLeft" });
+    expect(item).toHaveAttribute("data-delete-revealed", "true");
+    expect(action).not.toHaveAttribute("inert");
+
+    deleteButton.focus();
+    fireEvent.keyDown(deleteButton, { key: "Escape" });
+    expect(item).not.toHaveAttribute("data-delete-revealed");
+    expect(item).toHaveFocus();
   });
 });

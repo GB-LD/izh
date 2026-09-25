@@ -470,6 +470,8 @@ Coexiste avec la purge assistée. Deux gestes :
 
 **Confirmation :** Toast avec undo ("Tâche supprimée — [Annuler]" pendant 5 secondes). Pas de modal — ça casserait le flow de purge rapide. Même pattern que la complétion de tâche (CU-07).
 
+Sur appareil tactile sans survol, le glissement horizontal vers la gauche peut commencer partout sur la ligne, y compris sur « Activer ». Un défilement vertical garde la priorité. Après un glissement suffisant, le bouton reste visible à droite du bouton « Activer » ; un tap ailleurs le referme et laisse la cible agir normalement. Une seule ligne peut être ouverte. Au clavier, `Suppr` supprime la tâche focalisée ; `Flèche gauche` révèle le bouton, `Tab` l’atteint, et `Échap` referme l’action puis refocalise la ligne.
+
 #### Edge cases
 
 | Cas                             | Comportement                                                                                                      |
@@ -1009,8 +1011,11 @@ flowchart TD
     SCR09 --> BACK_RESERVE(["Retour Réserve"]):::success
 
     %% Purge unitaire hors overlay
-    TRIG_UNIT(["Swipe gauche ou menu\nsur une tache Réserve"]):::trigger
-    TRIG_UNIT --> UNIT_DELETE[/"Suppression unitaire"/]:::loading
+    TRIG_UNIT(["Swipe gauche\nsur une tache Réserve"]):::trigger
+    TRIG_UNIT --> REVEAL_DELETE["Bouton supprimer revele"]:::screen
+    REVEAL_DELETE -->|"Tap supprimer"| UNIT_DELETE[/"Suppression unitaire"/]:::loading
+    MENU_UNIT(["Menu sur une tache Réserve"]):::trigger
+    MENU_UNIT --> UNIT_DELETE
     UNIT_DELETE --> TOAST["Toast undo\nTache supprimee - Annuler\n5 secondes"]:::screen
     TOAST -->|"Annuler avant 5s"| UNDO(["Tache restauree"]):::success
     TOAST -->|"Timeout 5s"| GONE(["Suppression definitive"]):::success

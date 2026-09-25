@@ -58,6 +58,8 @@ describe("QuadrantSection", () => {
   it("renders the quadrant label, counter and task titles", () => {
     render(
       <QuadrantSection
+        revealedDeleteTaskId={null}
+        onDeleteRevealChange={() => {}}
         quadrant="q1"
         tasks={[
           makeTask({ title: "Appeler le médecin" }),
@@ -80,6 +82,8 @@ describe("QuadrantSection", () => {
   it("reflects the open state via aria-expanded", () => {
     const { rerender } = render(
       <QuadrantSection
+        revealedDeleteTaskId={null}
+        onDeleteRevealChange={() => {}}
         quadrant="q2"
         tasks={[]}
         isOpen={false}
@@ -94,6 +98,8 @@ describe("QuadrantSection", () => {
     );
     rerender(
       <QuadrantSection
+        revealedDeleteTaskId={null}
+        onDeleteRevealChange={() => {}}
         quadrant="q2"
         tasks={[]}
         isOpen
@@ -110,6 +116,8 @@ describe("QuadrantSection", () => {
     const onToggle = vi.fn();
     render(
       <QuadrantSection
+        revealedDeleteTaskId={null}
+        onDeleteRevealChange={() => {}}
         quadrant="q3"
         tasks={[]}
         isOpen={false}
@@ -125,6 +133,8 @@ describe("QuadrantSection", () => {
   it("shows an empty message when open with no tasks", () => {
     render(
       <QuadrantSection
+        revealedDeleteTaskId={null}
+        onDeleteRevealChange={() => {}}
         quadrant="q4"
         tasks={[]}
         isOpen

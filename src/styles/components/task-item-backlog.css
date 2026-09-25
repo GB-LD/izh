@@ -26,12 +26,59 @@
     outline: 2px solid var(--color-edge-focus);
     outline-offset: -2px;
   }
-  .task-item-backlog:hover .task-item__action,
   .task-item-backlog[data-delete-revealed] .task-item__action {
     pointer-events: auto;
     max-width: 120px;
     opacity: 1;
     transform: translateX(0);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .task-item-backlog:hover .task-item__action,
+    .task-item-backlog:focus-visible .task-item__action,
+    .task-item-backlog:has(:focus-visible) .task-item__action {
+      pointer-events: auto;
+      max-width: 120px;
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .task-item-backlog {
+      gap: 0;
+      overflow: visible;
+      touch-action: pan-y;
+    }
+
+    .task-item-backlog .task-item__action {
+      order: 1;
+      margin-right: 0;
+      transition:
+        max-width var(--transition-hover),
+        color var(--transition-hover),
+        background-color var(--transition-hover),
+        opacity var(--transition-hover),
+        transform var(--transition-hover),
+        margin-right var(--transition-hover);
+    }
+
+    .task-item-backlog[data-delete-revealed] .task-item__action {
+      max-width: 44px;
+      /* Occupe le padding droit sans déplacer toute la liste à la fermeture. */
+      margin-right: calc(-1 * var(--spacing-inline-lg));
+      transform: translateX(0);
+    }
+
+    .task-item-backlog__activation {
+      margin-inline-start: var(--spacing-inline-md);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .task-item-backlog .task-item__action {
+      transition: none;
+    }
   }
   .task-item-backlog__activation {
     position: relative;

@@ -17,6 +17,9 @@ const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 export function BacklogPage() {
   const { sentinelRef, isStuck: isTopStuck } = useStickyState<HTMLDivElement>();
   const [openQuadrant, setOpenQuadrant] = useState<Quadrant | null>("q1");
+  const [revealedDeleteTaskId, setRevealedDeleteTaskId] = useState<
+    string | null
+  >(null);
   const [confirmationToast, setConfirmationToast] = useState<
     "activation" | "undo" | null
   >(null);
@@ -36,6 +39,27 @@ export function BacklogPage() {
     );
     return () => window.clearTimeout(timer);
   }, [confirmationToast]);
+
+  useEffect(() => {
+    if (!revealedDeleteTaskId) return;
+
+    function closeOnOutsideClick(event: MouseEvent) {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target
+          .closest("[data-delete-action]")
+          ?.closest("[data-task-id]")
+          ?.getAttribute("data-task-id") === revealedDeleteTaskId
+      ) {
+        return;
+      }
+      setRevealedDeleteTaskId(null);
+    }
+
+    document.addEventListener("click", closeOnOutsideClick);
+    return () => document.removeEventListener("click", closeOnOutsideClick);
+  }, [revealedDeleteTaskId]);
 
   const backlogTasks = useTaskStore(
     useShallow((s) => s.tasks.filter((t) => t.status === "backlog")),
@@ -100,15 +124,20 @@ export function BacklogPage() {
                 quadrant={quadrant}
                 tasks={byQuadrant[quadrant]}
                 isOpen={openQuadrant === quadrant}
-                onToggle={() =>
+                revealedDeleteTaskId={revealedDeleteTaskId}
+                onDeleteRevealChange={setRevealedDeleteTaskId}
+                onToggle={() => {
+                  setRevealedDeleteTaskId(null);
                   setOpenQuadrant((prev) =>
                     prev === quadrant ? null : quadrant,
-                  )
-                }
+                  );
+                }}
                 onActivated={() => {
+                  setRevealedDeleteTaskId(null);
                   if (!undo.pending) setConfirmationToast("activation");
                 }}
                 onDelete={(task) => {
+                  setRevealedDeleteTaskId(null);
                   deleteTask(task.id);
                   setConfirmationToast(null);
                   undo.start(task);

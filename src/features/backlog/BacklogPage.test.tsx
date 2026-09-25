@@ -93,6 +93,14 @@ const headerOf = (name: RegExp | string) =>
   screen.getByRole("button", { name });
 
 beforeEach(() => {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }),
+  });
   useTaskStore.setState({ tasks: [] });
   localStorage.clear();
 });
@@ -207,6 +215,60 @@ describe("BacklogPage", () => {
     expect(screen.getByText("1/40")).toBeInTheDocument();
     const q1Body = within(headerOf(/Faire maintenant/).closest("section")!);
     expect(q1Body.getAllByRole("listitem")).toHaveLength(1);
+  });
+
+  it("keeps one delete action open and lets an outside tap activate normally", async () => {
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn().mockReturnValue({
+        matches: true,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
+    });
+    const first = makeTask({ id: "first", title: "Première", position: 1 });
+    const second = makeTask({ id: "second", title: "Deuxième", position: 2 });
+    useTaskStore.setState({ tasks: [first, second] });
+    renderBacklogPage();
+    const firstRow = screen.getByText("Première").closest("li")!;
+    const secondRow = screen.getByText("Deuxième").closest("li")!;
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+    expect(firstRow).toHaveAttribute("data-delete-revealed", "true");
+
+    await userEvent.setup().click(screen.getByText("Première"));
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+
+    secondRow.focus();
+    fireEvent.keyDown(secondRow, { key: "ArrowLeft" });
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+    expect(secondRow).toHaveAttribute("data-delete-revealed", "true");
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+    const activateSecond = screen.getByRole("button", {
+      name: `Activer "${second.title}"`,
+    });
+    fireEvent.pointerDown(activateSecond, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+    });
+    expect(firstRow).toHaveAttribute("data-delete-revealed", "true");
+    fireEvent.pointerUp(activateSecond, {
+      pointerType: "touch",
+      pointerId: 1,
+    });
+    fireEvent.click(activateSecond, { detail: 1 });
+
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+    expect(
+      useTaskStore.getState().tasks.find((task) => task.id === second.id),
+    ).toHaveProperty("status", "active");
   });
 
   it("restores a deleted task from the undo toast", async () => {

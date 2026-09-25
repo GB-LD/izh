@@ -40,8 +40,11 @@ flowchart TD
     SCR09 --> BACK_BL(["Retour backlog"]):::success
 
     %% Purge unitaire hors overlay
-    TRIG_UNIT(["Swipe gauche ou menu\nsur une tache backlog"]):::trigger
-    TRIG_UNIT --> UNIT_DELETE[/"Suppression unitaire"/]:::loading
+    TRIG_UNIT(["Swipe gauche\nsur une tache backlog"]):::trigger
+    TRIG_UNIT --> REVEAL_DELETE["Bouton supprimer revele"]:::screen
+    REVEAL_DELETE -->|"Tap supprimer"| UNIT_DELETE[/"Suppression unitaire"/]:::loading
+    MENU_UNIT(["Menu sur une tache backlog"]):::trigger
+    MENU_UNIT --> UNIT_DELETE
     UNIT_DELETE --> TOAST["Toast undo\nTache supprimee - Annuler\n5 secondes"]:::screen
     TOAST -->|"Annuler avant 5s"| UNDO(["Tache restauree"]):::success
     TOAST -->|"Timeout 5s"| GONE(["Suppression definitive"]):::success

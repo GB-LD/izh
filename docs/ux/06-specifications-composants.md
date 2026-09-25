@@ -366,7 +366,7 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | **Pressed**               | Mousedown / touchstart | Fond → `--color-surface-muted`. `transform: scale(0.98)`                                                                                                                                                                                                                                                                           | Feedback tactile immédiat                                          |
 | **Disabled**              | Condition non remplie  | Opacité 0.4. `cursor: not-allowed`                                                                                                                                                                                                                                                                                                 | `aria-disabled="true"` + tooltip expliquant POURQUOI               |
 | **Editing**               | Long press ~500ms      | Fond → accent léger (`--color-surface-accent`). Outline → `--color-border-focus` 2px. Titre devient éditable (contenteditable). Boutons ✓ (confirm, Primary) et ✕ (cancel) apparaissent à droite                                                                                                                                   | Vibration haptique mobile. `Enter` = confirmer, `Escape` = annuler |
-| **Swipe delete (mobile)** | Swipe gauche           | La card glisse, révèle un bouton rouge (`--color-action-danger`) pleine hauteur avec icône trash-2 en blanc                                                                                                                                                                                                                        | Tap sur trash = suppression + toast undo 5s                        |
+| **Swipe delete (mobile)** | Glissement gauche sur une ligne tactile sans survol | Le bouton supprimer s’ouvre à droite de « Activer » (largeur, opacité et translation). Il reste visible après un glissement suffisant. | Tap sur le bouton = suppression + toast undo 5s. Tap ailleurs = fermeture et action normale de la cible. |
 
 ---
 
@@ -1741,7 +1741,7 @@ Le Result Card vit dans un overlay (`surface: overlay-partial-75`, `backdrop: da
 
 **Anti-patterns izh :**
 
-- Pas de swipe-to-delete dans la Réserve — la suppression passe par la purge (SCR-07/08)
+- Pas de suppression immédiate au swipe dans la Réserve — le geste révèle un bouton, dont le tap déclenche la suppression
 - Pas de checkbox — la complétion se fait uniquement dans le Focus (SCR-10)
 
 ---
