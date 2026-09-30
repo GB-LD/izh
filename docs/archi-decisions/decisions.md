@@ -1,5 +1,5 @@
 ---
-updated: 2026-03-18
+updated: 2026-09-30
 ---
 
 
@@ -123,3 +123,16 @@ updated: 2026-03-18
 - ch.25 — Pyramide de tests : comportement observable + contrat de classes CSS
 
 **Raisonnement :** Le Button est un composant leaf (pas de composition, pas de sous-composants). Les patterns headless résolvent des problèmes de composition qui n'existent pas ici. Le pattern DaisyUI sépare proprement le visuel (CSS) du comportement (React) et sera réutilisé pour les composants suivants (Card, Input, Toast). L'approche headless sera reconsidérée pour les composants complexes (Dialog, Combobox).
+
+## ADR-006 — Réserver la capacité pendant une suppression annulable
+
+**Date :** 2026-09-30
+**Statut :** Acceptée
+
+**Contexte :** La Réserve est limitée à 40 tâches et une suppression peut être annulée pendant 5 secondes. Libérer immédiatement sa place permettrait de classer une autre tâche, puis de dépasser 40 en annulant.
+
+**Options considérées :** réserver la place pendant l'undo ; refuser l'undo si la place a été reprise ; autoriser temporairement 41 tâches.
+
+**Décision :** La tâche disparaît immédiatement de la liste, mais sa place reste réservée tant que son undo est disponible. Le compteur affiche les tâches présentes plus les suppressions en attente ; le tri refuse un ajout à 40/40. Chaque suppression garde son propre délai et son propre toast dans une pile défilable. Les annulations restent accessibles entre écrans et deviennent définitives au rechargement.
+
+**Raisonnement :** La réservation préserve à la fois la limite de capacité et la promesse d'annulation. Le store possède la règle de capacité ; l'état transitoire des suppressions n'est pas persisté.

@@ -9,8 +9,7 @@ import { EmptyState } from "@/shared/EmptyState/EmptyState";
 import { CounterCapacity } from "@/shared/CounterCapacity/CounterCapacity";
 import { QuadrantSection } from "./QuadrantSection";
 import { Toast } from "@/shared/Toast";
-import { useUndo } from "@/hooks/useUndo";
-import type { Task } from "@/schemas/task";
+import { useBacklogUndo } from "./useBacklogUndo";
 
 const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 
@@ -20,23 +19,12 @@ export function BacklogPage() {
   const [revealedDeleteTaskId, setRevealedDeleteTaskId] = useState<
     string | null
   >(null);
-  const [confirmationToast, setConfirmationToast] = useState<
-    "activation" | "undo" | null
-  >(null);
-  const { deleteTask, restoreTask } = useTaskStore(
-    useShallow((s) => ({
-      deleteTask: s.deleteTask,
-      restoreTask: s.restoreTask,
-    })),
-  );
-  const undo = useUndo<Task>();
+  const [confirmationToast, setConfirmationToast] = useState(false);
+  const { deleteTask, hasPendingDeletion } = useBacklogUndo();
 
   useEffect(() => {
     if (!confirmationToast) return;
-    const timer = window.setTimeout(
-      () => setConfirmationToast(null),
-      confirmationToast === "undo" ? 1500 : 3000,
-    );
+    const timer = window.setTimeout(() => setConfirmationToast(false), 3000);
     return () => window.clearTimeout(timer);
   }, [confirmationToast]);
 
@@ -64,6 +52,7 @@ export function BacklogPage() {
   const backlogTasks = useTaskStore(
     useShallow((s) => s.tasks.filter((t) => t.status === "backlog")),
   );
+  const backlogCapacityCount = useTaskStore((s) => s.getBacklogCapacityCount());
 
   const byQuadrant = useMemo(() => {
     const groups: Record<Quadrant, typeof backlogTasks> = {
@@ -104,7 +93,7 @@ export function BacklogPage() {
       >
         <header className="reserve-page__header reserve-page__container">
           <h1 className="reserve-page__title">Réserve</h1>
-          <CounterCapacity count={backlogCount} />
+          <CounterCapacity count={backlogCapacityCount} />
         </header>
       </div>
 
@@ -134,42 +123,20 @@ export function BacklogPage() {
                 }}
                 onActivated={() => {
                   setRevealedDeleteTaskId(null);
-                  if (!undo.pending) setConfirmationToast("activation");
+                  if (!hasPendingDeletion) setConfirmationToast(true);
                 }}
                 onDelete={(task) => {
                   setRevealedDeleteTaskId(null);
-                  deleteTask(task.id);
-                  setConfirmationToast(null);
-                  undo.start(task);
+                  setConfirmationToast(false);
+                  deleteTask(task);
                 }}
               />
             ))}
           </div>
         )}
       </div>
-      {undo.pending && (
-        <Toast
-          variant="undo"
-          message="Tâche supprimée"
-          taskTitle={undo.pending.title}
-          remainingMs={undo.remainingMs}
-          onPause={undo.pause}
-          onResume={undo.resume}
-          onClose={undo.clear}
-          onUndo={() => {
-            const task = undo.undo();
-            if (task && restoreTask(task)) setConfirmationToast("undo");
-          }}
-        />
-      )}
-      {!undo.pending && confirmationToast && (
-        <Toast
-          message={
-            confirmationToast === "activation"
-              ? "Ajoutée à ton Focus"
-              : "Annulé !"
-          }
-        />
+      {!hasPendingDeletion && confirmationToast && (
+        <Toast message="Ajoutée à ton Focus" />
       )}
     </section>
   );

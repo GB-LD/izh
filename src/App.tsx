@@ -9,22 +9,25 @@ import { Route, Routes } from "react-router";
 import { SortingOverlay } from "./features/sorting/SortingOverlay";
 import { PurgeOverlay } from "./features/purge/PurgeOverlay";
 import { SurveyOverlay } from "./features/survey/SurveyOverlay";
+import { BacklogUndoProvider } from "./features/backlog/BacklogUndoProvider";
 
 export function App() {
   return (
     <ErrorBoundary>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<InboxPage />} />
-          <Route path="/backlog" element={<BacklogPage />} />
-          <Route path="/focus" element={<FocusPage />} />
-          <Route path="/archive" element={<ArchivePage />} />
-          <Route path="/design-system" element={<DesignSystemPreview />} />
-        </Routes>
-      </Layout>
-      <SortingOverlay />
-      <PurgeOverlay />
-      <SurveyOverlay />
+      <BacklogUndoProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<InboxPage />} />
+            <Route path="/backlog" element={<BacklogPage />} />
+            <Route path="/focus" element={<FocusPage />} />
+            <Route path="/archive" element={<ArchivePage />} />
+            <Route path="/design-system" element={<DesignSystemPreview />} />
+          </Routes>
+        </Layout>
+        <SortingOverlay />
+        <PurgeOverlay />
+        <SurveyOverlay />
+      </BacklogUndoProvider>
     </ErrorBoundary>
   );
 }

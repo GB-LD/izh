@@ -16,14 +16,30 @@ type TaskState = {
   tasks: Task[];
 };
 
+type TaskTransientState = {
+  pendingBacklogDeletions: Task[];
+};
+
 type TaskSelectors = {
   getInboxTasks: () => Task[];
   getBacklogTasks: () => Task[];
   getActiveTasks: () => Task[];
   getArchivedTasks: () => Task[];
   getBacklogCount: () => number;
+  getBacklogCapacityCount: () => number;
+  isBacklogFull: () => boolean;
+  isFocusQuadrantFull: (quadrant: Quadrant | null) => boolean;
   getQuadrantTasks: (quadrant: Quadrant) => Task[];
 };
+
+function isFocusQuadrantFull(tasks: Task[], quadrant: Quadrant | null) {
+  if (!quadrant) return false;
+  return (
+    tasks.filter(
+      (task) => task.status === "active" && task.quadrant === quadrant,
+    ).length >= MAX_FOCUS_PER_QUADRANT
+  );
+}
 
 type TaskActions = {
   addTask: (taskTitle: string) => void;
@@ -34,6 +50,9 @@ type TaskActions = {
     >,
   ) => void;
   deleteTask: (id: string) => void;
+  stageBacklogDeletion: (id: string) => Task | null;
+  undoBacklogDeletion: (id: string) => boolean;
+  finalizeBacklogDeletion: (id: string) => void;
   restoreTask: (task: Task) => boolean;
   classifyTask: (
     id: string,
@@ -78,11 +97,14 @@ const taskStorage: PersistStorage<TaskState> = {
   },
 };
 
-export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
+export const useTaskStore = create<
+  TaskState & TaskTransientState & TaskSelectors & TaskActions
+>()(
   persist(
     (set, get) => ({
       // store state
       tasks: [],
+      pendingBacklogDeletions: [],
 
       // store actions
       addTask: (taskTitle) =>
@@ -112,8 +134,39 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
         }),
       deleteTask: (taskId: string) =>
         set((s) => ({ tasks: s.tasks.filter((t) => t.id !== taskId) })),
+      stageBacklogDeletion: (taskId) => {
+        const task = get().tasks.find((candidate) => candidate.id === taskId);
+        if (!task || task.status !== "backlog") return null;
+        set((s) => ({
+          tasks: s.tasks.filter((candidate) => candidate.id !== taskId),
+          pendingBacklogDeletions: [...s.pendingBacklogDeletions, task],
+        }));
+        return task;
+      },
+      undoBacklogDeletion: (taskId) => {
+        const task = get().pendingBacklogDeletions.find(
+          (candidate) => candidate.id === taskId,
+        );
+        if (!task) return false;
+        set((s) => ({
+          tasks: [...s.tasks, task],
+          pendingBacklogDeletions: s.pendingBacklogDeletions.filter(
+            (candidate) => candidate.id !== taskId,
+          ),
+        }));
+        return true;
+      },
+      finalizeBacklogDeletion: (taskId) =>
+        set((s) => ({
+          pendingBacklogDeletions: s.pendingBacklogDeletions.filter(
+            (candidate) => candidate.id !== taskId,
+          ),
+        })),
       restoreTask: (task) => {
         if (get().tasks.some((candidate) => candidate.id === task.id)) {
+          return false;
+        }
+        if (task.status === "backlog" && get().isBacklogFull()) {
           return false;
         }
         set((s) => ({ tasks: [...s.tasks, task] }));
@@ -128,7 +181,8 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
       ) =>
         set((s) => {
           if (
-            s.tasks.filter((t) => t.status === "backlog").length >=
+            s.tasks.filter((t) => t.status === "backlog").length +
+              s.pendingBacklogDeletions.length >=
             MAX_BACKLOG_SIZE
           )
             return s;
@@ -152,12 +206,7 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
         const task = state.tasks.find((candidate) => candidate.id === taskId);
         if (!task || task.status !== "backlog" || !task.quadrant) return false;
 
-        const activeInQuadrant = state.tasks.filter(
-          (candidate) =>
-            candidate.status === "active" &&
-            candidate.quadrant === task.quadrant,
-        ).length;
-        if (activeInQuadrant >= MAX_FOCUS_PER_QUADRANT) return false;
+        if (isFocusQuadrantFull(state.tasks, task.quadrant)) return false;
 
         set((s) => ({
           tasks: s.tasks.map((candidate) =>
@@ -222,6 +271,12 @@ export const useTaskStore = create<TaskState & TaskSelectors & TaskActions>()(
         get().tasks.filter((t) => t.status === "archived"),
       getBacklogCount: () =>
         get().tasks.filter((t) => t.status === "backlog").length,
+      getBacklogCapacityCount: () =>
+        get().tasks.filter((t) => t.status === "backlog").length +
+        get().pendingBacklogDeletions.length,
+      isBacklogFull: () => get().getBacklogCapacityCount() >= MAX_BACKLOG_SIZE,
+      isFocusQuadrantFull: (quadrant) =>
+        isFocusQuadrantFull(get().tasks, quadrant),
       getQuadrantTasks: (quadrant) =>
         get().tasks.filter((t) => t.quadrant === quadrant),
     }),

@@ -5,6 +5,8 @@ import { Button } from "@/shared/Button";
 
 interface ToastProps {
   message: string;
+  stacked?: boolean;
+  closeOnEscape?: boolean;
   variant?: "confirmation" | "undo";
   taskTitle?: string;
   remainingMs?: number;
@@ -16,6 +18,8 @@ interface ToastProps {
 
 export function Toast({
   message,
+  stacked = false,
+  closeOnEscape = true,
   variant = "confirmation",
   taskTitle,
   remainingMs,
@@ -38,13 +42,13 @@ export function Toast({
     interactions.hovered || interactions.pressed || interactions.focused;
 
   useEffect(() => {
-    if (!isUndo || !onClose) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
+    if (!isUndo || !onClose || !closeOnEscape) return;
+    const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [isUndo, onClose]);
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [closeOnEscape, isUndo, onClose]);
 
   useEffect(() => {
     if (!isUndo || wasPausedRef.current === isProgressPaused) return;
@@ -67,16 +71,25 @@ export function Toast({
   return (
     <motion.div
       className={`toast toast--${variant}`}
-      role={isUndo ? "alertdialog" : "status"}
+      role="status"
       aria-label={isUndo ? "Suppression de tâche" : undefined}
-      aria-live={isUndo ? "assertive" : "polite"}
-      initial={prefersReducedMotion ? false : { opacity: 0, x: "-50%", y: 12 }}
+      aria-live="polite"
+      initial={
+        prefersReducedMotion
+          ? false
+          : { opacity: 0, x: stacked ? 0 : "-50%", y: 12 }
+      }
       animate={
-        prefersReducedMotion ? { x: "-50%" } : { opacity: 1, x: "-50%", y: 0 }
+        prefersReducedMotion
+          ? { x: stacked ? 0 : "-50%" }
+          : { opacity: 1, x: stacked ? 0 : "-50%", y: 0 }
       }
       exit={
-        prefersReducedMotion ? { x: "-50%" } : { opacity: 0, x: "-50%", y: 12 }
+        prefersReducedMotion
+          ? { x: stacked ? 0 : "-50%" }
+          : { opacity: 0, x: stacked ? 0 : "-50%", y: 12 }
       }
+      transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
       onMouseEnter={isUndo ? () => setInteraction("hovered", true) : undefined}
       onMouseLeave={isUndo ? () => setInteraction("hovered", false) : undefined}
       onPointerDown={isUndo ? () => setInteraction("pressed", true) : undefined}

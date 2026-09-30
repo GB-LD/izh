@@ -14,6 +14,7 @@ import { MAX_FOCUS_PER_QUADRANT } from "@/lib/constants";
 import { QUADRANT_META } from "@/lib/quadrants";
 import { Button } from "@/shared/Button";
 import { useTaskStore } from "@/stores/useTaskStore";
+import { useBacklogSwipe } from "./useBacklogSwipe";
 
 interface TaskItemBacklogProps {
   task: Task;
@@ -23,17 +24,7 @@ interface TaskItemBacklogProps {
   onActivated: () => void;
 }
 
-const SWIPE_REVEAL_PX = 24;
-const SWIPE_COMMIT_PX = 48;
-const SWIPE_AXIS_PX = 8;
 const TOUCH_ONLY_QUERY = "(hover: none) and (pointer: coarse)";
-
-interface SwipeGesture {
-  pointerId: number;
-  startX: number;
-  startY: number;
-  axis: "pending" | "horizontal" | "vertical";
-}
 
 interface TooltipPosition {
   top: number;
@@ -50,16 +41,10 @@ export function TaskItemBacklog({
 }: TaskItemBacklogProps) {
   const prefersReducedMotion = useReducedMotion();
   const activateTask = useTaskStore((state) => state.activateTask);
-  const activeCount = useTaskStore(
-    (state) =>
-      state.tasks.filter(
-        (candidate) =>
-          candidate.status === "active" && candidate.quadrant === task.quadrant,
-      ).length,
+  const isFocusFull = useTaskStore((state) =>
+    state.isFocusQuadrantFull(task.quadrant),
   );
   const itemRef = useRef<HTMLLIElement>(null);
-  const swipeGesture = useRef<SwipeGesture | null>(null);
-  const suppressPointerClick = useRef(false);
   const activationRef = useRef<HTMLSpanElement>(null);
   const [isTouchOnly, setIsTouchOnly] = useState(
     () => window.matchMedia?.(TOUCH_ONLY_QUERY).matches ?? false,
@@ -67,8 +52,11 @@ export function TaskItemBacklog({
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [tooltipPosition, setTooltipPosition] =
     useState<TooltipPosition | null>(null);
+  const { isTouchTap, ...swipeHandlers } = useBacklogSwipe({
+    isTouchOnly,
+    onDeleteRevealChange,
+  });
   const tooltipId = useId();
-  const isFocusFull = activeCount >= MAX_FOCUS_PER_QUADRANT;
   const quadrantLabel = task.quadrant
     ? QUADRANT_META[task.quadrant].label
     : "Non classé";
@@ -147,70 +135,7 @@ export function TaskItemBacklog({
           itemRef.current?.focus();
         }
       }}
-      onPointerDownCapture={(event) => {
-        suppressPointerClick.current = false;
-        swipeGesture.current = null;
-        if (
-          event.isPrimary === false ||
-          (event.pointerType === "mouse" && isTouchOnly)
-        )
-          return;
-        if ((event.target as HTMLElement).closest("[data-delete-action]"))
-          return;
-        if (!isTouchOnly && (event.target as HTMLElement).closest("button"))
-          return;
-        swipeGesture.current = {
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          axis: "pending",
-        };
-      }}
-      onPointerMove={(event) => {
-        const gesture = swipeGesture.current;
-        if (!gesture || event.pointerId !== gesture.pointerId) return;
-        const dx = event.clientX - gesture.startX;
-        const dy = event.clientY - gesture.startY;
-        if (gesture.axis === "pending") {
-          if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_AXIS_PX) return;
-          gesture.axis =
-            Math.abs(dy) >= Math.abs(dx) || dx >= 0 ? "vertical" : "horizontal";
-        }
-        if (gesture.axis === "horizontal") {
-          onDeleteRevealChange(-dx >= SWIPE_REVEAL_PX);
-        }
-      }}
-      onPointerUp={(event) => {
-        const gesture = swipeGesture.current;
-        if (!gesture || event.pointerId !== gesture.pointerId) return;
-        swipeGesture.current = null;
-        const dx = event.clientX - gesture.startX;
-        const dy = event.clientY - gesture.startY;
-        if (gesture.axis === "pending") {
-          gesture.axis =
-            Math.abs(dx) >= SWIPE_AXIS_PX &&
-            Math.abs(dx) > Math.abs(dy) &&
-            dx < 0
-              ? "horizontal"
-              : "vertical";
-        }
-        if (gesture.axis !== "horizontal") return;
-        suppressPointerClick.current = true;
-        onDeleteRevealChange(-dx >= SWIPE_COMMIT_PX);
-      }}
-      onPointerCancel={() => {
-        if (swipeGesture.current?.axis === "horizontal") {
-          onDeleteRevealChange(false);
-        }
-        swipeGesture.current = null;
-      }}
-      onClickCapture={(event) => {
-        if (suppressPointerClick.current && event.detail !== 0) {
-          suppressPointerClick.current = false;
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      }}
+      {...swipeHandlers}
     >
       <span className="task-item-backlog__title">{task.title}</span>
       <div
@@ -249,14 +174,7 @@ export function TaskItemBacklog({
         }}
         onMouseLeave={() => setIsTooltipOpen(false)}
         onPointerUp={(event) => {
-          const gesture = swipeGesture.current;
-          if (
-            event.pointerType === "touch" &&
-            isFocusFull &&
-            gesture?.axis === "pending" &&
-            Math.abs(event.clientX - gesture.startX) < SWIPE_AXIS_PX &&
-            Math.abs(event.clientY - gesture.startY) < SWIPE_AXIS_PX
-          ) {
+          if (isFocusFull && isTouchTap(event)) {
             event.preventDefault();
             setIsTooltipOpen((isOpen) => !isOpen);
           }

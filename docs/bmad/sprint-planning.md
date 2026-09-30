@@ -333,10 +333,12 @@
 - **Description :**
   Créer `TaskItemBacklog` (titre + bouton Activer). Activation vers Focus (si < 4). Suppression swipe + toast undo 5s. Composant Toast générique avec countdown.
 - **Checklist :**
-  - [ ] `TaskItemBacklog.tsx` : titre + bouton "Activer" (icône, sm), zone 44px, édition inline
+  - [ ] `TaskItemBacklog.tsx` : titre en lecture seule + bouton "Activer" textuel (secondary, xs), zone 44px
   - [ ] Activer → status `active`, fade-out, toast "Ajoutée à ton Focus"
   - [ ] Activer bloqué si 4/4 → disabled + message "Focus plein (4/4)"
-  - [ ] Supprimer : swipe gauche (mobile) ou long press menu
+  - [ ] Supprimer : swipe gauche (mobile), hover (desktop) ou clavier ; bouton icône sans menu par appui long
+  - [ ] Capacité réservée pendant chaque undo : compteur effectif, tri bloqué à 40/40, restauration garantie
+  - [ ] Undos simultanés : un toast par tâche dans une pile défilable ; survivent à la navigation, pas au rechargement
   - [ ] `src/shared/Toast.tsx` : toast undo (countdown 5s + Annuler + auto-dismiss) + toast pédagogique (sans action)
   - [ ] `src/hooks/useUndo.ts` : timer 5s, annulation, expiration
   - [ ] `styles/components/toast.css` : position bottom au-dessus de la nav

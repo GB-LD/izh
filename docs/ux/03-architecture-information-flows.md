@@ -62,7 +62,7 @@ izh
 │   │   └── Q4 — Optionnel          (gris)
 │   ├── Drag & drop libre entre quadrants
 │   ├── Tri intra-quadrant (date de création / ordre manuel)
-│   ├── Purge unitaire (swipe to delete + menu contextuel)
+│   ├── Purge unitaire (swipe tactile + action au survol ou au clavier)
 │   └── [Action] Activer une tâche → Focus
 │       (pas de complétion dans la Réserve — uniquement dans le Focus)
 │
@@ -461,14 +461,16 @@ Le bilan renforce la satisfaction — "j'ai fait du tri, j'ai repris le contrôl
 
 #### Purge unitaire (hors overlay)
 
-Coexiste avec la purge assistée. Deux gestes :
+Coexiste avec la purge assistée. Accès selon la surface :
 
 | Geste                               | Surface          | Description                                                                       |
 | ----------------------------------- | ---------------- | --------------------------------------------------------------------------------- |
-| Swipe to delete (gauche)            | Mobile           | Révèle un bouton supprimer. Geste rapide pour David qui nettoie en 30 secondes.   |
-| Menu contextuel (long press ou •••) | Mobile + Desktop | Affiche options : Supprimer, Reclasser. Pour Camille qui ne connaît pas le swipe. |
+| Swipe to delete (gauche) | Mobile | Révèle un bouton supprimer. Geste rapide pour David qui nettoie en 30 secondes. |
+| Survol ou focus clavier | Desktop + clavier | Révèle le bouton supprimer ; la touche Suppr agit directement sur la ligne focalisée. |
 
 **Confirmation :** Toast avec undo ("Tâche supprimée — [Annuler]" pendant 5 secondes). Pas de modal — ça casserait le flow de purge rapide. Même pattern que la complétion de tâche (CU-07).
+
+Pendant chaque undo, la tâche disparaît mais sa place reste réservée : le compteur de capacité l'inclut et le tri reste bloqué à 40/40. Plusieurs suppressions gardent chacune leur délai et leur toast dans une pile défilable. L'undo reste disponible après navigation dans l'application, mais pas après rechargement.
 
 Sur appareil tactile sans survol, le glissement horizontal vers la gauche peut commencer partout sur la ligne, y compris sur « Activer ». Un défilement vertical garde la priorité. Après un glissement suffisant, le bouton reste visible à droite du bouton « Activer » ; un tap ailleurs le referme et laisse la cible agir normalement. Une seule ligne peut être ouverte. Au clavier, `Suppr` supprime la tâche focalisée ; `Flèche gauche` révèle le bouton, `Tab` l’atteint, et `Échap` referme l’action puis refocalise la ligne.
 
@@ -603,7 +605,7 @@ Sur appareil tactile sans survol, le glissement horizontal vers la gauche peut c
 | D6  | Écran de tri fusionné (quadrants + bouton assisté)                                                                                      | Écran de choix "assisté vs manuel" séparé               | Un tap de moins pour les utilisateurs expérimentés. L'exposition aux quadrants enseigne le modèle mental. Le nudge vers l'assisté est architectural (hiérarchie visuelle), pas textuel.                                                                                              |
 | D7  | Confirmation après tri assisté ("Ça me parle" + alternatives)                                                                           | Classement direct sans confirmation                     | L'utilisateur doit sentir qu'il a le dernier mot. Renforce la confiance. Permet de corriger en un geste. Le taux de correction est une donnée analytique précieuse.                                                                                                                  |
 | D8  | Pas de confirmation pour le tri manuel                                                                                                  | Confirmation systématique                               | L'utilisateur a fait un choix conscient — demander confirmation ajouterait de la friction inutile.                                                                                                                                                                                   |
-| D9  | Purge unitaire (swipe + menu contextuel) en parallèle de la purge assistée                                                              | Purge assistée uniquement                               | Deux moments différents : purge au fil de l'eau (David) vs session dédiée (Camille). Swipe pour le geste rapide, menu pour la discoverability.                                                                                                                                       |
+| D9  | Purge unitaire (swipe tactile + action au survol ou au clavier) en parallèle de la purge assistée | Purge assistée uniquement | Deux moments différents : purge au fil de l'eau (David) vs session dédiée (Camille). Le bouton est révélé par swipe sur tactile et par survol ou focus sur desktop. |
 | D10 | Toast undo (5s) plutôt que modal de confirmation pour suppression/complétion                                                            | Modal de confirmation                                   | La modal casse le flow rapide. Le toast undo est réversible et moins intrusif. Même pattern pour complétion (CU-07) et purge unitaire.                                                                                                                                               |
 | D11 | Pas de hamburger                                                                                                                        | Menu hamburger pour items secondaires                   | Avec 4 items, tout rentre dans la bottom bar. Le hamburger cache le contenu et pénalise la discoverability (Nogier).                                                                                                                                                                 |
 | D12 | Badge compteur sur Vrac (depuis tous les écrans)                                                                                        | Pas de badge                                            | Répond à "qu'y a-t-il d'autre" (Nogier ❸). Appel à l'action naturel sans être anxiogène.                                                                                                                                                                                             |
@@ -1014,8 +1016,6 @@ flowchart TD
     TRIG_UNIT(["Swipe gauche\nsur une tache Réserve"]):::trigger
     TRIG_UNIT --> REVEAL_DELETE["Bouton supprimer revele"]:::screen
     REVEAL_DELETE -->|"Tap supprimer"| UNIT_DELETE[/"Suppression unitaire"/]:::loading
-    MENU_UNIT(["Menu sur une tache Réserve"]):::trigger
-    MENU_UNIT --> UNIT_DELETE
     UNIT_DELETE --> TOAST["Toast undo\nTache supprimee - Annuler\n5 secondes"]:::screen
     TOAST -->|"Annuler avant 5s"| UNDO(["Tache restauree"]):::success
     TOAST -->|"Timeout 5s"| GONE(["Suppression definitive"]):::success
@@ -1038,7 +1038,7 @@ flowchart TD
 | Questionnaire  | C'est parti / action manuelle            | Tâches présentées par ancienneté, Q4 d'abord | Compteur progression X/Y                |
 | Bilan          | Toutes tâches revues                     | Récap suppressions/reclassements/gardées     | "Réserve : N/40"                        |
 | Rien à purger  | Action manuelle, pas de tâches anciennes | Message positif                              | "Ta Réserve est bien rangé"             |
-| Purge unitaire | Swipe ou menu •••                        | Suppression immédiate + toast undo 5s        | "Tâche supprimée — [Annuler]"           |
+| Purge unitaire | Swipe, survol ou clavier | Tâche masquée ; place réservée pendant l'undo 5s | "Tâche supprimée — [Annuler]" |
 
 ---
 

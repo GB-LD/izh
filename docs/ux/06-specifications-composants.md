@@ -344,14 +344,14 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | Variante              | Écran          | Structure                                   | Éléments                                                                                     |
 | --------------------- | -------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | **task-item-vrac**    | SCR-01 Vrac    | `[grip] [titre ←fill→] [Trier]`             | Drag handle + titre + bouton Secondary "Trier"                                               |
-| **task-item-reserve** | SCR-06 Réserve | `[grip] [titre ←fill→] [▶ Activer]`         | Drag handle + titre + bouton icon "Activer" (play)                                           |
+| **task-item-reserve** | SCR-06 Réserve | `[grip] [titre ←fill→] [Activer]` | Drag handle + titre en lecture seule + bouton textuel Secondary xs "Activer" |
 | **task-item-focus**   | SCR-10 Focus   | `[grip] [titre ←fill→] [☐]`                 | Drag handle + titre + checkbox à droite                                                      |
 | **task-item-archive** | SCR-11 Archive | `[~~titre barré~~] [badge Q] [date phrase]` | Titre barré en tertiary + badge d'origine + date de complétion en phrase ("Faite le 8 mars") |
 
 **Différences clés :**
 
 - **Vrac** : la plus simple — pas de badge, pas de date. L'action "Trier" est le seul CTA.
-- **Réserve** : pas de badge quadrant — le quadrant est implicite par la section dans laquelle la tâche se trouve. Bouton "Activer" (icône play) envoie vers Focus.
+- **Réserve** : pas de badge quadrant — le quadrant est implicite par la section dans laquelle la tâche se trouve. Bouton textuel "Activer" envoie vers Focus ; le titre n'est pas éditable sur cet écran.
 - **Focus** : épuré pour l'exécution. Pas de badge (le quadrant est implicite par la zone proéminente). Checkbox à droite pour compléter.
 - **Archive** : lecture seule. Titre barré en `--color-text-tertiary`, badge d'origine + date en phrase lisible ("Faite le 8 mars"). Pas de checkbox — le titre barré suffit à signaler la complétion.
 
@@ -362,10 +362,10 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | État                      | Déclencheur            | Changement visuel                                                                                                                                                                                                                                                                                                                  | Comportement                                                       |
 | ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | **Default**               | —                      | Fond transparent, pas de bordure, pas d'ombre. Divider `--color-border-subtle` 1px entre rows. Drag handle en `--color-text-tertiary`                                                                                                                                                                                              | Cliquable, draggable                                               |
-| **Hover (desktop)**       | Survol souris          | Fond → `--color-surface-subtle` (#F7F7F5). Drag handle → `--color-text-secondary`. Timestamp "Créée il y a [durée]" apparaît en `--color-text-tertiary` (`--text-caption`). Icônes edit (pencil) et delete (trash-2) apparaissent à droite. Bouton "Trier" passe en Primary inversé (`--color-action-primary` fond, texte inverse) | `cursor: pointer`                                                  |
+| **Hover (desktop)**       | Survol souris          | Fond → `--color-surface-subtle` (#F7F7F5). Drag handle → `--color-text-secondary`. Timestamp "Créée il y a [durée]" apparaît en `--color-text-tertiary` (`--text-caption`). L'icône delete (trash-2) apparaît dans la Réserve ; l'édition n'y est pas proposée. | `cursor: pointer` |
 | **Pressed**               | Mousedown / touchstart | Fond → `--color-surface-muted`. `transform: scale(0.98)`                                                                                                                                                                                                                                                                           | Feedback tactile immédiat                                          |
 | **Disabled**              | Condition non remplie  | Opacité 0.4. `cursor: not-allowed`                                                                                                                                                                                                                                                                                                 | `aria-disabled="true"` + tooltip expliquant POURQUOI               |
-| **Editing**               | Long press ~500ms      | Fond → accent léger (`--color-surface-accent`). Outline → `--color-border-focus` 2px. Titre devient éditable (contenteditable). Boutons ✓ (confirm, Primary) et ✕ (cancel) apparaissent à droite                                                                                                                                   | Vibration haptique mobile. `Enter` = confirmer, `Escape` = annuler |
+| **Editing**               | Long press ~500ms dans les écrans qui le proposent | Fond → accent léger (`--color-surface-accent`). Outline → `--color-border-focus` 2px. Titre devient éditable. Cet état ne s'applique pas à la Réserve. | `Enter` = confirmer, `Escape` = annuler |
 | **Swipe delete (mobile)** | Glissement gauche sur une ligne tactile sans survol | Le bouton supprimer s’ouvre à droite de « Activer » (largeur, opacité et translation). Il reste visible après un glissement suffisant. | Tap sur le bouton = suppression + toast undo 5s. Tap ailleurs = fermeture et action normale de la cible. |
 
 ---
@@ -666,7 +666,7 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | **Hover action (desktop)**        | Survol du bouton "Annuler"                        | Texte action plus lumineux + `text-decoration: underline`                                                                                                     | `cursor: pointer`. Timer **se met en pause** au hover sur le toast entier                |
 | **Action triggered**              | Tap sur "Annuler"                                 | Fond passe en `--color-feedback-success-surface` (#DBE9E6). Icône → `check` verte. Message → "Annulé !" pendant 800ms → dismiss                               | Action inversée (tâche restaurée)                                                        |
 | **Dismiss**                       | Timer expiré / swipe down / tap ✕                 | Slide down + fade out. `translateY(0) → translateY(100%)` · `opacity: 1 → 0` · durée `var(--duration-normal)` (200ms) `var(--ease-in)`                        | Toast supprimé du DOM. Action définitive                                                 |
-| **Stacked**                       | Nouveau toast alors qu'un toast est visible       | Le toast existant se dismiss immédiatement. Le nouveau entre. **Max 1 toast visible à la fois**                                                               | Le timer du toast précédent est annulé — si c'était un undo, l'action devient définitive |
+| **Stacked**                       | Plusieurs suppressions annulables                 | Un toast par tâche dans une pile à hauteur limitée et défilable au-dessus de la navigation. | Chaque toast conserve son propre délai ; l'undo reste accessible après navigation et cesse au rechargement. |
 
 ---
 
@@ -678,7 +678,7 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | **Largeur**          | Auto (fit-content) — le toast s'adapte au contenu du message. Pas de max-width imposé                                                                                            |
 | **Timer pause**      | Le timer se met en pause quand le pointeur/doigt est sur le toast (hover desktop, touch-hold mobile). Reprend au leave                                                           |
 | **Swipe to dismiss** | Swipe down > 50px → dismiss avec inertie. Le toast suit le doigt pendant le swipe (manipulation directe, Nogier)                                                                 |
-| **Stacking**         | Max 1 toast visible. Si un nouveau toast arrive, il remplace l'ancien. Si l'ancien était un undo, l'action devient définitive immédiatement                                      |
+| **Stacking**         | Les suppressions annulables gardent chacune leur toast et leur timer dans une pile à hauteur limitée, défilable sur mobile. |
 | **Undo mécanique**   | Suppression : la tâche est retirée visuellement mais conservée en mémoire pendant 5s. Undo = réinsertion à la position d'origine. Complétion : idem, la tâche revient dans Focus |
 | **Navbar**           | Le toast est **au-dessus** de la bottom nav, jamais en overlap                                                                                                                   |
 | **Overlay**          | Si un overlay est ouvert, le toast apparaît au-dessus de l'overlay                                                                                                               |
@@ -730,12 +730,12 @@ Timestamp : "Créée il y a 1h" — visible uniquement au hover/focus, masqué a
 | Critère          | Spécification                                                                                                                                |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Rôle**         | `role="status"` + `aria-live="polite"` — annonce sans interrompre le screen reader                                                           |
-| **Undo**         | `role="alertdialog"` + `aria-live="assertive"` — interrompt le SR pour les actions destructives                                              |
+| **Undo**         | `role="status"` + `aria-live="polite"` — annonce la suppression sans interrompre le screen reader                                            |
 | **Label action** | Bouton "Annuler" avec `aria-label="Annuler la suppression de [nom tâche]"` — contexte complet                                                |
 | **Timer**        | Pas d'annonce continue du timer — uniquement annonce à l'apparition du toast                                                                 |
 | **Focus**        | Le toast ne capture **pas** le focus automatiquement. Exception : si navigation clavier, `Tab` atteint le bouton "Annuler"                   |
 | **Contraste**    | Texte #37352F sur #EADCDC = ~8.5:1 ✅ AAA. Action #D14040 sur #EADCDC = ~3.8:1 — renforcé par le poids 600 (conforme WCAG 1.4.1 texte large) |
-| **Dismiss**      | `Escape` dismiss le toast. Si c'était un undo, l'action devient définitive                                                                   |
+| **Dismiss**      | `Escape` dismiss le toast undo le plus récent. Son action devient définitive ; les autres restent annulables.                               |
 | **Motion**       | `@media (prefers-reduced-motion)` : pas de slide ni de gradient animé, apparition instantanée avec fade 100ms, fond uni                      |
 
 ---
@@ -1781,6 +1781,8 @@ Le Result Card vit dans un overlay (`surface: overlay-partial-75`, `backdrop: da
 **Référence :** Kholmatova (pattern de feedback d'état — rendre visible l'invisible), Nogier (feedback continu et prévention de l'erreur — l'utilisateur ne doit jamais être surpris par une limite)
 
 **Écrans :** SCR-06 (Réserve — header), SCR-09 (résultat de tri — bilan Réserve)
+
+Le ratio mesure la capacité occupée : il inclut les tâches visibles et les suppressions encore annulables. Une tâche masquée pendant son undo conserve donc sa place dans [N]/40 ; le chiffre baisse à l'expiration ou à la clôture de cette fenêtre.
 
 ### Anatomie
 

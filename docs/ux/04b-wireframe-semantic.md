@@ -872,9 +872,9 @@ screen:
     - trigger: "Swipe gauche sur tâche"
       action: "Révélation du bouton supprimer à droite de « Activer »"
       feedback: "Tap sur le bouton pour supprimer, puis toast undo 5s."
-    - trigger: "Long press sur titre"
-      action: "Édition inline (DT-01)"
-      feedback: "Vibration haptique + titre éditable"
+    - trigger: "Survol ou focus clavier sur tâche"
+      action: "Révélation du bouton supprimer"
+      feedback: "Suppression suivie d'un toast undo 5s. Le titre reste en lecture seule."
 ```
 
 ---

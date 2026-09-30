@@ -1,4 +1,27 @@
 @layer components {
+  .toast-stack {
+    position: fixed;
+    z-index: 100;
+    left: calc(50% + var(--layout-sidebar-center-offset, 0px));
+    bottom: calc(var(--layout-navbar-height) + var(--spacing-component-md));
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--spacing-inline-sm);
+    width: max-content;
+    max-width: calc(100vw - 2 * var(--spacing-page-mobile));
+    max-height: min(50dvh, 320px);
+    overflow-y: auto;
+    transform: translateX(-50%);
+  }
+
+  .toast-stack .toast {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+
   .toast {
     position: fixed;
     z-index: 100;
@@ -37,6 +60,9 @@
     font-size: var(--text-sm);
   }
   @media (min-width: 768px) {
+    .toast-stack {
+      bottom: var(--spacing-component-lg);
+    }
     .toast {
       bottom: var(--spacing-component-lg);
     }

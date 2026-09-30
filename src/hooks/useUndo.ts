@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { UNDO_DELAY_MS } from "@/lib/constants";
 
-export function useUndo<T>(duration = UNDO_DELAY_MS) {
+export function useUndo<T>(
+  duration = UNDO_DELAY_MS,
+  onExpire?: (value: T) => void,
+) {
   const [pending, setPending] = useState<T | null>(null);
   const [remainingMs, setRemainingMs] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -35,9 +38,13 @@ export function useUndo<T>(duration = UNDO_DELAY_MS) {
         remainingRef.current = remaining;
         setRemainingMs(remaining);
       }, 100);
-      timeoutRef.current = window.setTimeout(clear, delay);
+      timeoutRef.current = window.setTimeout(() => {
+        const value = pendingRef.current;
+        clear();
+        if (value !== null) onExpire?.(value);
+      }, delay);
     },
-    [clear],
+    [clear, onExpire],
   );
 
   const start = useCallback(

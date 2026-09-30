@@ -5,7 +5,6 @@ import { useUIStore } from "@/stores/useUIStore";
 import { useFlowStore } from "@/stores/useFlowStore";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useFlowReducer } from "@/hooks/useFlowReducer";
-import { MAX_BACKLOG_SIZE } from "@/lib/constants";
 import { OverlayShell } from "@/shared/OverlayShell";
 import { TaskContextHeader } from "@/shared/TaskContextHeader";
 import { QuadrantButton } from "@/shared/QuadrantButton";
@@ -40,10 +39,7 @@ export function SortingOverlay() {
   const inboxCount = useTaskStore(
     (s) => s.tasks.filter((t) => t.status === "inbox").length,
   );
-  const reserveFull = useTaskStore(
-    (s) =>
-      s.tasks.filter((t) => t.status === "backlog").length >= MAX_BACKLOG_SIZE,
-  );
+  const reserveFull = useTaskStore((s) => s.isBacklogFull());
 
   // Session counter — snapshot the number of tasks to sort when the overlay
   // opens, kept across the "next task" chain, reset on close (AC8). Captured

@@ -282,7 +282,7 @@
 - Drag vertical dans section ouverte → réordonnancement intra-quadrant.
 - Tap "Activer" → tâche disparaît (animation) → toast "Ajoutée à ta matrice". Grisé si quadrant matrice plein (4/4).
 - Swipe gauche → révélation du bouton supprimer à droite de « Activer », puis tap pour supprimer. Toast undo 5s.
-- Long press titre → édition inline (DT-01), vibration haptique.
+- Titre en lecture seule dans la Réserve ; pas d'édition par appui long.
 - Highlight post-tri : tâche classée depuis overlay → highlight 2-3s dans son quadrant.
 - Toggle tri discret : "Par date" / "Manuel" (défaut : manuel).
 - Nudge purge à 35+ : banner dismissable.

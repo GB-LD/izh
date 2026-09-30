@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BacklogPage } from "./BacklogPage";
+import { BacklogUndoProvider } from "./BacklogUndoProvider";
 import { useTaskStore } from "@/stores/useTaskStore";
 import type { Task } from "@/schemas/task";
 
@@ -84,7 +85,9 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
 function renderBacklogPage() {
   return render(
     <MemoryRouter>
-      <BacklogPage />
+      <BacklogUndoProvider>
+        <BacklogPage />
+      </BacklogUndoProvider>
     </MemoryRouter>,
   );
 }
@@ -101,7 +104,7 @@ beforeEach(() => {
       removeEventListener: vi.fn(),
     }),
   });
-  useTaskStore.setState({ tasks: [] });
+  useTaskStore.setState({ tasks: [], pendingBacklogDeletions: [] });
   localStorage.clear();
 });
 
@@ -279,9 +282,9 @@ describe("BacklogPage", () => {
 
     await user.click(screen.getByRole("button", { name: /supprimer/i }));
 
-    expect(screen.getByRole("alertdialog")).toHaveTextContent(
-      "Tâche supprimée",
-    );
+    expect(
+      screen.getByRole("status", { name: "Suppression de tâche" }),
+    ).toHaveTextContent("Tâche supprimée");
     await user.click(
       screen.getByRole("button", {
         name: `Annuler la suppression de "${task.title}"`,
@@ -302,7 +305,9 @@ describe("BacklogPage", () => {
     await user.click(screen.getByRole("button", { name: /supprimer/i }));
     fireEvent.keyDown(window, { key: "Escape" });
 
-    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("status", { name: "Suppression de tâche" }),
+    ).not.toBeInTheDocument();
     expect(useTaskStore.getState().tasks).toEqual([]);
   });
 });

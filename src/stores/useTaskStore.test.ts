@@ -21,7 +21,7 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
 });
 
 beforeEach(() => {
-  useTaskStore.setState({ tasks: [] });
+  useTaskStore.setState({ tasks: [], pendingBacklogDeletions: [] });
   localStorage.clear();
 });
 
@@ -154,6 +154,45 @@ describe("restoreTask", () => {
 
     expect(restored).toBe(false);
     expect(get().tasks).toEqual([task]);
+  });
+
+  it("refuses to restore a Reserve task when all 40 places are occupied", () => {
+    const reserveTasks = Array.from({ length: MAX_BACKLOG_SIZE }, (_, index) =>
+      makeTask({ status: "backlog", quadrant: "q1", position: index + 1 }),
+    );
+    useTaskStore.setState({ tasks: reserveTasks });
+
+    const restored = get().restoreTask(
+      makeTask({ status: "backlog", quadrant: "q2" }),
+    );
+
+    expect(restored).toBe(false);
+    expect(get().getBacklogCapacityCount()).toBe(40);
+  });
+});
+
+describe("pending Reserve deletion", () => {
+  it("reserves capacity until a deleted task is restored", () => {
+    const reserveTasks = Array.from({ length: MAX_BACKLOG_SIZE }, (_, index) =>
+      makeTask({ status: "backlog", quadrant: "q1", position: index + 1 }),
+    );
+    const inboxTask = makeTask({ title: "New task" });
+    const deletedTask = reserveTasks[14];
+    useTaskStore.setState({ tasks: [...reserveTasks, inboxTask] });
+
+    get().stageBacklogDeletion(deletedTask.id);
+    expect(get().getBacklogCapacityCount()).toBe(40);
+
+    get().classifyTask(inboxTask.id, "q2", "manual");
+    expect(get().tasks.find((task) => task.id === inboxTask.id)?.status).toBe(
+      "inbox",
+    );
+
+    get().undoBacklogDeletion(deletedTask.id);
+    expect(get().tasks.find((task) => task.id === deletedTask.id)).toEqual(
+      deletedTask,
+    );
+    expect(get().getBacklogCapacityCount()).toBe(40);
   });
 });
 

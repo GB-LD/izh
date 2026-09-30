@@ -56,6 +56,19 @@ vi.mock("motion/react", async () => {
 });
 
 describe("Toast", () => {
+  it("announces undo politely as a status", () => {
+    render(
+      <Toast
+        variant="undo"
+        message="Tâche supprimée"
+        remainingMs={5000}
+        onUndo={() => {}}
+      />,
+    );
+
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
+  });
+
   it("keeps its horizontal centering during entry, display, and exit", () => {
     render(<Toast message="Ajoutée à ton Focus" />);
 
@@ -92,7 +105,9 @@ describe("Toast", () => {
       JSON.parse(progress?.getAttribute("data-motion-transition") ?? "{}"),
     ).toMatchObject({ duration: 2.5, ease: "linear" });
 
-    fireEvent.mouseEnter(screen.getByRole("alertdialog"));
+    fireEvent.mouseEnter(
+      screen.getByRole("status", { name: "Suppression de tâche" }),
+    );
 
     expect(
       JSON.parse(progress?.getAttribute("data-motion-animate") ?? "{}"),
@@ -117,7 +132,7 @@ describe("Toast", () => {
       />,
     );
 
-    const toast = screen.getByRole("alertdialog");
+    const toast = screen.getByRole("status", { name: "Suppression de tâche" });
     fireEvent.mouseEnter(toast);
     fireEvent.pointerDown(toast);
     fireEvent.pointerUp(toast);
