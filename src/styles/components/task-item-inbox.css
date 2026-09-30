@@ -32,6 +32,19 @@
       transform var(--transition-hover);
   }
 
+  .task-item__action > button {
+    @apply inline-flex items-center justify-center shrink-0 w-11 h-11 cursor-pointer;
+
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+  }
+
+  .task-item__action > button:focus-visible {
+    outline: 2px solid var(--color-edge-focus);
+    outline-offset: -2px;
+  }
+
   .task-item-inbox:has(:focus-visible) .task-item__action {
     @apply pointer-events-auto;
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Layers } from "lucide-react";
 import { useTaskStore } from "@/stores/useTaskStore";
@@ -8,16 +8,51 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/shared/EmptyState/EmptyState";
 import { CounterCapacity } from "@/shared/CounterCapacity/CounterCapacity";
 import { QuadrantSection } from "./QuadrantSection";
+import { Toast } from "@/shared/Toast";
+import { useBacklogUndo } from "./useBacklogUndo";
 
 const QUADRANTS: Quadrant[] = ["q1", "q2", "q3", "q4"];
 
 export function BacklogPage() {
   const { sentinelRef, isStuck: isTopStuck } = useStickyState<HTMLDivElement>();
   const [openQuadrant, setOpenQuadrant] = useState<Quadrant | null>("q1");
+  const [revealedDeleteTaskId, setRevealedDeleteTaskId] = useState<
+    string | null
+  >(null);
+  const [confirmationToast, setConfirmationToast] = useState(false);
+  const { deleteTask, hasPendingDeletion } = useBacklogUndo();
+
+  useEffect(() => {
+    if (!confirmationToast) return;
+    const timer = window.setTimeout(() => setConfirmationToast(false), 3000);
+    return () => window.clearTimeout(timer);
+  }, [confirmationToast]);
+
+  useEffect(() => {
+    if (!revealedDeleteTaskId) return;
+
+    function closeOnOutsideClick(event: MouseEvent) {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target
+          .closest("[data-delete-action]")
+          ?.closest("[data-task-id]")
+          ?.getAttribute("data-task-id") === revealedDeleteTaskId
+      ) {
+        return;
+      }
+      setRevealedDeleteTaskId(null);
+    }
+
+    document.addEventListener("click", closeOnOutsideClick);
+    return () => document.removeEventListener("click", closeOnOutsideClick);
+  }, [revealedDeleteTaskId]);
 
   const backlogTasks = useTaskStore(
     useShallow((s) => s.tasks.filter((t) => t.status === "backlog")),
   );
+  const backlogCapacityCount = useTaskStore((s) => s.getBacklogCapacityCount());
 
   const byQuadrant = useMemo(() => {
     const groups: Record<Quadrant, typeof backlogTasks> = {
@@ -30,7 +65,12 @@ export function BacklogPage() {
       if (task.quadrant) groups[task.quadrant].push(task);
     }
     for (const quadrant of QUADRANTS) {
-      groups[quadrant].sort((a, b) => a.position - b.position);
+      groups[quadrant].sort(
+        (a, b) =>
+          a.position - b.position ||
+          a.createdAt.localeCompare(b.createdAt) ||
+          a.id.localeCompare(b.id),
+      );
     }
     return groups;
   }, [backlogTasks]);
@@ -53,7 +93,7 @@ export function BacklogPage() {
       >
         <header className="reserve-page__header reserve-page__container">
           <h1 className="reserve-page__title">Réserve</h1>
-          <CounterCapacity count={backlogCount} />
+          <CounterCapacity count={backlogCapacityCount} />
         </header>
       </div>
 
@@ -73,16 +113,31 @@ export function BacklogPage() {
                 quadrant={quadrant}
                 tasks={byQuadrant[quadrant]}
                 isOpen={openQuadrant === quadrant}
-                onToggle={() =>
+                revealedDeleteTaskId={revealedDeleteTaskId}
+                onDeleteRevealChange={setRevealedDeleteTaskId}
+                onToggle={() => {
+                  setRevealedDeleteTaskId(null);
                   setOpenQuadrant((prev) =>
                     prev === quadrant ? null : quadrant,
-                  )
-                }
+                  );
+                }}
+                onActivated={() => {
+                  setRevealedDeleteTaskId(null);
+                  if (!hasPendingDeletion) setConfirmationToast(true);
+                }}
+                onDelete={(task) => {
+                  setRevealedDeleteTaskId(null);
+                  setConfirmationToast(false);
+                  deleteTask(task);
+                }}
               />
             ))}
           </div>
         )}
       </div>
+      {!hasPendingDeletion && confirmationToast && (
+        <Toast message="Ajoutée à ton Focus" />
+      )}
     </section>
   );
 }

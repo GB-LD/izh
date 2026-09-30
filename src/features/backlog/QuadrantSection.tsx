@@ -4,26 +4,34 @@ import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import type { Quadrant, Task } from "@/schemas/task";
 import { QUADRANT_META } from "@/lib/quadrants";
 import { cn } from "@/lib/utils";
+import { TaskItemBacklog } from "./TaskItemBacklog";
 
 interface QuadrantSectionProps {
   quadrant: Quadrant;
   tasks: Task[];
   isOpen: boolean;
+  revealedDeleteTaskId: string | null;
+  onDeleteRevealChange: (taskId: string | null) => void;
   onToggle: () => void;
+  onDelete: (task: Task) => void;
+  onActivated: () => void;
 }
 
 /**
  * C-14 — Section accordéon d'un quadrant de la Réserve.
  *
  * Toujours rendue (même vide). L'état ouvert/fermé est piloté par le parent
- * (`BacklogPage`) pour garantir l'accordion strict. Le rendu des tâches est ici
- * un stub minimal (titre seul) ; story 4.2 le remplacera par `TaskItemBacklog`.
+ * (`BacklogPage`) pour garantir l'accordion strict.
  */
 export function QuadrantSection({
   quadrant,
   tasks,
   isOpen,
+  revealedDeleteTaskId,
+  onDeleteRevealChange,
   onToggle,
+  onDelete,
+  onActivated,
 }: QuadrantSectionProps) {
   const prefersReduced = useReducedMotion();
   const { label, Icon } = QUADRANT_META[quadrant];
@@ -112,13 +120,21 @@ export function QuadrantSection({
               {count === 0 ? (
                 <p className="quadrant-section__empty-text">Aucune tâche</p>
               ) : (
-                <ul role="list">
-                  {tasks.map((task) => (
-                    // 4.2 → <TaskItemBacklog task={task} />
-                    <li key={task.id} className="reserve-task-stub">
-                      {task.title}
-                    </li>
-                  ))}
+                <ul role="list" className="quadrant-section__tasks">
+                  <AnimatePresence initial={false}>
+                    {tasks.map((task) => (
+                      <TaskItemBacklog
+                        key={task.id}
+                        task={task}
+                        isDeleteRevealed={revealedDeleteTaskId === task.id}
+                        onDeleteRevealChange={(revealed) =>
+                          onDeleteRevealChange(revealed ? task.id : null)
+                        }
+                        onDelete={onDelete}
+                        onActivated={onActivated}
+                      />
+                    ))}
+                  </AnimatePresence>
                 </ul>
               )}
             </div>

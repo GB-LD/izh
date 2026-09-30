@@ -21,6 +21,8 @@
 @import "./styles/components/empty-state.css";
 @import "./styles/components/inbox-page.css";
 @import "./styles/components/reserve-section.css";
+@import "./styles/components/task-item-backlog.css";
+@import "./styles/components/toast.css";
 
 /* Utilitaires custom (à venir) */
 @import "./styles/utilities/index.css";

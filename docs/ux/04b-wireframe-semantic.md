@@ -870,11 +870,11 @@ screen:
       action: "Tâche → Focus (même quadrant)"
       feedback: "Animation disparition + toast 'Ajoutée à Focus'"
     - trigger: "Swipe gauche sur tâche"
-      action: "Suppression"
-      feedback: "Reveal bouton supprimer. Toast undo 5s."
-    - trigger: "Long press sur titre"
-      action: "Édition inline (DT-01)"
-      feedback: "Vibration haptique + titre éditable"
+      action: "Révélation du bouton supprimer à droite de « Activer »"
+      feedback: "Tap sur le bouton pour supprimer, puis toast undo 5s."
+    - trigger: "Survol ou focus clavier sur tâche"
+      action: "Révélation du bouton supprimer"
+      feedback: "Suppression suivie d'un toast undo 5s. Le titre reste en lecture seule."
 ```
 
 ---

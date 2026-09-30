@@ -1,8 +1,9 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BacklogPage } from "./BacklogPage";
+import { BacklogUndoProvider } from "./BacklogUndoProvider";
 import { useTaskStore } from "@/stores/useTaskStore";
 import type { Task } from "@/schemas/task";
 
@@ -33,8 +34,33 @@ vi.mock("motion/react", async () => {
     ),
   );
   MotionDiv.displayName = "MockMotionDiv";
+  type MotionLiProps = React.HTMLAttributes<HTMLLIElement> & {
+    children?: React.ReactNode;
+    initial?: unknown;
+    animate?: unknown;
+    exit?: unknown;
+    transition?: unknown;
+  };
+  const MotionLi = React.forwardRef<HTMLLIElement, MotionLiProps>(
+    (
+      {
+        children,
+        initial: _i,
+        animate: _a,
+        exit: _e,
+        transition: _t,
+        ...props
+      },
+      ref,
+    ) => (
+      <li ref={ref} {...props}>
+        {children}
+      </li>
+    ),
+  );
+  MotionLi.displayName = "MockMotionLi";
   return {
-    motion: { div: MotionDiv },
+    motion: { div: MotionDiv, li: MotionLi, span: MotionDiv },
     AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
     useReducedMotion: () => false,
   };
@@ -59,7 +85,9 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
 function renderBacklogPage() {
   return render(
     <MemoryRouter>
-      <BacklogPage />
+      <BacklogUndoProvider>
+        <BacklogPage />
+      </BacklogUndoProvider>
     </MemoryRouter>,
   );
 }
@@ -68,7 +96,15 @@ const headerOf = (name: RegExp | string) =>
   screen.getByRole("button", { name });
 
 beforeEach(() => {
-  useTaskStore.setState({ tasks: [] });
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }),
+  });
+  useTaskStore.setState({ tasks: [], pendingBacklogDeletions: [] });
   localStorage.clear();
 });
 
@@ -182,5 +218,96 @@ describe("BacklogPage", () => {
     expect(screen.getByText("1/40")).toBeInTheDocument();
     const q1Body = within(headerOf(/Faire maintenant/).closest("section")!);
     expect(q1Body.getAllByRole("listitem")).toHaveLength(1);
+  });
+
+  it("keeps one delete action open and lets an outside tap activate normally", async () => {
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn().mockReturnValue({
+        matches: true,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
+    });
+    const first = makeTask({ id: "first", title: "Première", position: 1 });
+    const second = makeTask({ id: "second", title: "Deuxième", position: 2 });
+    useTaskStore.setState({ tasks: [first, second] });
+    renderBacklogPage();
+    const firstRow = screen.getByText("Première").closest("li")!;
+    const secondRow = screen.getByText("Deuxième").closest("li")!;
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+    expect(firstRow).toHaveAttribute("data-delete-revealed", "true");
+
+    await userEvent.setup().click(screen.getByText("Première"));
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+
+    secondRow.focus();
+    fireEvent.keyDown(secondRow, { key: "ArrowLeft" });
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+    expect(secondRow).toHaveAttribute("data-delete-revealed", "true");
+
+    firstRow.focus();
+    fireEvent.keyDown(firstRow, { key: "ArrowLeft" });
+    const activateSecond = screen.getByRole("button", {
+      name: `Activer "${second.title}"`,
+    });
+    fireEvent.pointerDown(activateSecond, {
+      pointerType: "touch",
+      pointerId: 1,
+      isPrimary: true,
+    });
+    expect(firstRow).toHaveAttribute("data-delete-revealed", "true");
+    fireEvent.pointerUp(activateSecond, {
+      pointerType: "touch",
+      pointerId: 1,
+    });
+    fireEvent.click(activateSecond, { detail: 1 });
+
+    expect(firstRow).not.toHaveAttribute("data-delete-revealed");
+    expect(
+      useTaskStore.getState().tasks.find((task) => task.id === second.id),
+    ).toHaveProperty("status", "active");
+  });
+
+  it("restores a deleted task from the undo toast", async () => {
+    const user = userEvent.setup();
+    const task = makeTask({ id: "undo-task", title: "À garder", position: 2 });
+    useTaskStore.setState({ tasks: [task] });
+    renderBacklogPage();
+
+    await user.click(screen.getByRole("button", { name: /supprimer/i }));
+
+    expect(
+      screen.getByRole("status", { name: "Suppression de tâche" }),
+    ).toHaveTextContent("Tâche supprimée");
+    await user.click(
+      screen.getByRole("button", {
+        name: `Annuler la suppression de "${task.title}"`,
+      }),
+    );
+
+    expect(useTaskStore.getState().tasks).toEqual([task]);
+    expect(screen.getByText("À garder")).toBeInTheDocument();
+    expect(screen.getByText("Annulé !")).toBeInTheDocument();
+  });
+
+  it("makes a deletion definitive when Escape closes its undo toast", async () => {
+    const user = userEvent.setup();
+    const task = makeTask({ id: "escape-task", title: "À retirer" });
+    useTaskStore.setState({ tasks: [task] });
+    renderBacklogPage();
+
+    await user.click(screen.getByRole("button", { name: /supprimer/i }));
+    fireEvent.keyDown(window, { key: "Escape" });
+
+    expect(
+      screen.queryByRole("status", { name: "Suppression de tâche" }),
+    ).not.toBeInTheDocument();
+    expect(useTaskStore.getState().tasks).toEqual([]);
   });
 });

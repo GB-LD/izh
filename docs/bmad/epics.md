@@ -123,7 +123,7 @@ This document provides the complete epic and story breakdown for izh planning, d
 - UX-DR5: Tokens ombres : cards flat par défaut, shadow-xs au hover, shadow-sm toasts, shadow-md modales, shadow-lg bottom sheets. Opacités 7-16%.
 - UX-DR6: Composant Button (C-01) : 6 variantes (primary, secondary, outline, text, icon-only, danger), 3 tailles (sm 36px, md 44px, lg 52px), 6 états (default, hover, focus-visible, active, loading, disabled), modificateurs block/icon-only/icon-left
 - UX-DR7: Composant CaptureInput (C-02) : champ 44px sticky au-dessus de la liste, icône + placeholder, auto-focus 1er lancement, validation Enter → champ vidé → focus maintenu, clear ✕ optionnel
-- UX-DR8: Composant Card/TaskItem (C-03) : 4 variantes — inbox (titre + bouton trier), backlog (titre + bouton activer + drag handle), matrix (checkbox + titre), archive (titre + badge quadrant + date). Édition inline long press/double-clic.
+- UX-DR8: Composant Card/TaskItem (C-03) : 4 variantes — inbox (titre + bouton trier), backlog (titre en lecture seule + bouton activer + drag handle), matrix (checkbox + titre), archive (titre + badge quadrant + date). L'édition inline ne s'applique pas à la Réserve.
 - UX-DR9: Composant BottomNav (C-05) : navigation segmentée 4 items (Vrac/Réserve/Focus/Archive), icônes Lucide, badge compteur sur Vrac, indicateur actif pill, hauteur 52px, masqué sous les overlays
 - UX-DR10: Composant Toast (C-06) : toast undo 5s avec countdown visuel + bouton Annuler, toast pédagogique sans action, position bottom au-dessus de la nav, auto-dismiss
 - UX-DR11: Composant EmptyState (C-07) : 5 variantes contextuelles — 1er lancement Vrac (champ auto-focus), Vrac triée (lien Réserve), Réserve vide (lien Vrac), Focus vide (lien Réserve), Archive vide
@@ -719,9 +719,8 @@ So that I can move tasks forward in my workflow or clean up my backlog.
 
 **Given** une tâche est affichée dans une section ouverte de la Réserve
 **When** l'utilisateur la voit
-**Then** `TaskItemBacklog.tsx` affiche : titre de la tâche + bouton "Activer" (icône, taille sm) à droite
+**Then** `TaskItemBacklog.tsx` affiche : titre de la tâche en lecture seule + bouton "Activer" textuel (secondary, taille xs) à droite
 **And** chaque item a une zone tactile ≥44px de hauteur
-**And** l'édition inline du titre fonctionne (long press mobile / double-clic desktop, comme Story 2.3)
 
 **Given** l'utilisateur tape sur le bouton "Activer"
 **When** le quadrant correspondant dans le Focus a moins de 4 tâches
@@ -735,17 +734,20 @@ So that I can move tasks forward in my workflow or clean up my backlog.
 **And** un message adjacent ou tooltip explique "Focus plein pour ce quadrant (4/4)"
 
 **Given** l'utilisateur veut supprimer une tâche
-**When** il swipe à gauche sur la tâche (mobile) ou fait un long press pour le menu contextuel
-**Then** un bouton "Supprimer" (variant danger) est révélé
+**When** il swipe à gauche sur la tâche (mobile), la survole (desktop) ou utilise le clavier
+**Then** un bouton icône "Supprimer" est révélé, sans menu contextuel par appui long
 **And** la suppression est confirmée par un toast undo 5s : "Tâche supprimée — [Annuler]" (FR23)
+**And** la place de la tâche reste réservée pendant l'undo : le compteur de capacité l'inclut et un nouveau classement reste bloqué à 40/40
 
 **Given** l'utilisateur tape "Annuler" sur le toast dans les 5 secondes
 **When** l'undo est déclenché
 **Then** la tâche est restaurée à sa position précédente dans le même quadrant
+**And** chaque suppression possède sa propre fenêtre d'annulation de 5 secondes
+**And** les toasts undo simultanés restent accessibles dans une pile défilable, y compris après navigation dans l'application ; un rechargement clôt les fenêtres d'annulation
 
 **And** `src/shared/Toast.tsx` implémente le toast undo avec countdown visuel 5s + bouton Annuler + auto-dismiss
 **And** `src/hooks/useUndo.ts` gère le mécanisme d'undo : timer 5s, annulation, expiration
-**And** `styles/components/toast.css` définit `.toast`, `.toast-undo` avec position bottom au-dessus de la nav
+**And** `styles/components/toast.css` définit `.toast`, `.toast-undo` et une pile à hauteur limitée au-dessus de la nav
 **And** `TaskItemBacklog.test.tsx` valide : affichage, activation, activation bloquée (4/4), suppression swipe, toast undo
 **And** `useUndo.test.ts` valide : timer 5s, annulation dans le délai, expiration après 5s
 
